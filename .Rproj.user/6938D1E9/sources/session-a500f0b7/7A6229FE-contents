@@ -1,0 +1,351 @@
+rm(list = ls())
+setwd("~/New Results")
+Rcpp::sourceCpp("~/Code_Running_Preparation/Final_Code/Full_Code_new_version_exp.cpp")
+source("~/Code_Running_Preparation/Data & Graph Preparation/Data Preparation_without_intercept.R", echo=TRUE)
+
+
+
+## loading Processed Data
+
+library(data.table)
+# newdat<-fread("~/Final Codes/Model with Random effects/newdat.csv",showProgress = T,data.table = F,nThread = 5)
+dataset <- data.table::fread("~/Code_Running_Preparation/Data/newdat.csv", showProgress = TRUE)
+
+dataset$sst_ssd_dur[is.na(dataset$sst_ssd_dur)]<-0
+
+
+head(dataset)
+
+cluster<-load("~/Clustering latent factors/Cluster_Anxiety_Data.RData")
+
+
+merged_dat<-as.data.frame(merge(dataset,new_dat,by='subject'))
+
+
+HV_Anx_dat<-merged_dat[merged_dat$cluster_label=="Advantaged Overall" & merged_dat$Anxiety_status=="Anxious" ,]
+
+
+
+
+
+library(dplyr)
+
+# Assumes run 1 comes before run 2
+diffs <- HV_Anx_dat%>%
+  group_by(subject) %>%
+  summarise(
+    last_run1 = max(sst_stimonset[sst_run == "1"]),
+    first_run2 = min(sst_stimonset[sst_run == "2"]),
+    diff = first_run2 - last_run1
+  )
+
+
+fast_sub<-(diffs$subject[(diffs$diff)/1000<=60])  
+
+fast_sub_dat<-HV_Anx_dat[HV_Anx_dat$subject %in% fast_sub, ]
+
+f <- function(x) mean(x, na.rm = TRUE)
+
+CA_fast_sub<-na.omit(aggregate(fast_sub_dat$sst_choiceacc,list(fast_sub_dat$subject),f))
+
+colnames(CA_fast_sub)<-c("Sub","PER")
+
+
+
+## Selecting Subjects
+# set.seed(1235)
+set.seed(5151)
+sub <- sample(CA_fast_sub$Sub[CA_fast_sub$PER>=0.6], 70)
+
+
+# sub <- sample(ChoicAccPERT1$ID[ChoicAccPERT1$PER>=0.9], 45)
+
+## Creating Dataset with the subjects
+M_I1_Non_Anx_dat<-data_prep(fast_sub_dat,sub=sub,nknots=12,m=10,scale=100)
+
+
+
+# mean(na.omit(M_I1_Non_Anx_dat$dat$sst_primaryrt[M_I1_Non_Anx_dat$dat$sst_run=='1' & M_I1_Non_Anx_dat$dat$sst_primaryrt !=0]))
+# 
+# mean(na.omit(M_I1_Non_Anx_dat$dat$sst_primaryrt[M_I1_Non_Anx_dat$dat$sst_run=='2'& M_I1_Non_Anx_dat$dat$sst_primaryrt !=0]))
+
+
+## Basic Variables
+T=M_I1_Non_Anx_dat$T
+Time=M_I1_Non_Anx_dat$Time ## Time-subject wise
+X=M_I1_Non_Anx_dat$X ##. Time-combined
+X1=M_I1_Non_Anx_dat$X1 ## Spline 
+Go_RT=M_I1_Non_Anx_dat$tau
+Go_RT_S=M_I1_Non_Anx_dat$tau_s
+SP_SIM_Dat=M_I1_Non_Anx_dat$sp.x1
+Ind_G=M_I1_Non_Anx_dat$Ind_G
+Indicator=M_I1_Non_Anx_dat$Ind
+T_Go=M_I1_Non_Anx_dat$T_Go
+T_Total=M_I1_Non_Anx_dat$T_Total
+FT=M_I1_Non_Anx_dat$FT
+PGF=M_I1_Non_Anx_dat$PGF
+
+
+Stop_S_D=M_I1_Non_Anx_dat$SSD
+
+Phi_mat=M_I1_Non_Anx_dat$Phi
+
+lambda<-M_I1_Non_Anx_dat$lambda
+
+U<-M_I1_Non_Anx_dat$U
+
+lower_bound<-M_I1_Non_Anx_dat$l_lim
+
+SSD_min=50
+
+
+
+
+
+## Initialization
+
+P=ncol(X1[[1]])
+N=length(Go_RT)
+m=length(lambda)
+
+
+mu_bl<-mu_br<-mu_gl<-mu_gr<-c(rep(0,P))
+mean_priors_main<-list(mu_gl,mu_gr,mu_bl,mu_br);
+
+# Function to create the Du matrix using diff
+create_Du_diff <- function(K) {
+  # Initialize an empty matrix for Du
+  Du <- matrix(0, nrow = K-2, ncol = K)
+  
+  # Fill the Du matrix using second-order differences
+  for (i in 1:(K-2)) {
+    Du[i, ] <- diff(diag(K), differences = 2)[i, ]
+  }
+  
+  return(Du)
+}
+
+
+
+
+# Function to compute Pu
+compute_Pu_diff <- function(K) {
+  Du <- create_Du_diff(K)
+  Pu <- t(Du) %*% Du
+  return(Pu)
+}
+
+sigma_bl_inv<-sigma_br_inv<-sigma_gl_inv<-sigma_gr_inv<-compute_Pu_diff(P)
+
+var_priors_main<-list(sigma_gl_inv,sigma_gr_inv,sigma_bl_inv,sigma_br_inv);
+
+dim(sigma_bl_inv)
+
+gama_Ind<-replicate(N, matrix(0, nrow = m, ncol = 2), simplify = FALSE)
+beta_Ind<-replicate(N, matrix(0, nrow = m, ncol = 2), simplify = FALSE)
+
+
+
+mu_lambda_prime<-0
+sigma_lambda_prime<-1
+mu_alpha_prime<-0
+sigma_alpha_prime<-1
+
+mu_b_stop<-0
+sigma_b_stop<-1
+mu_nu_stop<-0
+sigma_nu_stop<-1
+
+prior_penal_stop<-c(mu_lambda_prime,sigma_lambda_prime,mu_alpha_prime,sigma_alpha_prime,
+                    mu_b_stop,sigma_b_stop,mu_nu_stop,sigma_nu_stop)
+
+
+upper_bound=1000
+
+
+sigma<-1
+
+
+
+
+# ## Initialiation of Parameters
+
+range_g_b<-c(0,0.000095) ## /2.5  ## Decrease to increase
+
+range_p= c(0,0.006) ## Decrease to increase
+
+range_d= c(0,0.065) ## Decrease to increase
+range_stop_prob= c(0,0.007) ## Decrease to increase
+
+
+range_rand_eff=c(0,0.15) ## m=10 ## with scale
+
+
+range_rand_g_l<-range_rand_g_r<-c(0,0.075) ## m=10 # with scale
+range_rand_b_l<-range_rand_b_r<-c(0,0.075) ##.25
+
+
+ranges<-list(range_g_b,range_p,range_d,range_stop_prob,range_rand_eff,range_rand_g_l,range_rand_g_r,range_rand_b_l,range_rand_b_r)
+
+source("~/Final Codes/Model with Random effects/Data Preparation_without_intercept.R", echo=TRUE)
+
+data<-data_prep(fast_sub_dat,sub=sub,nknots=12,m=10,scale=100)
+
+
+# source("~/ABCD Study/Method of Moment Method_version2.R")
+
+source("Method of Moment Method_without_intercept.R")
+
+
+
+mean<-tapply(data$dat$sst_primaryrt[data$dat$sst_expcon=="GoTrial" |data$dat$sst_inhibitacc==0 ],data$dat$sst_primaryresp[data$dat$sst_expcon=="GoTrial" |data$dat$sst_inhibitacc==0 ],mean,na.rm = TRUE)
+
+mean <- mean[mean != 0]
+
+var<-tapply(data$dat$sst_go_rt[data$dat$sst_expcon=="GoTrial" |data$dat$sst_inhibitacc==0 ],data$dat$sst_primaryresp[data$dat$sst_expcon=="GoTrial" |data$dat$sst_inhibitacc==0 ],var,na.rm = TRUE)
+var <- var[var != 0]
+
+
+
+nu_hat<-sqrt(mean/var)
+
+b_hat<-nu_hat*mean
+
+
+SP2=Reduce(rbind,X1)
+
+
+gama_l<-init_Gen_b(b_hat[1],SP2)
+gama_r<-init_Gen_b(b_hat[2],SP2)
+gama.int<-matrix(c(gama_l,gama_r),ncol=2,byrow = F)
+
+
+beta_l<-init_Gen_nu(nu_hat[1],SP2)
+beta_r<-init_Gen_nu(nu_hat[2],SP2)
+beta.int<-matrix(c(beta_l,beta_r),ncol=2,byrow = F)
+
+
+
+set.seed (1451)
+l<-log(runif(N, min = 0, max = 1))
+a<-log(runif(N, min = 0, max = 1))
+
+penal_param.int<-as.matrix(rbind(l,a))
+
+delta_prime.int<-matrix(c(rep(-2,2*N)),nrow=2,ncol=N)
+
+
+b_stop.int=rep(log(25),N)
+
+# b_stop.int=rep(2,N)
+
+nu_stop.int=rep(log(0.2),N)
+
+stop_param.int<-as.matrix(rbind(b_stop.int,nu_stop.int))
+
+
+GF.int<-rep(log(2),N)
+
+TF1.int<-rep(log(32),N)
+
+TF2.int<-rep(log(6),N)
+
+prob_param.int<-as.matrix(rbind(GF.int,TF1.int,TF2.int),ncol=N,nrow=3)
+
+
+# rand_param_g_l<-rand_param_g_r<-as.matrix(c(5,50),nrow=2)
+# 
+# rand_param_b_l<-rand_param_b_r<-as.matrix(c(5,50),nrow=2)
+
+
+
+rand_param_g_l<-rand_param_g_r<-as.matrix(c(0,log(400)),nrow=2)
+
+rand_param_b_l<-rand_param_b_r<-as.matrix(c(0,log(400)),nrow=2)
+
+
+nu_d=3/2
+kappa=1
+
+a=1/5
+b=1/5
+
+# a_00=0.1
+# a_10=0.3
+# 
+# a_01=0.5
+
+prob_hyp<-c(1,1,1)
+
+shape=a+((P-1)/2)
+
+
+
+
+rate_b_l=b+(t(gama.int[,1])%*%sigma_gl_inv%*%gama.int[,1])/2
+rate_b_r=b+(t(gama.int[,2])%*%sigma_gl_inv%*%gama.int[,2])/2
+
+rate_nu_l=b+(t(beta.int[,1])%*%sigma_gl_inv%*%beta.int[,1])/2
+rate_nu_r=b+(t(beta.int[,2])%*%sigma_gl_inv%*%beta.int[,2])/2
+
+eta_b_l=rgamma(1,shape,1/rate_b_l)
+eta_b_r=rgamma(1,shape,1/rate_b_r)
+
+
+eta_nu_l=rgamma(1,shape,1/rate_nu_l)
+eta_nu_r=rgamma(1,shape,1/rate_nu_r)
+
+
+
+
+L=5
+leapmax=8 ## 8
+thin=5
+nparall=55
+
+nhmc=20000
+
+library(parallel)
+
+library(RcppArmadillo)
+
+# Record the start time
+start_time <- Sys.time()
+
+set.seed(5121)
+
+# set.seed(5121) 
+
+model<-hmc(X1,Go_RT=Go_RT,Go_RT_S=Go_RT_S,SSD_min=SSD_min, U=U,Ind_G=Ind_G,Stop_S_D=Stop_S_D,
+           sigma,delta_param=delta_prime.int,gama=gama.int,beta=beta.int,
+           stop_param=stop_param.int,prob_param=prob_param.int,
+           Indicator=Indicator,
+           mean_priors_main,var_priors_main,
+           penal_param.int, prior_penal_stop,
+           T_Go,FT,T_Total,
+           a,b,prob_hyp,
+           eta_b_l,eta_b_r,eta_nu_l,eta_nu_r,
+           gama_Ind,beta_Ind,
+           nu_d,lambda,Phi_mat,
+           rand_param_g_l,rand_param_g_r,rand_param_b_l,rand_param_b_r,
+           kappa,
+           ranges, L,leapmax,nhmc,thin,nparall,
+           lower_bound,upper_bound,
+           update_gama_beta=1,update_penalty=1,update_stop_prob=1,
+           update_rand_eff=1,update_delta=1,lt=1)
+
+
+
+
+# Record the end time
+end_time <- Sys.time()
+
+# Calculate the duration
+(runtime <- end_time - start_time)
+
+
+saveRDS(model, file = "Advant_Anx")
+
+
+# saveRDS(model, file = "full_model_main_effect_new_results_only")
+

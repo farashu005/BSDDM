@@ -1,0 +1,22 @@
+Package: BSDDM
+Type: Package
+Title: Bayesian Semi-parametric Drift Diffusion Model
+Version: 0.1.0
+Authors@R: 
+    person("Farabi Raihan", "Shuvo", 
+           email = "frs200000@utd.edu", 
+           role = c("aut", "cre"))
+Description: Estimation and diagnostics tools for Bayesian Semi-parametric Drift Diffusion Models 
+    (SDDMs) in cognitive modeling using Hamiltonian Monte Carlo.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Imports:
+    Rcpp,
+    RcppArmadillo,
+    RcppDist,splines2,MASS,ggplot2,gridExtra,dplyr,ggpubr
+LinkingTo: Rcpp, RcppArmadillo, RcppDist, RcppEnsmallen, mlpack
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Suggests: knitr, rmarkdown
+VignetteBuilder: knitr

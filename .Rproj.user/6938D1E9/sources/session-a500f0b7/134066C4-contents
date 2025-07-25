@@ -1,0 +1,128 @@
+rm(list = ls())
+
+save_location<-"~/Code_Running_Preparation/Saved_Model"
+file_name = "Advant_Non_Anx"
+prep_data_file_name<-"Advant_Non_Anx_data"
+
+
+
+cluster_label = "Advantaged Overall"
+Anxiety_status = "TD"
+sub_type = "Quick_starter"
+N=200
+
+
+
+
+
+# ## Initialiation of Parameters
+
+range_main_effect<-c(0,0.000065) ## /2.5  ## Decrease to increase
+range_p= c(0,0.0072) ## Decrease to increase
+range_d= c(0,0.06) ## Decrease to increase
+range_stop_prob= c(0,0.007) ## Decrease to increase
+range_rand_eff=c(0,0.19) ## m=10 ## with scale
+range_rand_g_l<-range_rand_g_r<-c(0,0.045) ## m=10 # with scale
+range_rand_b_l<-range_rand_b_r<-c(0,0.045) ##.25
+
+
+
+
+
+## Initializing
+
+set.seed (1451)
+l<-log(runif(N, min = 0, max = 1))
+a<-log(runif(N, min = 0, max = 1))
+
+penal_param.int<-as.matrix(rbind(l,a))
+
+delta_prime.int<-matrix(c(rep(-2,2*N)),nrow=2,ncol=N)
+
+
+b_stop.int=rep(log(25),N)
+
+
+
+nu_stop.int=rep(log(0.2),N)
+
+stop_param.int<-as.matrix(rbind(b_stop.int,nu_stop.int))
+
+
+GF.int<-rep(log(2),N)
+
+TF1.int<-rep(log(32),N)
+
+TF2.int<-rep(log(6),N)
+
+prob_param.int<-as.matrix(rbind(GF.int,TF1.int,TF2.int),ncol=N,nrow=3)
+
+rand_param_g_l.int<-rand_param_g_r.int<-as.matrix(c(0,log(400)),nrow=2)
+
+rand_param_b_l.int<-rand_param_b_r.int<-as.matrix(c(0,log(400)),nrow=2)
+
+
+## Dataset
+
+dat <- readRDS("~/Code_Running_Preparation/Data/full_data.rds")
+
+
+
+#source("~/Code_Running_Preparation/Code_Running_function.R", echo=TRUE)
+
+nu_d = 3/2
+kappa = 1
+a = 1/5
+b = 1/5
+CA_threshold = 0.6
+nknots = 12
+m = 10
+scale = 100
+
+SSD_min = 50
+upper_bound = 1000
+L = 5
+leapmax = 8
+thin = 5
+nparall = 48
+nhmc = 20000
+
+intercept=FALSE
+
+library(BSDDM)
+
+?code_run
+
+code_run(save_location = save_location,
+         dat = dat,
+         cluster_label,
+         Anxiety_status,
+         sub_type ,sampling=TRUE,
+         sample_size = N,run=3,
+         file_name,prep_data_file_name,
+
+         range_main_eff = range_main_effect,
+         range_p = range_p,
+         range_d = range_d,
+         range_stop_prob = range_stop_prob,
+         range_rand_eff = range_rand_eff,
+         range_rand_g_l = range_rand_g_l,
+         range_rand_g_r = range_rand_g_r,
+         range_rand_b_l = range_rand_b_l,
+         range_rand_b_r = range_rand_b_r,
+
+         penal_param.int = penal_param.int,
+         delta_prime.int = delta_prime.int,
+         stop_param.int = stop_param.int,
+         prob_param.int = prob_param.int,
+         rand_param_g_l.int = rand_param_g_l.int,
+         rand_param_g_r.int = rand_param_g_r.int,
+         rand_param_b_l.int = rand_param_b_l.int,
+         rand_param_b_r.int = rand_param_b_r.int,
+
+         nu_d, kappa, a, b,
+         CA_threshold, nknots, m, scale,
+         SSD_min, upper_bound,
+         L, leapmax, thin, nparall, nhmc,intercept)
+
+

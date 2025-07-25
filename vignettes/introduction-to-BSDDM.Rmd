@@ -1,0 +1,133 @@
+---
+title: "Introduction to BSDDM"
+author: "Farabi Raihan Shuvo"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to BSDDM}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+library(BSDDM)
+
+```
+
+
+## Overview
+
+The BSDDM package provides tools for estimating Bayesian Semi-parametric Drift Diffusion Models (SDDMs) in cognitive tasks such as the Stop-Signal Task. It supports hierarchical modeling where trial-level decision parameters (e.g., boundary separation, drift rate) are modeled as smooth functions of time using spline basis functions. Subject-level random effects are modeled using Gaussian Process (GP) priors, allowing flexible borrowing of information across individuals. The posterior inference is performed using Hamiltonian Monte Carlo (HMC) for efficient and scalable sampling.
+
+
+This vignette walks through a typical workflow using the package, including data preparation, model fitting, and result visualization.
+
+
+
+## Data Preparation & Model Fitting
+
+The core function for preparing data and fitting the model is `code_run()`. This function automates a complete pipeline, performing the following key tasks:
+
+- Filters subjects based on experimental grouping variables:
+  - `cluster_label`
+  - `Anxiety_status`
+  - `sub_type`
+
+- Constructs spline bases for individual-level covariates, which are used to flexibly model boundary and drift functions.
+
+- Initializes model components, including:
+  - Boundary (`gama`) and drift (`beta`) coefficients for both left and right stimuli in the Go process
+  - Penalty and stop-process parameters, such as:
+    - Boundary (`b_stop`)
+    - Drift rate (`nu_stop`)
+  - Failure weight parameters: `w_00`, `w_01`, `w_10`
+  - Random effect coefficients:
+    - `Gama_I`: for boundary variation across individuals
+    - `Beta_I`: for drift variation across individuals
+  - Gaussian Process (GP) hyperparameters:
+    - Marginal variance
+    - Length scale (controlling smoothness)
+
+- Specifies integration parameters, such as:
+  - Stop-signal delay (SSD)
+  - Lower and upper integration bounds
+
+- Saves the preprocessed data as `.rds` files for downstream sampling and diagnostics.
+
+- Finally, `code_run()` launches the Bayesian Semi-parametric Drift Diffusion Model (BSDDM) using Hamiltonian Monte Carlo (HMC) sampling, preparing the model output for posterior analysis.
+
+
+
+
+```{r eval = FALSE}
+code_run(
+  Code_sourcing = TRUE,
+  save_location = getwd(),
+  dat = my_data,
+  cluster_label = "ClusterA",
+  Anxiety_status = "TD",
+  sub_type = "fast",
+  sampling=TRUE,
+  sample_size = 100,run=1,
+  file_name = "model_output.rds",
+  prep_data_file_name = "prep_data.rds",
+  range_main_eff = c(0.1, 1),
+  range_p = c(0.1, 1),
+  range_d = c(0.1, 1),
+  range_stop_prob = c(0.1, 1),
+  range_rand_eff = c(0.1, 1),
+  range_rand_g_l = c(0.1, 1),
+  range_rand_g_r = c(0.1, 1),
+  range_rand_b_l = c(0.1, 1),
+  range_rand_b_r = c(0.1, 1),
+  penal_param.int = matrix(0, nrow = 2, ncol = 1),
+  delta_prime.int = rep(0, 2),
+  stop_param.int = rep(0, 2),
+  prob_param.int = rep(0, 2),
+  rand_param_g_l.int = rep(0, 2),
+  rand_param_g_r.int = rep(0, 2),
+  rand_param_b_l.int = rep(0, 2),
+  rand_param_b_r.int = rep(0, 2),
+  nu_d = 3/2, kappa = 1, a = 1/5, b = 1/5,
+  CA_threshold = 0.6, nknots = 12, m = 10, scale = 100,
+  SSD_min = 50, upper_bound = 1000,
+  L = 5, leapmax = 8, thin = 5, nparall = 48, nhmc = 20000,
+  intercept = TRUE
+```
+
+
+## Model Output
+After the model is run, the output is saved as an RDS (model_output.rds) file in the specified save_location. This output contains posterior samples and runtime diagnostics.
+
+
+
+
+## Model Diagnostics and Visualization
+Once model fitting is complete using `code_run()`, posterior summaries and diagnostics can be generated with `graph_generate()`.
+
+This function will:
+
+- Load the model and preprocessed data from `.rds` files
+- Remove burn-in samples from each parameter
+- Generate plots using `Plot_results()`:
+  - Trace plots for convergence
+  - Posterior means and credible intervals
+  - Subject-level boundary and drift trajectories
+
+
+```{r eval = FALSE}
+## Example usage
+graph_result <- graph_generate(
+  model_name = "model_output.rds",
+  data = "prep_data.rds",
+  Burn = 5000,
+  SSD_min = 50,
+  CI = 0.95,
+  convergence_plots = TRUE
+)
+```

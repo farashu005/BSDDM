@@ -1,0 +1,103 @@
+
+
+rm(list = ls())           # Clear everything from global environment
+gc()                      # Run garbage collection
+library(BSDDM)            # Reload your package
+
+
+
+
+# Generate fake inputs (you can replace with real data later)
+Time_stamp <- list(matrix(100, 5, 1))
+Go_RT <- list(matrix(500, 5, 1))
+Go_RT_S <- list(matrix(500, 5, 1))
+SSD_min <- 100
+U <- rep(0.5, 10)
+
+Ind_G <- list(1:5)
+Stop_S_D <- list(matrix(1, 5, 2))
+sigma <- 1
+
+m <- 10  # dimension
+delta_param <- matrix(0, m, m)
+gama <- matrix(0, m, m)
+beta <- matrix(0, m, m)
+stop_param <- matrix(0, m, m)
+prob_param <- matrix(0, m, m)
+
+Indicator <- list(Ind_S = 1:5)
+mean_priors_main <- list(matrix(0, m, 1))
+var_priors_main <- list(matrix(1, m, 1))
+
+penal_param <- matrix(1, m, m)
+prior_penal_stop <- rep(1, m)
+T_Go <- rep(500, 10)
+k <- rep(1, 10)
+T_Total <- rep(1000, 10)
+
+a <- 0.2
+b <- 0.2
+prob_hyp <- rep(0.5, 10)
+
+eta_b_l <- 1
+eta_b_r <- 1
+eta_nu_l <- 1
+eta_nu_r <- 1
+
+gama_Ind <- list(1:m)
+beta_Ind <- list(1:m)
+
+nu_d <- 1.5
+lam <- rep(1, m)
+
+Phi_mat <- list(matrix(1, 10, 10))
+
+rand_param_g_l <- rep(0.1, m)
+rand_param_g_r <- rep(0.1, m)
+rand_param_b_l <- rep(0.1, m)
+rand_param_b_r <- rep(0.1, m)
+
+kappa <- 1
+
+ranges <- list(0, 1000)
+
+L <- 5
+leapmax <- 10
+nhmc <- 100
+thin <- 2
+nparall <- 2
+
+l_bound <- list(1, 1000)
+upper_bound <- 1000
+
+update_gama_beta <- TRUE
+update_penalty <- TRUE
+update_stop_prob <- TRUE
+update_rand_eff <- TRUE
+update_delta <- TRUE
+lt <- TRUE
+
+
+result <- BSDDM::hmc(
+  Time_stamp, Go_RT, Go_RT_S, SSD_min, U, Ind_G, Stop_S_D, sigma,
+  delta_param, gama, beta, stop_param, prob_param,
+  Indicator, mean_priors_main, var_priors_main,
+  penal_param, prior_penal_stop, T_Go, k, T_Total,
+  a, b, prob_hyp, eta_b_l, eta_b_r, eta_nu_l, eta_nu_r,
+  gama_Ind, beta_Ind, nu_d, lam, Phi_mat,
+  rand_param_g_l, rand_param_g_r, rand_param_b_l, rand_param_b_r,
+  kappa, ranges, L, leapmax, nhmc, thin, nparall,
+  l_bound, upper_bound,
+  update_gama_beta, update_penalty, update_stop_prob,
+  update_rand_eff, update_delta, lt
+)
+
+
+
+remove.packages("BSDDM", lib = "/home/012/f/fr/frs200000/R/x86_64-pc-linux-gnu-library/4.4")
+
+setwd("/home/012/f/fr/frs200000/BSDDM")  # Set working directory to the package root
+
+list.files()
+
+devtools::install()

@@ -1,0 +1,12 @@
+rm(list = ls())
+
+setwd("~/Code_Running_Preparation/Saved_Model")
+
+model<-readRDS("Advant_Non_Anx")
+
+
+data<-readRDS("Advant_Non_Anx_data")
+
+Burn<-1000
+
+graph_generate(model,data,Burn,SSD_min=50,CI="YES",convergence_plots=1)

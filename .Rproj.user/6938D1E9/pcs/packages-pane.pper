@@ -1,0 +1,7 @@
+{
+    "installOptions": {
+        "installFromRepository": true,
+        "libraryPath": "/home/012/f/fr/frs200000/R/x86_64-pc-linux-gnu-library/4.4",
+        "installDependencies": true
+    }
+}

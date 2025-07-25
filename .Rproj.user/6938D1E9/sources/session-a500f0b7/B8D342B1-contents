@@ -1,0 +1,39 @@
+graph_generate<-function(model_name,data,Burn,SSD_min=50,CI,convergence_plots){
+                   
+
+model<-readRDS("model_name")
+
+
+
+
+## Creating Dataset with the subjects
+data<-readRDS(data)
+
+
+
+Gama_I_L<-model$Gama_I_L[,,-(1:Burn)]
+Gama_I_R<-model$Gama_I_R[,,-(1:Burn)]
+
+Beta_I_L<-model$Beta_I_L[,,-(1:Burn)]
+Beta_I_R<-model$Beta_I_R[,,-(1:Burn)]
+
+Phi_mat=data$Phi_Full
+
+Time=data$Time_Point
+
+sp.x1=data$sp.x1_Full ## Spline
+
+U<-data$U
+
+N=length(Time)
+
+SSD_min=50
+
+source("~/Code_Running_Preparation/Data & Graph Preparation/Graph Preparation.R", echo=TRUE)
+
+
+result<-Plot_results(model,sp.x1,Time,X1=X1,Time_point, Burn, N,Phi_mat,U,SSD_min, CI,convergence_plots)
+
+return(result)
+
+}
