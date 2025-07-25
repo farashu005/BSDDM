@@ -3,41 +3,51 @@
 #' This function prepares a dataset, initializes priors, loads necessary C++ functions,
 #' and runs a Bayesian Semi-parametric Drift Diffusion Model (SSDDM) using Hamiltonian Monte Carlo (HMC).
 #'
-#' @param save_location Directory to save all model outputs
-#' @param dat Input data frame with stop-signal and go-trial information
-#' @param cluster_label Cluster label used to subset the data
-#' @param Anxiety_status Group label used to subset the data
-#' @param sub_type Subtype category used to subset the data
-#' @param sampling Logical. Whether to sample subjects from the subset or use all subjects
-#' @param sample_size Number of subjects to sample from the subset (if sampling=TRUE, otherwise all subjects will be chosen irrespective of the value of sample_size)
-#' @param run whether to use the first run(=1) or second run (=2) or both (=3)
-#' @param file_name File path to save the model output (RDS)
-#' @param prep_data_file_name File path to save the preprocessed data (RDS)
-#' @param range_main_eff Prior range for main effects
-#' @param range_p,range_d,range_stop_prob Prior ranges for penalty, delta, and stop probability
-#' @param range_rand_eff,range_rand_g_l,range_rand_g_r,range_rand_b_l,range_rand_b_r Ranges for random effects
-#' @param penal_param.int Initial penalty parameters
-#' @param delta_prime.int Initial delta prime parameters
-#' @param stop_param.int Initial stop parameters
-#' @param prob_param.int Initial probability parameters
-#' @param rand_param_g_l.int,rand_param_g_r.int,rand_param_b_l.int,rand_param_b_r.int Initial random parameters
-#' @param nu_d Degrees of freedom for random effect prior
-#' @param kappa Shape parameter for inverse gamma prior
-#' @param a,b Hyperparameters for the prior
-#' @param CA_threshold Threshold for subject-level choice accuracy
-#' @param nknots Number of spline knots
-#' @param m Number of basis functions
-#' @param scale Rescaling factor
-#' @param SSD_min Minimum Stop Signal Delay
-#' @param upper_bound Upper bound for integration
-#' @param L Number of leapfrog steps
-#' @param leapmax Maximum leap size
-#' @param thin Thinning interval
-#' @param nparall Number of parallel threads
-#' @param nhmc Number of HMC iterations
-#' @param intercept Logical. Whether to include intercept terms in spline
+#' @param save_location Directory to save all model outputs.
+#' @param dat Input data frame with stop-signal and go-trial information.
+#' @param cluster_label Cluster label used to subset the data.
+#' @param Anxiety_status Group label used to subset the data.
+#' @param sub_type Subtype category used to subset the data.
+#' @param sampling Logical. Whether to sample subjects from the subset or use all subjects.
+#' @param sample_size Number of subjects to sample from the subset (if sampling = TRUE, otherwise all subjects are used).
+#' @param run Integer: 1 for first run, 2 for second run, 3 for both.
+#' @param file_name File path to save the final model output as an RDS file.
+#' @param prep_data_file_name File path to save the preprocessed data as an RDS file.
+#' @param range_main_eff Step size range for main effects during leapfrog updates in HMC.
+#' @param range_p Step size range for penalty parameters during leapfrog updates in HMC.
+#' @param range_d Step size range for delta parameters during leapfrog updates in HMC.
+#' @param range_stop_prob Step size range for stop and probability parameters during leapfrog updates in HMC.Prior range for  parameters.
+#' @param range_rand_eff Step size range for random effect parameters during leapfrog updates in HMC.Prior
+#' @param range_rand_g_l Step size range for left boundary Gaussian Process random effects during leapfrog updates.
+#' @param range_rand_g_r Step size range for right boundary Gaussian Process random effects during leapfrog updates.
+#' @param range_rand_b_l Step size range for left drift Gaussian Process random effects during leapfrog updates.
+#' @param range_rand_b_r Step size range for right boundary Gaussian Process random effects during leapfrog updates.
+##' @param penal_param.int Initial value penalty parameters.
+#' @param delta_prime.int Initial value of delta prime parameters.
+#' @param stop_param.int Initial value of stop parameters.
+#' @param prob_param.int Initial value of probability parameters.
+#' @param rand_param_g_l.int Initial value of Gaussian Proecess Parameters for left Boundary random effects.
+#' @param rand_param_g_r.int Initial value of Gaussian Proecess Parameters for right Boundary random effects.
+#' @param rand_param_b_l.int Initial value of Gaussian Proecess Parameters for left Drift random effects.
+#' @param rand_param_b_r.int Initial value of Gaussian Process Parameters for Right Drift random effects.
+#' @param nu_d Degrees of freedom for the random effect prior.
+#' @param kappa Shape parameter for the inverse gamma prior.
+#' @param a Hyperparameter a for the prior.
+#' @param b Hyperparameter b for the prior.
+#' @param CA_threshold Minimum choice accuracy required to retain a subject.
+#' @param nknots Number of spline knots.
+#' @param m Number of basis functions.
+#' @param scale Rescaling factor applied to predictors.
+#' @param SSD_min Minimum Stop Signal Delay to include.
+#' @param upper_bound Upper bound for integration.
+#' @param L Number of leapfrog steps in HMC.
+#' @param leapmax Maximum leap size in HMC.
+#' @param thin Thinning interval for storing HMC samples.
+#' @param nparall Number of parallel threads to use.
+#' @param nhmc Total number of HMC iterations.
+#' @param intercept Logical. Whether to include intercept terms in the spline basis.
 #'
-#' @return Saves two RDS files: one with preprocessed data and another with the model output
+#' @return Saves two RDS files: one containing the preprocessed dataset, and another containing model outputs.
 #' @export
 
 
