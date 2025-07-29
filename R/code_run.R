@@ -315,7 +315,8 @@ code_run<-function(save_location,dat,cluster_label,Anxiety_status,sub_type,sampl
   (runtime <- end_time - start_time)
 
 
-  print(runtime());
+  cat("Runtime duration:", runtime, "\n")
+
 
   saveRDS(model, file = file_name)
 
