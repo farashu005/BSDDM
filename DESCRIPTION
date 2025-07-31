@@ -14,7 +14,7 @@ LazyData: true
 Imports:
     Rcpp,
     RcppArmadillo,
-    RcppDist,splines2,MASS,ggplot2,gridExtra,dplyr
+    RcppDist,splines2,MASS,ggplot2,gridExtra,dplyr,ggpubr
 LinkingTo: Rcpp, RcppArmadillo, RcppDist, RcppEnsmallen, mlpack
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
