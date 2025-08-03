@@ -308,9 +308,10 @@ vec log_survival(const double sigma, const vec &tau, const vec &b, const vec &nu
 
   vec val = -exp(y3 - y1);
 
-
+  val.clamp(-0.999,datum::inf);
+  
   vec result = y1 + log1p(val);
-
+  
 
   if(any(val<-1)){
     (val.t()).print("val_log_survival: ");
