@@ -6846,10 +6846,10 @@ void leap_frog_main_effect(const field <mat> &t,
 
     gama.clamp(-5,100);
 
-        beta += delta * (p_b - (delta/2)   * v_old_b);
+    beta += delta * (p_b - (delta/2)   * v_old_b);
 
 
-    beta.clamp(-5,3);
+    beta.clamp(-5,1);
 
 
     field <field<vec>> gama_ess = update_gama_param_ess1(t,Rand_gama_l,Rand_gama_r,gama);
