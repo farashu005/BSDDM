@@ -407,6 +407,10 @@ vec log_survival_stop(const double sigma, const vec &tau_s, const double b_stop,
     vec y3 = C + y2;
     vec val = -exp(y3 - y1);
 
+
+    val.clamp(-0.999,datum::inf);
+
+
     vec partial_result = y1 + log1p(val);
 
     // Safety check for numerical stability
