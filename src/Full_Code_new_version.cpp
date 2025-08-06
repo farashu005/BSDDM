@@ -72,7 +72,7 @@ vec log_dens(const double sigma,const vec &tau, const vec &b, const vec &nu){
   // Rcpp::Rcout<<"A"<< endl;
 
 
-  vec =(b -  ((log(2 * datum::pi*sigma))/2)
+  vec result =(b -  ((log(2 * datum::pi*sigma))/2)
                 - ((3 * log(tau)) / 2) - ((exp(2 * b)) / (2 * sigma*tau)) +
                   (((exp(nu+b)))/(sigma))-(((exp(2*nu))%tau)/(2*sigma)));
 
