@@ -72,7 +72,7 @@ vec log_dens(const double sigma,const vec &tau, const vec &b, const vec &nu){
   // Rcpp::Rcout<<"A"<< endl;
 
 
-  vec result=(b -  ((log(2 * datum::pi*sigma))/2)
+  vec =(b -  ((log(2 * datum::pi*sigma))/2)
                 - ((3 * log(tau)) / 2) - ((exp(2 * b)) / (2 * sigma*tau)) +
                   (((exp(nu+b)))/(sigma))-(((exp(2*nu))%tau)/(2*sigma)));
 
@@ -80,7 +80,7 @@ vec log_dens(const double sigma,const vec &tau, const vec &b, const vec &nu){
   // Rcpp::Rcout<<"result"<<result<<endl;
 
   if(!result.is_finite()){
-    (result.t()).print("result: ");
+    (result.t()).print("result_log_dens: ");
     cout << " b:" << b.t()<< std::endl;
     cout << " log(tau):" << log(tau).t() << std::endl;
     cout << " exp(2 * b):" <<   exp(2 * b).t()<< std::endl;
@@ -215,7 +215,7 @@ vec log_dens_s(const double sigma, const vec &tau, const vec &tau_s, const vec &
 
   if (!result.is_finite()) {
     Rcpp::Rcout << "NaN in final result (log_dens + lp)\n";
-    Rcpp::Rcout << "result: " << result.t();
+    Rcpp::Rcout << "result_log_dens_s: " << result.t();
 
     // Print all input parameters again
     Rcpp::Rcout << "--- Input Parameters ---\n";
@@ -265,7 +265,7 @@ vec log_dens_stop(const double sigma, const vec &tau_s, const double b_stop, con
 
   // Check for NaNs or infinite values (excluding zeros from tau_s <= 0)
   if (!result.is_finite()) {
-    result.t().print("result: ");
+    result.t().print("result_log_dens_stop: ");
     std::cout << "b_stop = " << b_stop << std::endl;
     std::cout << "exp(nu_stop) = " << exp(nu_stop) << std::endl;
     tau_s.t().print("tau_s: ");
@@ -315,7 +315,7 @@ vec log_survival(const double sigma, const vec &tau, const vec &b, const vec &nu
 
   if(any(val<-1)){
     (val.t()).print("val_log_survival: ");
-    (result.t()).print("result: ");
+    (result.t()).print("result_log_survival: ");
     (exp(b.t())).print("boundary");
     (exp(nu.t())).print("drift");
 
@@ -361,7 +361,7 @@ vec log_survival_s(const double sigma, const vec &tau,const vec &tau_s,const vec
   if (any(val < -1)) {
     val.t().print("val_log_survival_s: ");
     m.t().print("m: ");
-    result.t().print("result: ");
+    result.t().print("result_log_survival_s: ");
     y1.t().print("y1: ");
     y2.t().print("y2: ");
     Rcpp::stop("Error in log-survival_s:");
@@ -416,7 +416,7 @@ vec log_survival_stop(const double sigma, const vec &tau_s, const double b_stop,
     // Safety check for numerical stability
     if (any(val < -1)) {
       val.t().print("val_log_survival_stop: ");
-      partial_result.t().print("partial_result: ");
+      partial_result.t().print("partial_result_log_survival_stop: ");
       y1.t().print("y1: ");
       y2.t().print("y2: ");
       Rcpp::stop("Error in log-survival_stop:");
