@@ -9767,6 +9767,12 @@ List hmc(const List Time_stamp,const List Go_RT,const List Go_RT_S,const double 
 
   Rcpp::Rcout<<"ABP"<< endl;
 
+// --- Checkpoint controls ---
+  const unsigned checkpoint_every = 2000U;                    // save every 2000 iterations
+  const std::string checkpoint_prefix = "checkpoint_iter_";   // filename prefix
+  Function saveRDS("saveRDS");                                // R's saveRDS for checkpointing
+
+
   // Making Field from List
 
   field <mat> t=make_field_from_list1(Time_stamp);
@@ -10367,6 +10373,68 @@ List hmc(const List Time_stamp,const List Go_RT,const List Go_RT_S,const double 
 
     }
 
+      // --- Checkpoint save every 2000 iterations ---
+    if ((i + 1) % checkpoint_every == 0) {
+      const unsigned tcol = (i / thin);             // last filled thin index (only valid when i%thin==0 or earlier cols)
+      const unsigned have_cols = std::min(tcol + 1, (unsigned)num_thinned_samples);
+
+      // Slice only the filled portions to keep files smaller
+      mat  theta1_L_part = have_cols ? theta1_L.cols(0, have_cols - 1) : mat(P, 0);
+      mat  theta1_R_part = have_cols ? theta1_R.cols(0, have_cols - 1) : mat(P, 0);
+      mat  theta2_L_part = have_cols ? theta2_L.cols(0, have_cols - 1) : mat(P, 0);
+      mat  theta2_R_part = have_cols ? theta2_R.cols(0, have_cols - 1) : mat(P, 0);
+      cube theta3_part   = have_cols ? theta3.slices(0, have_cols - 1) : cube(2, N, 0);
+      cube theta5_part   = have_cols ? theta5.slices(0, have_cols - 1) : cube(2, N, 0);
+      cube theta5_L_part = have_cols ? theta5_L.slices(0, have_cols - 1) : cube(m, N, 0);
+      cube theta5_R_part = have_cols ? theta5_R.slices(0, have_cols - 1) : cube(m, N, 0);
+      cube theta6_L_part = have_cols ? theta6_L.slices(0, have_cols - 1) : cube(m, N, 0);
+      cube theta6_R_part = have_cols ? theta6_R.slices(0, have_cols - 1) : cube(m, N, 0);
+      cube theta7_part   = have_cols ? theta7.slices(0, have_cols - 1) : cube(3, N, 0);
+      mat  theta8_part   = have_cols ? theta8.cols(0, have_cols - 1)   : mat(2, 0);
+      mat  theta9_part   = have_cols ? theta9.cols(0, have_cols - 1)   : mat(2, 0);
+      mat  theta10_part  = have_cols ? theta10.cols(0, have_cols - 1)  : mat(2, 0);
+      mat  theta11_part  = have_cols ? theta11.cols(0, have_cols - 1)  : mat(2, 0);
+      cube theta12_part  = have_cols ? theta12.slices(0, have_cols - 1): cube(2, N, 0);
+
+      List out_partial;
+      out_partial["Gamma_L"]=theta1_L_part;
+      out_partial["Gamma_R"]=theta1_R_part;
+      out_partial["Beta_L"]=theta2_L_part;
+      out_partial["Beta_R"]=theta2_R_part;
+      out_partial["Penalty"]=exp(theta3_part);
+      out_partial["Shift"]=theta12_part;
+      out_partial["Stop"]=exp(theta5_part);
+      out_partial["Gama_I_L"]=theta5_L_part;
+      out_partial["Gama_I_R"]=theta5_R_part;
+      out_partial["Beta_I_L"]=theta6_L_part;
+      out_partial["Beta_I_R"]=theta6_R_part;
+      out_partial["Prob_param"]=exp(theta7_part);
+      out_partial["rand_param_g_l"]=theta8_part;
+      out_partial["rand_param_g_r"]=theta9_part;
+      out_partial["rand_param_b_l"]=theta10_part;
+      out_partial["rand_param_b_r"]=theta11_part;
+
+      // acceptance rates so far (divide by iterations done, i+1)
+      double denom = (double)(i + 1);
+      out_partial["Accept_main_effect"]=acceptance_main_eff/denom;
+      out_partial["Accept_penal"]=acceptance_p/denom;
+      out_partial["Accept_Shift"]=acceptance_d/denom;
+      out_partial["Accept_Stop_Prob"]=acceptance_stop_prob/denom;
+      out_partial["Accept_rand_effect"]=acceptance_rand_effect/denom;
+      out_partial["Accept_rand_g_l"]=acceptance_rand_g_l/denom;
+      out_partial["Accept_rand_g_r"]=acceptance_rand_g_r/denom;
+      out_partial["Accept_rand_b_l"]=acceptance_rand_b_l/denom;
+      out_partial["Accept_rand_b_r"]=acceptance_rand_b_r/denom;
+
+      // Filename
+      std::string fname = checkpoint_prefix + std::to_string(i + 1) + ".rds";
+
+      // saveRDS(object, file)
+      saveRDS(out_partial, fname);
+
+      Rcpp::Rcout << "Checkpoint saved at iteration " << (i + 1)
+                  << " -> " << fname << std::endl;
+    }
 
 
   }
