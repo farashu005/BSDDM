@@ -67,31 +67,60 @@ inline double EXPITE_sq(double x) {
 // log density (Go Trial)
 
 
-vec log_dens(const double sigma,const vec &tau, const vec &b, const vec &nu){
+// vec log_dens(const double sigma,const vec &tau, const vec &b, const vec &nu){
+//
+//   // Rcpp::Rcout<<"A"<< endl;
+//
+//
+//   vec result =(b -  ((log(2 * datum::pi*sigma))/2)
+//                 - ((3 * log(tau)) / 2) - ((exp(2 * b)) / (2 * sigma*tau)) +
+//                   (((exp(nu+b)))/(sigma))-(((exp(2*nu))%tau)/(2*sigma)));
+//
+//
+//   // Rcpp::Rcout<<"result"<<result<<endl;
+//
+//   if(!result.is_finite()){
+//     (result.t()).print("result_log_dens: ");
+//     cout << " b:" << b.t()<< std::endl;
+//     cout << " log(tau):" << log(tau).t() << std::endl;
+//     cout << " exp(2 * b):" <<   exp(2 * b).t()<< std::endl;
+//     cout << " nu:" <<   nu.t()<< std::endl;
+//     Rcpp::stop("Error in log-density:");
+//   }
+//
+//
+//
+//   return  result;
+//
+// 
 
-  // Rcpp::Rcout<<"A"<< endl;
 
 
-  vec result =(b -  ((log(2 * datum::pi*sigma))/2)
-                - ((3 * log(tau)) / 2) - ((exp(2 * b)) / (2 * sigma*tau)) +
-                  (((exp(nu+b)))/(sigma))-(((exp(2*nu))%tau)/(2*sigma)));
+vec log_dens(const double sigma, const vec &tau, const vec &b, const vec &nu) {
+  vec term1 = b;
+  double term2 = - (std::log(2 * datum::pi * sigma)) / 2.0;
+  vec term3 = - (3.0 * arma::log(tau)) / 2.0;
+  vec term4 = - (arma::exp(2 * b)) / (2.0 * sigma * tau);
+  vec term5 = arma::exp(nu + b) / sigma;
+  vec term6 = - (arma::exp(2 * nu) % tau) / (2.0 * sigma);
 
+  vec result = term1 + term2 + term3 + term4 + term5 + term6;
 
-  // Rcpp::Rcout<<"result"<<result<<endl;
-
-  if(!result.is_finite()){
-    (result.t()).print("result_log_dens: ");
-    cout << " b:" << b.t()<< std::endl;
-    cout << " log(tau):" << log(tau).t() << std::endl;
-    cout << " exp(2 * b):" <<   exp(2 * b).t()<< std::endl;
-    cout << " nu:" <<   nu.t()<< std::endl;
-    Rcpp::stop("Error in log-density:");
+  if (!result.is_finite()) {
+    Rcpp::Rcout << "Debugging log_dens failure:\n";
+    term1.t().print("term1 (b):");
+    Rcpp::Rcout << "term2 (constant): " << term2 << "\n";
+    term3.t().print("term3 (-3/2 * log(tau)):");
+    term4.t().print("term4 (-exp(2*b)/(2*sigma*tau)):");
+    term5.t().print("term5 (exp(nu+b)/sigma):");
+    term6.t().print("term6 (-exp(2*nu)*tau/(2*sigma)):");
+    tau.t().print("tau:");
+    b.t().print("b:");
+    nu.t().print("nu:");
+    Rcpp::stop("Error in log-density: NaN/Inf detected");
   }
 
-
-
-  return  result;
-
+  return result;
 }
 
 
