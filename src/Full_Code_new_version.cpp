@@ -103,11 +103,14 @@ vec log_dens(const double sigma, const vec &tau, const vec &b, const vec &nu) {
   vec term4 = - (arma::exp(2 * b)) / (2.0 * sigma * tau);
   vec term5 = arma::exp(nu + b) / sigma;
   vec term6 = - (arma::exp(2 * nu) % tau) / (2.0 * sigma);
+
+  vec term7=tau;
   
   vec result = term1 + term2 + term3 + term4 + term5 + term6;
 
   if (!result.is_finite()) {
     Rcpp::Rcout << "Debugging log_dens failure:\n";
+    tau.t().print("tau");
     term1.t().print("term1 (b):");
     Rcpp::Rcout << "term2 (constant): " << term2 << "\n";
     term3.t().print("term3 (-3/2 * log(tau)):");
@@ -1955,45 +1958,44 @@ field <field<vec>> update_delta_prime_param_ess(const field<vec> &tau,const fiel
     // Apply update only where tau > 0
     uvec idx_tau_pos = find(tau(i) > 0);
     tau_prime(i).elem(idx_tau_pos) = tau(i).elem(idx_tau_pos) - DEL(i);
-// ---- collect all invalid indices for tau_s ----
-    uvec bad_neg_s   = find(tau_s(i) < 0);
-    uvec bad_nf_s    = find_nonfinite(tau_s(i));        // NaN or Inf
-    uvec bad_idx_s   = unique(join_cols(bad_neg_s, bad_nf_s));
-
-    if (!bad_idx_s.is_empty()) {
-      Rcpp::Rcout << "Invalid tau_s at subject index i=" << i
-                  << " (DEL_s=" << DEL_s(i) << ")\n";
-      for (uword k = 0; k < bad_idx_s.n_elem; ++k) {
-        uword j = bad_idx_s(k);
-        Rcpp::Rcout << "  j=" << j
-                    << "  tau_s=" << tau_s(i)(j)
-                    << "  tau_stop=" << tau_stop(i)(j)
-                    << "  updated? " << ( std::binary_search(idx_stop_pos.begin(),
-                                                             idx_stop_pos.end(), j) ? "yes" : "no")
-                    << "\n";
-      }
-      Rcpp::stop("tau_s contains negative or non-finite values.");
-    }
-
-    // ---- collect all invalid indices for tau_prime ----
-    uvec bad_neg_p   = find(tau_prime(i) < 0);
-    uvec bad_nf_p    = find_nonfinite(tau_prime(i));
-    uvec bad_idx_p   = unique(join_cols(bad_neg_p, bad_nf_p));
-
-    if (!bad_idx_p.is_empty()) {
-      Rcpp::Rcout << "Invalid tau_prime at subject index i=" << i
-                  << " (DEL=" << DEL(i) << ")\n";
-      for (uword k = 0; k < bad_idx_p.n_elem; ++k) {
-        uword j = bad_idx_p(k);
-        Rcpp::Rcout << "  j=" << j
-                    << "  tau_prime=" << tau_prime(i)(j)
-                    << "  tau=" << tau(i)(j)
-                    << "  updated? " << ( std::binary_search(idx_tau_pos.begin(),
-                                                             idx_tau_pos.end(), j) ? "yes" : "no")
-                    << "\n";
-      }
-      Rcpp::stop("tau_prime contains negative or non-finite values.");
-    }
+// uvec bad_neg_s   = find(tau_s(i) < 0);
+// uvec bad_nf_s    = find_nonfinite(tau_s(i));        // NaN or Inf
+// uvec bad_idx_s   = unique(join_cols(bad_neg_s, bad_nf_s));
+// 
+// if (!bad_idx_s.is_empty()) {
+//   Rcpp::Rcout << "Invalid tau_s at subject index i=" << i
+//               << " (DEL_s=" << DEL_s(i) << ")\n";
+//   for (uword k = 0; k < bad_idx_s.n_elem; ++k) {
+//     uword j = bad_idx_s(k);
+//     Rcpp::Rcout << "  j=" << j
+//                 << "  tau_s=" << tau_s(i)(j)
+//                 << "  tau_stop=" << tau_stop(i)(j)
+//                 << "  updated? " << ( std::binary_search(idx_stop_pos.begin(),
+//     idx_stop_pos.end(), j) ? "yes" : "no")
+//       << "\n";
+//   }
+//   Rcpp::stop("tau_s contains negative or non-finite values.");
+// }
+// 
+// // ---- collect all invalid indices for tau_prime ----
+// uvec bad_neg_p   = find(tau_prime(i) < 0);
+// uvec bad_nf_p    = find_nonfinite(tau_prime(i));
+// uvec bad_idx_p   = unique(join_cols(bad_neg_p, bad_nf_p));
+// 
+// if (!bad_idx_p.is_empty()) {
+//   Rcpp::Rcout << "Invalid tau_prime at subject index i=" << i
+//               << " (DEL=" << DEL(i) << ")\n";
+//   for (uword k = 0; k < bad_idx_p.n_elem; ++k) {
+//     uword j = bad_idx_p(k);
+//     Rcpp::Rcout << "  j=" << j
+//                 << "  tau_prime=" << tau_prime(i)(j)
+//                 << "  tau=" << tau(i)(j)
+//                 << "  updated? " << ( std::binary_search(idx_tau_pos.begin(),
+//     idx_tau_pos.end(), j) ? "yes" : "no")
+//       << "\n";
+//   }
+//   Rcpp::stop("tau_prime contains negative or non-finite values.");
+// }
   }
 
 
