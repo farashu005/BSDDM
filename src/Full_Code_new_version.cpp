@@ -1936,26 +1936,7 @@ field <field<vec>> update_delta_prime_param_ess(const field<vec> &tau,const fiel
     // Apply update only where tau > 0
     uvec idx_tau_pos = find(tau(i) > 0);
     tau_prime(i).elem(idx_tau_pos) = tau(i).elem(idx_tau_pos) - DEL(i);
-// ===== Check tau_s =====
-const vec  &ts  = tau_s(i);
-const vec  &tst = tau_stop(i);
 
-uvec bad_neg_s = find(ts < 0);            // negatives
-uvec bad_nf_s  = find_nonfinite(ts);      // NaN or Inf
-uvec bad_idx_s = unique(join_cols(bad_neg_s, bad_nf_s));
-
-if (!bad_idx_s.is_empty()) {
-  Rcpp::Rcout << "WARNING: Invalid tau_s at i=" << i 
-              << " (DEL_s=" << DEL_s(i) << ")\n";
-  for (uword k = 0; k < bad_idx_s.n_elem; ++k) {
-    uword j = bad_idx_s(k);
-    Rcpp::Rcout << "  j=" << j
-                << "  tau_s=" << ts(j)       // bad value
-                << "  tau_stop=" << tst(j)   // original tau_stop
-                << "  DEL_s=" << DEL_s(i)    // scalar used
-                << "\n";
-  }
-}
 
 // ===== Check tau_prime =====
 const vec  &tp = tau_prime(i);
