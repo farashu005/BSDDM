@@ -1955,11 +1955,7 @@ field <field<vec>> update_delta_prime_param_ess(const field<vec> &tau,const fiel
     // Apply update only where tau > 0
     uvec idx_tau_pos = find(tau(i) > 0);
     tau_prime(i).elem(idx_tau_pos) = tau(i).elem(idx_tau_pos) - DEL(i);
-
-  }
-
-
-   // ---- collect all invalid indices for tau_s ----
+// ---- collect all invalid indices for tau_s ----
     uvec bad_neg_s   = find(tau_s(i) < 0);
     uvec bad_nf_s    = find_nonfinite(tau_s(i));        // NaN or Inf
     uvec bad_idx_s   = unique(join_cols(bad_neg_s, bad_nf_s));
@@ -1999,6 +1995,9 @@ field <field<vec>> update_delta_prime_param_ess(const field<vec> &tau,const fiel
       Rcpp::stop("tau_prime contains negative or non-finite values.");
     }
   }
+
+
+   
 
 
   field<field<vec>> result(3);
