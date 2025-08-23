@@ -67,63 +67,41 @@ inline double EXPITE_sq(double x) {
 // log density (Go Trial)
 
 
-// vec log_dens(const double sigma,const vec &tau, const vec &b, const vec &nu){
-//
-//   // Rcpp::Rcout<<"A"<< endl;
-//
-//
-//   vec result =(b -  ((log(2 * datum::pi*sigma))/2)
-//                 - ((3 * log(tau)) / 2) - ((exp(2 * b)) / (2 * sigma*tau)) +
-//                   (((exp(nu+b)))/(sigma))-(((exp(2*nu))%tau)/(2*sigma)));
-//
-//
-//   // Rcpp::Rcout<<"result"<<result<<endl;
-//
-//   if(!result.is_finite()){
-//     (result.t()).print("result_log_dens: ");
-//     cout << " b:" << b.t()<< std::endl;
-//     cout << " log(tau):" << log(tau).t() << std::endl;
-//     cout << " exp(2 * b):" <<   exp(2 * b).t()<< std::endl;
-//     cout << " nu:" <<   nu.t()<< std::endl;
-//     Rcpp::stop("Error in log-density:");
-//   }
-//
-//
-//
-//   return  result;
-//
-// 
+vec log_dens(const double sigma,const vec &tau, const vec &b, const vec &nu){
+
+  // Rcpp::Rcout<<"A"<< endl;
+
+vec result(tau.n_elem);
+result.fill(trunc_log(0.0));  // if trunc_log(0.0) = -1e10 or similar
+
+// Logical index for tau_s > 0
+uvec valid_idx = find(tau > 0);
 
 
+if (!valid_idx.is_empty()) {
+  vec tau_valid = tau.elem(valid_idx);
 
-vec log_dens(const double sigma, const vec &tau, const vec &b, const vec &nu) {
-  vec term1 = b;
-  double term2 = - (std::log(2 * datum::pi * sigma)) / 2.0;
-  vec term3 = - (3.0 * arma::log(tau)) / 2.0;
-  vec term4 = - (arma::exp(2 * b)) / (2.0 * sigma * tau);
-  vec term5 = arma::exp(nu + b) / sigma;
-  vec term6 = - (arma::exp(2 * nu) % tau) / (2.0 * sigma);
+  vec partial_result =(b -  ((log(2 * datum::pi*sigma))/2)
+                - ((3 * log(tau_valid)) / 2) - ((exp(2 * b)) / (2 * sigma*tau_valid)) +
+                  (((exp(nu+b)))/(sigma))-(((exp(2*nu))%tau_valid)/(2*sigma)));
 
-  vec term7=tau;
-  
-  vec result = term1 + term2 + term3 + term4 + term5 + term6;
-
-  if (!result.is_finite()) {
-    Rcpp::Rcout << "Debugging log_dens failure:\n";
-    tau.t().print("tau");
-    term1.t().print("term1 (b):");
-    Rcpp::Rcout << "term2 (constant): " << term2 << "\n";
-    term3.t().print("term3 (-3/2 * log(tau)):");
-    term4.t().print("term4 (-exp(2*b)/(2*sigma*tau)):");
-    term5.t().print("term5 (exp(nu+b)/sigma):");
-    term6.t().print("term6 (-exp(2*nu)*tau/(2*sigma)):");
-    tau.t().print("tau:");
-    b.t().print("b:");
-    nu.t().print("nu:");
-    Rcpp::stop("Error in log-density: NaN/Inf detected");
+  result.elem(valid_idx) = partial_result;
   }
 
-  return result;
+  // Rcpp::Rcout<<"result"<<result<<endl;
+
+  if(!result.is_finite()){
+    (result.t()).print("result_log_dens: ");
+    cout << " b:" << b.t()<< std::endl;
+    cout << " tau:" << tau.t() << std::endl;
+    cout << " exp(2 * b):" <<   exp(2 * b).t()<< std::endl;
+    cout << " nu:" <<   nu.t()<< std::endl;
+    Rcpp::stop("Error in log-density:");
+  }
+
+  return  result;
+
+
 }
 
 
