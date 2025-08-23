@@ -1958,44 +1958,48 @@ field <field<vec>> update_delta_prime_param_ess(const field<vec> &tau,const fiel
     // Apply update only where tau > 0
     uvec idx_tau_pos = find(tau(i) > 0);
     tau_prime(i).elem(idx_tau_pos) = tau(i).elem(idx_tau_pos) - DEL(i);
-// uvec bad_neg_s   = find(tau_s(i) < 0);
-// uvec bad_nf_s    = find_nonfinite(tau_s(i));        // NaN or Inf
-// uvec bad_idx_s   = unique(join_cols(bad_neg_s, bad_nf_s));
-// 
-// if (!bad_idx_s.is_empty()) {
-//   Rcpp::Rcout << "Invalid tau_s at subject index i=" << i
-//               << " (DEL_s=" << DEL_s(i) << ")\n";
-//   for (uword k = 0; k < bad_idx_s.n_elem; ++k) {
-//     uword j = bad_idx_s(k);
-//     Rcpp::Rcout << "  j=" << j
-//                 << "  tau_s=" << tau_s(i)(j)
-//                 << "  tau_stop=" << tau_stop(i)(j)
-//                 << "  updated? " << ( std::binary_search(idx_stop_pos.begin(),
-//     idx_stop_pos.end(), j) ? "yes" : "no")
-//       << "\n";
-//   }
-//   Rcpp::stop("tau_s contains negative or non-finite values.");
-// }
-// 
-// // ---- collect all invalid indices for tau_prime ----
-// uvec bad_neg_p   = find(tau_prime(i) < 0);
-// uvec bad_nf_p    = find_nonfinite(tau_prime(i));
-// uvec bad_idx_p   = unique(join_cols(bad_neg_p, bad_nf_p));
-// 
-// if (!bad_idx_p.is_empty()) {
-//   Rcpp::Rcout << "Invalid tau_prime at subject index i=" << i
-//               << " (DEL=" << DEL(i) << ")\n";
-//   for (uword k = 0; k < bad_idx_p.n_elem; ++k) {
-//     uword j = bad_idx_p(k);
-//     Rcpp::Rcout << "  j=" << j
-//                 << "  tau_prime=" << tau_prime(i)(j)
-//                 << "  tau=" << tau(i)(j)
-//                 << "  updated? " << ( std::binary_search(idx_tau_pos.begin(),
-//     idx_tau_pos.end(), j) ? "yes" : "no")
-//       << "\n";
-//   }
-//   Rcpp::stop("tau_prime contains negative or non-finite values.");
-// }
+// ===== Check tau_s =====
+const vec  &ts  = tau_s(i);
+const vec  &tst = tau_stop(i);
+
+uvec bad_neg_s = find(ts < 0);            // negatives
+uvec bad_nf_s  = find_nonfinite(ts);      // NaN or Inf
+uvec bad_idx_s = unique(join_cols(bad_neg_s, bad_nf_s));
+
+if (!bad_idx_s.is_empty()) {
+  Rcpp::Rcout << "WARNING: Invalid tau_s at i=" << i 
+              << " (DEL_s=" << DEL_s(i) << ")\n";
+  for (uword k = 0; k < bad_idx_s.n_elem; ++k) {
+    uword j = bad_idx_s(k);
+    Rcpp::Rcout << "  j=" << j
+                << "  tau_s=" << ts(j)       // bad value
+                << "  tau_stop=" << tst(j)   // original tau_stop
+                << "  DEL_s=" << DEL_s(i)    // scalar used
+                << "\n";
+  }
+}
+
+// ===== Check tau_prime =====
+const vec  &tp = tau_prime(i);
+const vec  &t  = tau(i);
+
+uvec bad_neg_p = find(tp < 0);
+uvec bad_nf_p  = find_nonfinite(tp);
+uvec bad_idx_p = unique(join_cols(bad_neg_p, bad_nf_p));
+
+if (!bad_idx_p.is_empty()) {
+  Rcpp::Rcout << "WARNING: Invalid tau_prime at i=" << i 
+              << " (DEL=" << DEL(i) << ")\n";
+  for (uword k = 0; k < bad_idx_p.n_elem; ++k) {
+    uword j = bad_idx_p(k);
+    Rcpp::Rcout << "  j=" << j
+                << "  tau_prime=" << tp(j)   // bad value
+                << "  tau=" << t(j)          // original tau
+                << "  DEL=" << DEL(i)        // scalar used
+                << "\n";
+  }
+}
+
   }
 
 
