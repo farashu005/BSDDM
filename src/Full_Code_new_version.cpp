@@ -228,15 +228,15 @@ vec log_dens_s(const double sigma, const vec &tau, const vec &tau_s, const vec &
     Rcpp::Rcout << "result_log_dens_s: " << result.t();
 
     // Print all input parameters again
-    Rcpp::Rcout << "--- Input Parameters ---\n";
-    Rcpp::Rcout << "sigma: " << sigma << "\n";
-    Rcpp::Rcout << "DEL: " << DEL << ", DEL_s: " << DEL_s << ", lt: " << lt << "\n";
-    Rcpp::Rcout << "tau: " << tau.t();
-    Rcpp::Rcout << "tau_s: " << tau_s.t();
-    Rcpp::Rcout << "SSD: " << SSD.t();
-    Rcpp::Rcout << "b: " << b.t();
-    Rcpp::Rcout << "nu1: " << nu1.t();
-    Rcpp::Rcout << "nu2: " << nu2.t();
+    cout << "--- Input Parameters ---\n";
+    cout << "sigma: " << sigma << "\n";
+    cout << "DEL: " << DEL << ", DEL_s: " << DEL_s << ", lt: " << lt << "\n";
+    cout << "tau: " << tau.t();
+    cout << "tau_s: " << tau_s.t();
+    cout << "SSD: " << SSD.t();
+    cout << "b: " << b.t();
+    cout << "nu1: " << nu1.t();
+    cout << "nu2: " << nu2.t();
   }
 
 
