@@ -6290,91 +6290,94 @@ vec grad_delta(const vec &tau,const vec &tau_s,const double sigma,const vec &SSD
   vec FS_RIR= weight_FS_RIR %  diff_Y_RIR;
 
 
-  // 1) Group terms (unweighted / weighted)
-double t1  = arma::accu(LCR_delta_prime_s.elem(Ind_LCR));
-if (arma::is_nan(t1)) Rcpp::Rcout << "NaN in t1: accu(LCR_delta_prime_s[Ind_LCR])\n";
+ // 1) Group terms (unweighted / weighted)
+  double t1  = arma::accu(LCR_delta_prime_s.elem(Ind_LCR));
 
-double t2  = arma::accu(LIR_delta_prime_s.elem(Ind_LCR) % weight_LCR);
-if (arma::is_nan(t2)) Rcpp::Rcout << "NaN in t2: accu(LIR_delta_prime_s[Ind_LCR] % weight_LCR)\n";
+  if (!arma::is_finite(t1)) {
+    Rcpp::Rcout << "Non-finite value in t1 (NaN or Inf)\n";
+  }
 
-double t3  = arma::accu(LIR_delta_prime_s.elem(Ind_LIR));
-if (arma::is_nan(t3)) Rcpp::Rcout << "NaN in t3: accu(LIR_delta_prime_s[Ind_LIR])\n";
+  double t2  = arma::accu(LIR_delta_prime_s.elem(Ind_LCR) % weight_LCR);
+  if (!arma::is_finite(t2)) Rcpp::Rcout << "NaN in t2: accu(LIR_delta_prime_s[Ind_LCR] % weight_LCR)\n";
 
-double t4  = arma::accu(LCR_delta_prime_s.elem(Ind_LIR) % weight_LIR);
-if (arma::is_nan(t4)) Rcpp::Rcout << "NaN in t4: accu(LCR_delta_prime_s[Ind_LIR] % weight_LIR)\n";
+  double t3  = arma::accu(LIR_delta_prime_s.elem(Ind_LIR));
+  if (!arma::is_finite(t3)) Rcpp::Rcout << "NaN in t3: accu(LIR_delta_prime_s[Ind_LIR])\n";
 
-double t5  = arma::accu(RIR_delta_prime_s.elem(Ind_RIR));
-if (arma::is_nan(t5)) Rcpp::Rcout << "NaN in t5: accu(RIR_delta_prime_s[Ind_RIR])\n";
+  double t4  = arma::accu(LCR_delta_prime_s.elem(Ind_LIR) % weight_LIR);
+  if (!arma::is_finite(t4)) Rcpp::Rcout << "NaN in t4: accu(LCR_delta_prime_s[Ind_LIR] % weight_LIR)\n";
 
-double t6  = arma::accu(RCR_delta_prime_s.elem(Ind_RIR) % weight_RIR);
-if (arma::is_nan(t6)) Rcpp::Rcout << "NaN in t6: accu(RCR_delta_prime_s[Ind_RIR] % weight_RIR)\n";
+  double t5  = arma::accu(RIR_delta_prime_s.elem(Ind_RIR));
+  if (!arma::is_finite(t5)) Rcpp::Rcout << "NaN in t5: accu(RIR_delta_prime_s[Ind_RIR])\n";
 
-double t7  = arma::accu(RCR_delta_prime_s.elem(Ind_RCR));
-if (arma::is_nan(t7)) Rcpp::Rcout << "NaN in t7: accu(RCR_delta_prime_s[Ind_RCR])\n";
+  double t6  = arma::accu(RCR_delta_prime_s.elem(Ind_RIR) % weight_RIR);
+  if (!arma::is_finite(t6)) Rcpp::Rcout << "NaN in t6: accu(RCR_delta_prime_s[Ind_RIR] % weight_RIR)\n";
 
-double t8  = arma::accu(RIR_delta_prime_s.elem(Ind_RCR) % weight_RCR);
-if (arma::is_nan(t8)) Rcpp::Rcout << "NaN in t8: accu(RIR_delta_prime_s[Ind_RCR] % weight_RCR)\n";
+  double t7  = arma::accu(RCR_delta_prime_s.elem(Ind_RCR));
+  if (!arma::is_finite(t7)) Rcpp::Rcout << "NaN in t7: accu(RCR_delta_prime_s[Ind_RCR])\n";
 
-// 2) Subject-specific X-weighted terms
-double t9  = arma::accu(LCR_delta_prime_s.elem(Ind_S_LCR) % diff_X_LCR);
-if (arma::is_nan(t9)) Rcpp::Rcout << "NaN in t9: accu(LCR_delta_prime_s[Ind_S_LCR] % diff_X_LCR)\n";
+  double t8  = arma::accu(RIR_delta_prime_s.elem(Ind_RCR) % weight_RCR);
+  if (!arma::is_finite(t8)) Rcpp::Rcout << "NaN in t8: accu(RIR_delta_prime_s[Ind_RCR] % weight_RCR)\n";
 
-double t10 = arma::accu(LIR_delta_prime_s.elem(Ind_S_LCR) % (weight_LCR_G_FS % diff_X_LCR));
-if (arma::is_nan(t10)) Rcpp::Rcout << "NaN in t10: accu(LIR_delta_prime_s[Ind_S_LCR] % (weight_LCR_G_FS % diff_X_LCR))\n";
+  // 2) Subject-specific X-weighted terms
+  double t9  = arma::accu(LCR_delta_prime_s.elem(Ind_S_LCR) % diff_X_LCR);
+  if (!arma::is_finite(t9)) Rcpp::Rcout << "NaN in t9: accu(LCR_delta_prime_s[Ind_S_LCR] % diff_X_LCR)\n";
 
-double t11 = arma::accu(LIR_delta_prime_s.elem(Ind_S_LIR) % diff_X_LIR);
-if (arma::is_nan(t11)) Rcpp::Rcout << "NaN in t11: accu(LIR_delta_prime_s[Ind_S_LIR] % diff_X_LIR)\n";
+  double t10 = arma::accu(LIR_delta_prime_s.elem(Ind_S_LCR) % (weight_LCR_G_FS % diff_X_LCR));
+  if (!arma::is_finite(t10)) Rcpp::Rcout << "NaN in t10: accu(LIR_delta_prime_s[Ind_S_LCR] % (weight_LCR_G_FS % diff_X_LCR))\n";
 
-double t12 = arma::accu(LCR_delta_prime_s.elem(Ind_S_LIR) % (weight_LIR_G_FS % diff_X_LIR));
-if (arma::is_nan(t12)) Rcpp::Rcout << "NaN in t12: accu(LCR_delta_prime_s[Ind_S_LIR] % (weight_LIR_G_FS % diff_X_LIR))\n";
+  double t11 = arma::accu(LIR_delta_prime_s.elem(Ind_S_LIR) % diff_X_LIR);
+  if (!arma::is_finite(t11)) Rcpp::Rcout << "NaN in t11: accu(LIR_delta_prime_s[Ind_S_LIR] % diff_X_LIR)\n";
 
-double t13 = arma::accu(RIR_delta_prime_s.elem(Ind_S_RIR) % diff_X_RIR);
-if (arma::is_nan(t13)) Rcpp::Rcout << "NaN in t13: accu(RIR_delta_prime_s[Ind_S_RIR] % diff_X_RIR)\n";
+  double t12 = arma::accu(LCR_delta_prime_s.elem(Ind_S_LIR) % (weight_LIR_G_FS % diff_X_LIR));
+  if (!arma::is_finite(t12)) Rcpp::Rcout << "NaN in t12: accu(LCR_delta_prime_s[Ind_S_LIR] % (weight_LIR_G_FS % diff_X_LIR))\n";
 
-double t14 = arma::accu(RCR_delta_prime_s.elem(Ind_S_RIR) % (weight_RIR_G_FS % diff_X_RIR));
-if (arma::is_nan(t14)) Rcpp::Rcout << "NaN in t14: accu(RCR_delta_prime_s[Ind_S_RIR] % (weight_RIR_G_FS % diff_X_RIR))\n";
+  double t13 = arma::accu(RIR_delta_prime_s.elem(Ind_S_RIR) % diff_X_RIR);
+  if (!arma::is_finite(t13)) Rcpp::Rcout << "NaN in t13: accu(RIR_delta_prime_s[Ind_S_RIR] % diff_X_RIR)\n";
 
-double t15 = arma::accu(RCR_delta_prime_s.elem(Ind_S_RCR) % diff_X_RCR);
-if (arma::is_nan(t15)) Rcpp::Rcout << "NaN in t15: accu(RCR_delta_prime_s[Ind_S_RCR] % diff_X_RCR)\n";
+  double t14 = arma::accu(RCR_delta_prime_s.elem(Ind_S_RIR) % (weight_RIR_G_FS % diff_X_RIR));
+  if (!arma::is_finite(t14)) Rcpp::Rcout << "NaN in t14: accu(RCR_delta_prime_s[Ind_S_RIR] % (weight_RIR_G_FS % diff_X_RIR))\n";
 
-double t16 = arma::accu(RIR_delta_prime_s.elem(Ind_S_RCR) % (weight_RCR_G_FS % diff_X_RCR));
-if (arma::is_nan(t16)) Rcpp::Rcout << "NaN in t16: accu(RIR_delta_prime_s[Ind_S_RCR] % (weight_RCR_G_FS % diff_X_RCR))\n";
+  double t15 = arma::accu(RCR_delta_prime_s.elem(Ind_S_RCR) % diff_X_RCR);
+  if (!arma::is_finite(t15)) Rcpp::Rcout << "NaN in t15: accu(RCR_delta_prime_s[Ind_S_RCR] % diff_X_RCR)\n";
 
-// 3) Dot products (+)
-double t17 = arma::dot(diff_Y_LCR, deriv_LCR_delta_prime_s);
-if (arma::is_nan(t17)) Rcpp::Rcout << "NaN in t17: dot(diff_Y_LCR, deriv_LCR_delta_prime_s)\n";
+  double t16 = arma::accu(RIR_delta_prime_s.elem(Ind_S_RCR) % (weight_RCR_G_FS % diff_X_RCR));
+  if (!arma::is_finite(t16)) Rcpp::Rcout << "NaN in t16: accu(RIR_delta_prime_s[Ind_S_RCR] % (weight_RCR_G_FS % diff_X_RCR))\n";
 
-double t18 = arma::dot(diff_Y_LIR, deriv_LIR_delta_prime_s);
-if (arma::is_nan(t18)) Rcpp::Rcout << "NaN in t18: dot(diff_Y_LIR, deriv_LIR_delta_prime_s)\n";
+  // 3) Dot products (+)
+  double t17 = arma::dot(diff_Y_LCR, deriv_LCR_delta_prime_s);
+  if (!arma::is_finite(t17)) Rcpp::Rcout << "NaN in t17: dot(diff_Y_LCR, deriv_LCR_delta_prime_s)\n";
 
-double t19 = arma::dot(diff_Y_RCR, deriv_RCR_delta_prime_s);
-if (arma::is_nan(t19)) Rcpp::Rcout << "NaN in t19: dot(diff_Y_RCR, deriv_RCR_delta_prime_s)\n";
+  double t18 = arma::dot(diff_Y_LIR, deriv_LIR_delta_prime_s);
+  if (!arma::is_finite(t18)) Rcpp::Rcout << "NaN in t18: dot(diff_Y_LIR, deriv_LIR_delta_prime_s)\n";
 
-double t20 = arma::dot(diff_Y_RIR, deriv_RIR_delta_prime_s);
-if (arma::is_nan(t20)) Rcpp::Rcout << "NaN in t20: dot(diff_Y_RIR, deriv_RIR_delta_prime_s)\n";
+  double t19 = arma::dot(diff_Y_RCR, deriv_RCR_delta_prime_s);
+  if (!arma::is_finite(t19)) Rcpp::Rcout << "NaN in t19: dot(diff_Y_RCR, deriv_RCR_delta_prime_s)\n";
 
-// 4) Dot products (−)
-double t21 = arma::dot(FS_LCR, deriv_d_s_LCR);
-if (arma::is_nan(t21)) Rcpp::Rcout << "NaN in t21: dot(FS_LCR, deriv_d_s_LCR)\n";
+  double t20 = arma::dot(diff_Y_RIR, deriv_RIR_delta_prime_s);
+  if (!arma::is_finite(t20)) Rcpp::Rcout << "NaN in t20: dot(diff_Y_RIR, deriv_RIR_delta_prime_s)\n";
 
-double t22 = arma::dot(FS_LIR, deriv_d_s_LIR);
-if (arma::is_nan(t22)) Rcpp::Rcout << "NaN in t22: dot(FS_LIR, deriv_d_s_LIR)\n";
+  // 4) Dot products (−)
+  double t21 = arma::dot(FS_LCR, deriv_d_s_LCR);
+  if (!arma::is_finite(t21)) Rcpp::Rcout << "NaN in t21: dot(FS_LCR, deriv_d_s_LCR)\n";
 
-double t23 = arma::dot(FS_RCR, deriv_d_s_RCR);
-if (arma::is_nan(t23)) Rcpp::Rcout << "NaN in t23: dot(FS_RCR, deriv_d_s_RCR)\n";
+  double t22 = arma::dot(FS_LIR, deriv_d_s_LIR);
+  if (!arma::is_finite(t22)) Rcpp::Rcout << "NaN in t22: dot(FS_LIR, deriv_d_s_LIR)\n";
 
-double t24 = arma::dot(FS_RIR, deriv_d_s_RIR);
-if (arma::is_nan(t24)) Rcpp::Rcout << "NaN in t24: dot(FS_RIR, deriv_d_s_RIR)\n";
+  double t23 = arma::dot(FS_RCR, deriv_d_s_RCR);
+  if (!arma::is_finite(t23)) Rcpp::Rcout << "NaN in t23: dot(FS_RCR, deriv_d_s_RCR)\n";
 
-// 5) Integral pieces & final scalar
-double t25 = arma::sum(delta_s_Integral(0));
-if (arma::is_nan(t25)) Rcpp::Rcout << "NaN in t25: sum(delta_s_Integral(0))\n";
+  double t24 = arma::dot(FS_RIR, deriv_d_s_RIR);
+  if (!arma::is_finite(t24)) Rcpp::Rcout << "NaN in t24: dot(FS_RIR, deriv_d_s_RIR)\n";
 
-double t26 = arma::sum(delta_s_Integral(1));
-if (arma::is_nan(t26)) Rcpp::Rcout << "NaN in t26: sum(delta_s_Integral(1))\n";
+  // 5) Integral pieces & final scalar
+  double t25 = arma::sum(delta_s_Integral(0));
+  if (!arma::is_finite(t25)) Rcpp::Rcout << "NaN in t25: sum(delta_s_Integral(0))\n";
 
-double t27 = 1.0 - 2.0 * EXPITE(delta_param(0));
-if (arma::is_nan(t27)) Rcpp::Rcout << "NaN in t27: 1 - 2*EXPITE(delta_param(0))\n";
+  double t26 = arma::sum(delta_s_Integral(1));
+  if (!arma::is_finite(t26)) Rcpp::Rcout << "NaN in t26: sum(delta_s_Integral(1))\n";
+
+  double t27 = 1.0 - 2.0 * EXPITE(delta_param(0));
+  if (!arma::is_finite(t27)) Rcpp::Rcout << "NaN in t27: 1 - 2*EXPITE(delta_param(0))\n";
 
 
   double grad_delta_prime_s = accu(LCR_delta_prime_s.elem(Ind_LCR)) - accu(LIR_delta_prime_s.elem(Ind_LCR) % weight_LCR) +
@@ -6456,79 +6459,80 @@ if (arma::is_nan(t27)) Rcpp::Rcout << "NaN in t27: 1 - 2*EXPITE(delta_param(0))\
   vec deriv_RIR_delta_prime=(RIR_S_delta_prime(Ind_S_RIR))-(RCR_S_delta_prime(Ind_S_RIR)%weight_RIR_S);
 
 
-  // 1) Group terms
-double p1  = arma::accu(LCR_delta_prime.elem(Ind_LCR));
-if (arma::is_nan(p1)) Rcpp::Rcout << "NaN in p1: accu(LCR_delta_prime[Ind_LCR])\n";
+// 1) Group terms
+  double p1  = arma::accu(LCR_delta_prime.elem(Ind_LCR));
+  if (!arma::is_finite(p1)) Rcpp::Rcout << "NaN in p1: accu(LCR_delta_prime[Ind_LCR])\n";
 
-double p2  = arma::accu(LIR_delta_prime.elem(Ind_LCR) % weight_LCR);
-if (arma::is_nan(p2)) Rcpp::Rcout << "NaN in p2: accu(LIR_delta_prime[Ind_LCR] % weight_LCR)\n";
+  double p2  = arma::accu(LIR_delta_prime.elem(Ind_LCR) % weight_LCR);
+  if (!arma::is_finite(p2)) Rcpp::Rcout << "NaN in p2: accu(LIR_delta_prime[Ind_LCR] % weight_LCR)\n";
 
-double p3  = arma::accu(LIR_delta_prime.elem(Ind_LIR));
-if (arma::is_nan(p3)) Rcpp::Rcout << "NaN in p3: accu(LIR_delta_prime[Ind_LIR])\n";
+  double p3  = arma::accu(LIR_delta_prime.elem(Ind_LIR));
+  if (!arma::is_finite(p3)) Rcpp::Rcout << "NaN in p3: accu(LIR_delta_prime[Ind_LIR])\n";
 
-double p4  = arma::accu(LCR_delta_prime.elem(Ind_LIR) % weight_LIR);
-if (arma::is_nan(p4)) Rcpp::Rcout << "NaN in p4: accu(LCR_delta_prime[Ind_LIR] % weight_LIR)\n";
+  double p4  = arma::accu(LCR_delta_prime.elem(Ind_LIR) % weight_LIR);
+  if (!arma::is_finite(p4)) Rcpp::Rcout << "NaN in p4: accu(LCR_delta_prime[Ind_LIR] % weight_LIR)\n";
 
-double p5  = arma::accu(RIR_delta_prime.elem(Ind_RIR));
-if (arma::is_nan(p5)) Rcpp::Rcout << "NaN in p5: accu(RIR_delta_prime[Ind_RIR])\n";
+  double p5  = arma::accu(RIR_delta_prime.elem(Ind_RIR));
+  if (!arma::is_finite(p5)) Rcpp::Rcout << "NaN in p5: accu(RIR_delta_prime[Ind_RIR])\n";
 
-double p6  = arma::accu(RCR_delta_prime.elem(Ind_RIR) % weight_RIR);
-if (arma::is_nan(p6)) Rcpp::Rcout << "NaN in p6: accu(RCR_delta_prime[Ind_RIR] % weight_RIR)\n";
+  double p6  = arma::accu(RCR_delta_prime.elem(Ind_RIR) % weight_RIR);
+  if (!arma::is_finite(p6)) Rcpp::Rcout << "NaN in p6: accu(RCR_delta_prime[Ind_RIR] % weight_RIR)\n";
 
-double p7  = arma::accu(RCR_delta_prime.elem(Ind_RCR));
-if (arma::is_nan(p7)) Rcpp::Rcout << "NaN in p7: accu(RCR_delta_prime[Ind_RCR])\n";
+  double p7  = arma::accu(RCR_delta_prime.elem(Ind_RCR));
+  if (!arma::is_finite(p7)) Rcpp::Rcout << "NaN in p7: accu(RCR_delta_prime[Ind_RCR])\n";
 
-double p8  = arma::accu(RIR_delta_prime.elem(Ind_RCR) % weight_RCR);
-if (arma::is_nan(p8)) Rcpp::Rcout << "NaN in p8: accu(RIR_delta_prime[Ind_RCR] % weight_RCR)\n";
+  double p8  = arma::accu(RIR_delta_prime.elem(Ind_RCR) % weight_RCR);
+  if (!arma::is_finite(p8)) Rcpp::Rcout << "NaN in p8: accu(RIR_delta_prime[Ind_RCR] % weight_RCR)\n";
 
-// 2) Subject-specific X-weighted terms
-double p9  = arma::accu(LCR_delta_prime.elem(Ind_S_LCR) % diff_X_LCR);
-if (arma::is_nan(p9)) Rcpp::Rcout << "NaN in p9: accu(LCR_delta_prime[Ind_S_LCR] % diff_X_LCR)\n";
+  // 2) Subject-specific X-weighted terms
+  double p9  = arma::accu(LCR_delta_prime.elem(Ind_S_LCR) % diff_X_LCR);
+  if (!arma::is_finite(p9)) Rcpp::Rcout << "NaN in p9: accu(LCR_delta_prime[Ind_S_LCR] % diff_X_LCR)\n";
 
-double p10 = arma::accu(LIR_delta_prime.elem(Ind_S_LCR) % (weight_LCR_G_FS % diff_X_LCR));
-if (arma::is_nan(p10)) Rcpp::Rcout << "NaN in p10: accu(LIR_delta_prime[Ind_S_LCR] % (weight_LCR_G_FS % diff_X_LCR))\n";
+  double p10 = arma::accu(LIR_delta_prime.elem(Ind_S_LCR) % (weight_LCR_G_FS % diff_X_LCR));
+  if (!arma::is_finite(p10)) Rcpp::Rcout << "NaN in p10: accu(LIR_delta_prime[Ind_S_LCR] % (weight_LCR_G_FS % diff_X_LCR))\n";
 
-double p11 = arma::accu(LIR_delta_prime.elem(Ind_S_LIR) % diff_X_LIR);
-if (arma::is_nan(p11)) Rcpp::Rcout << "NaN in p11: accu(LIR_delta_prime[Ind_S_LIR] % diff_X_LIR)\n";
+  double p11 = arma::accu(LIR_delta_prime.elem(Ind_S_LIR) % diff_X_LIR);
+  if (!arma::is_finite(p11)) Rcpp::Rcout << "NaN in p11: accu(LIR_delta_prime[Ind_S_LIR] % diff_X_LIR)\n";
 
-double p12 = arma::accu(LCR_delta_prime.elem(Ind_S_LIR) % (weight_LIR_G_FS % diff_X_LIR));
-if (arma::is_nan(p12)) Rcpp::Rcout << "NaN in p12: accu(LCR_delta_prime[Ind_S_LIR] % (weight_LIR_G_FS % diff_X_LIR))\n";
+  double p12 = arma::accu(LCR_delta_prime.elem(Ind_S_LIR) % (weight_LIR_G_FS % diff_X_LIR));
+  if (!arma::is_finite(p12)) Rcpp::Rcout << "NaN in p12: accu(LCR_delta_prime[Ind_S_LIR] % (weight_LIR_G_FS % diff_X_LIR))\n";
 
-double p13 = arma::accu(RIR_delta_prime.elem(Ind_S_RIR) % diff_X_RIR);
-if (arma::is_nan(p13)) Rcpp::Rcout << "NaN in p13: accu(RIR_delta_prime[Ind_S_RIR] % diff_X_RIR)\n";
+  double p13 = arma::accu(RIR_delta_prime.elem(Ind_S_RIR) % diff_X_RIR);
+  if (!arma::is_finite(p13)) Rcpp::Rcout << "NaN in p13: accu(RIR_delta_prime[Ind_S_RIR] % diff_X_RIR)\n";
 
-double p14 = arma::accu(RCR_delta_prime.elem(Ind_S_RIR) % (weight_RIR_G_FS % diff_X_RIR));
-if (arma::is_nan(p14)) Rcpp::Rcout << "NaN in p14: accu(RCR_delta_prime[Ind_S_RIR] % (weight_RIR_G_FS % diff_X_RIR))\n";
+  double p14 = arma::accu(RCR_delta_prime.elem(Ind_S_RIR) % (weight_RIR_G_FS % diff_X_RIR));
+  if (!arma::is_finite(p14)) Rcpp::Rcout << "NaN in p14: accu(RCR_delta_prime[Ind_S_RIR] % (weight_RIR_G_FS % diff_X_RIR))\n";
 
-double p15 = arma::accu(RCR_delta_prime.elem(Ind_S_RCR) % diff_X_RCR);
-if (arma::is_nan(p15)) Rcpp::Rcout << "NaN in p15: accu(RCR_delta_prime[Ind_S_RCR] % diff_X_RCR)\n";
+  double p15 = arma::accu(RCR_delta_prime.elem(Ind_S_RCR) % diff_X_RCR);
+  if (!arma::is_finite(p15)) Rcpp::Rcout << "NaN in p15: accu(RCR_delta_prime[Ind_S_RCR] % diff_X_RCR)\n";
 
-double p16 = arma::accu(RIR_delta_prime.elem(Ind_S_RCR) % (weight_RCR_G_FS % diff_X_RCR));
-if (arma::is_nan(p16)) Rcpp::Rcout << "NaN in p16: accu(RIR_delta_prime[Ind_S_RCR] % (weight_RCR_G_FS % diff_X_RCR))\n";
+  double p16 = arma::accu(RIR_delta_prime.elem(Ind_S_RCR) % (weight_RCR_G_FS % diff_X_RCR));
+  if (!arma::is_finite(p16)) Rcpp::Rcout << "NaN in p16: accu(RIR_delta_prime[Ind_S_RCR] % (weight_RCR_G_FS % diff_X_RCR))\n";
 
-// 3) Dot products
-double p17 = arma::dot(diff_Y_LCR, deriv_LCR_delta_prime);
-if (arma::is_nan(p17)) Rcpp::Rcout << "NaN in p17: dot(diff_Y_LCR, deriv_LCR_delta_prime)\n";
+  // 3) Dot products
+  double p17 = arma::dot(diff_Y_LCR, deriv_LCR_delta_prime);
+  if (!arma::is_finite(p17)) Rcpp::Rcout << "NaN in p17: dot(diff_Y_LCR, deriv_LCR_delta_prime)\n";
 
-double p18 = arma::dot(diff_Y_LIR, deriv_LIR_delta_prime);
-if (arma::is_nan(p18)) Rcpp::Rcout << "NaN in p18: dot(diff_Y_LIR, deriv_LIR_delta_prime)\n";
+  double p18 = arma::dot(diff_Y_LIR, deriv_LIR_delta_prime);
+  if (!arma::is_finite(p18)) Rcpp::Rcout << "NaN in p18: dot(diff_Y_LIR, deriv_LIR_delta_prime)\n";
 
-double p19 = arma::dot(diff_Y_RCR, deriv_RCR_delta_prime);
-if (arma::is_nan(p19)) Rcpp::Rcout << "NaN in p19: dot(diff_Y_RCR, deriv_RCR_delta_prime)\n";
+  double p19 = arma::dot(diff_Y_RCR, deriv_RCR_delta_prime);
+  if (!arma::is_finite(p19)) Rcpp::Rcout << "NaN in p19: dot(diff_Y_RCR, deriv_RCR_delta_prime)\n";
 
-double p20 = arma::dot(diff_Y_RIR, deriv_RIR_delta_prime);
-if (arma::is_nan(p20)) Rcpp::Rcout << "NaN in p20: dot(diff_Y_RIR, deriv_RIR_delta_prime)\n";
+  double p20 = arma::dot(diff_Y_RIR, deriv_RIR_delta_prime);
+  if (!arma::is_finite(p20)) Rcpp::Rcout << "NaN in p20: dot(diff_Y_RIR, deriv_RIR_delta_prime)\n";
 
-// 4) Integral parts
-double p21 = arma::sum(delta_prime_Integral(0));
-if (arma::is_nan(p21)) Rcpp::Rcout << "NaN in p21: sum(delta_prime_Integral(0))\n";
+  // 4) Integral parts
+  double p21 = arma::sum(delta_prime_Integral(0));
+  if (!arma::is_finite(p21)) Rcpp::Rcout << "NaN in p21: sum(delta_prime_Integral(0))\n";
 
-double p22 = arma::sum(delta_prime_Integral(1));
-if (arma::is_nan(p22)) Rcpp::Rcout << "NaN in p22: sum(delta_prime_Integral(1))\n";
+  double p22 = arma::sum(delta_prime_Integral(1));
+  if (!arma::is_finite(p22)) Rcpp::Rcout << "NaN in p22: sum(delta_prime_Integral(1))\n";
 
-// 5) Final scalar
-double p23 = 1.0 - 2.0 * EXPITE(delta_param(1));
-if (arma::is_nan(p23)) Rcpp::Rcout << "NaN in p23: 1 - 2*EXPITE(delta_param(1))\n";
+  // 5) Final scalar
+  double p23 = 1.0 - 2.0 * EXPITE(delta_param(1));
+  if (!arma::is_finite(p23)) Rcpp::Rcout << "NaN in p23: 1 - 2*EXPITE(delta_param(1))\n";
+
 
 
 
