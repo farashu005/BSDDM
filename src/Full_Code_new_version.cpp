@@ -8747,20 +8747,36 @@ void leap_frog_delta_param(const vec &tau,const vec &tau_stop,const double sigma
 
     delta_param+=delta*(p-(delta/2)*v_old);
     
-    if (!arma::is_finite(delta_param)) {
+    // --- Guard: delta_param must be finite ---
+if (!arma::is_finite(delta_param)) {
     Rcpp::Rcout << "Error: delta_param contains NaN/Inf values.\n";
     Rcpp::Rcout << "v_old = " << v_old.t();  // print v_old for debugging
+    Rcpp::Rcout.flush();
     Rcpp::stop("Stopping because delta_param is NaN/Inf");
 }
 
+// --- compute DEL_s ---
+double DEL_s = U * EXPITE(delta_param(0));
+if (!std::isfinite(DEL_s)) {
+    Rcpp::Rcout << "FATAL: DEL_s is NaN/Inf. "
+                << "U=" << U 
+                << ", delta_param(0)=" << delta_param(0) << std::endl;
+    Rcpp::Rcout.flush();
+    Rcpp::stop("Stopping: DEL_s invalid (NaN/Inf)");
+}
 
-    // Rcpp::Rcout<<"delta_param"<<delta_param<<endl;
+// --- compute DEL ---
+double DEL = (SSD_min + DEL_s) * EXPITE(delta_param(1));
+if (!std::isfinite(DEL)) {
+    Rcpp::Rcout << "FATAL: DEL is NaN/Inf. "
+                << "SSD_min=" << SSD_min 
+                << ", DEL_s=" << DEL_s 
+                << ", delta_param(1)=" << delta_param(1) << std::endl;
+    Rcpp::Rcout.flush();
+    Rcpp::stop("Stopping: DEL invalid (NaN/Inf)");
+}
 
-    double DEL_s=U*EXPITE(delta_param(0));
-
-    double DEL=(SSD_min+DEL_s)*EXPITE(delta_param(1));
-
-
+    
     vec tau_prime(tau.n_elem, fill::zeros);
     vec tau_s(tau_stop.n_elem, fill::zeros);
 
