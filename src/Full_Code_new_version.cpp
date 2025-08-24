@@ -8746,6 +8746,13 @@ void leap_frog_delta_param(const vec &tau,const vec &tau_stop,const double sigma
 
 
     delta_param+=delta*(p-(delta/2)*v_old);
+    
+    if (!arma::is_finite(delta_param)) {
+    Rcpp::Rcout << "Error: delta_param contains NaN/Inf values.\n";
+    Rcpp::Rcout << "v_old = " << v_old.t();  // print v_old for debugging
+    Rcpp::stop("Stopping because delta_param is NaN/Inf");
+}
+
 
     // Rcpp::Rcout<<"delta_param"<<delta_param<<endl;
 
