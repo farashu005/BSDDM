@@ -8596,8 +8596,6 @@ void leap_frog_delta_param(const vec &tau,const vec &tau_stop,const double sigma
 
 
     delta_param+=delta*(p-(delta/2)*v_old);
-    
-    // --- Guard: delta_param must be finite ---
 
 // --- compute DEL_s ---
 double DEL_s = U * EXPITE(delta_param(0));
