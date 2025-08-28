@@ -573,7 +573,7 @@ data_prep<-function(newdat,sub,nknots,m,run,scale){
   Result<-list("tau"=tau,"tau_s"=tau_s,"Ind_G"=Ind_G,"U"=U,"L"=L,"L_full"=L_full,"lambda"=lambda,"Phi"=Phi,"SSD"=SSD,"T_Go"=T_go,
                "T_Total"=T_Total,"FT"=FT,"l_lim"=l_lim,"Ind"=Ind,'sp.x1'=sp.x1,"X1"=X1,
                "sp.x1_Full"=sp.x1_Full,"X1_Full"=X1_Full,"Phi_Full"=Phi_full,"Time_Point"=T_full,"Time_Point_list"=t_full,
-               "Len_Full"=Len_Full,
+               "Len_Full"=Len_Full,"Len"=Len,
                "dat"=main_dat)
 
   return(Result)
