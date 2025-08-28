@@ -285,8 +285,6 @@ code_run<-function(save_location,dat,cluster_label,Anxiety_status,sub_type,sampl
   # Record the start time
   start_time <- Sys.time()
 
-  set.seed(5121)
-
   model<-hmc(X1,Go_RT=Go_RT,Go_RT_S=Go_RT_S,SSD_min=SSD_min, U=U,Ind_G=Ind_G,Stop_S_D=Stop_S_D,
              sigma,delta_param=delta_prime.int,gama=gama.int,beta=beta.int,
              stop_param=stop_param.int,prob_param=prob_param.int,
