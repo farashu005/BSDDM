@@ -10109,6 +10109,16 @@ List hmc(const List Time_stamp,const List Go_RT,const List Go_RT_S,const double 
       field<vec> lower_bound = delta_prime_ess(2);
 
 
+      uword total_neg = 0;
+      for (uword i = 0; i < tau_prime.n_elem; ++i) {
+        total_neg += accu(tau_prime(i) < 0);
+      }
+
+      if (total_neg > 0) {
+        Rcpp::Rcout << "Total negative values in tau_prime: " << total_neg << std::endl;
+      }
+
+
 
       // Rcpp::Rcout<<"delta_updated"<<endl;
 
