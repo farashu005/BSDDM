@@ -209,7 +209,12 @@ code_run<-function(save_location,dat,cluster_label,Anxiety_status,sub_type,sampl
 
 
 
-  prob_hyp<-c(1,1,1)
+  #prob_hyp<-c(1,1,1)
+
+  # order must be: (PGF, P00, PTF)
+prob_hyp <- 40 * c(PGF = 0.02, P00 = 0.95, PTF = 0.03)   # a = (0.8, 38, 1.2)
+# w_{ik} ~ Gamma(shape = a[k], rate = 1);  P_i = w_i / sum(w_i)
+
 
 
 
