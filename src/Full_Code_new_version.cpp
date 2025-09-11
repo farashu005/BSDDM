@@ -88,9 +88,13 @@ uvec valid_idx = find(tau > 0);
 if (!valid_idx.is_empty()) {
   vec tau_valid = tau.elem(valid_idx);
 
-  vec partial_result =(b -  ((log(2 * datum::pi*sigma))/2)
-                - ((3 * log(tau_valid)) / 2) - ((exp(2 * b)) / (2 * sigma*tau_valid)) +
-                  (((exp(nu+b)))/(sigma))-(((exp(2*nu))%tau_valid)/(2*sigma)));
+  vec b_valid = b.elem(valid_idx);
+
+  vec nu_valid = nu.elem(valid_idx);
+
+  vec partial_result =(b_valid -  ((log(2 * datum::pi*sigma))/2)
+                - ((3 * log(tau_valid)) / 2) - ((exp(2 * b_valid)) / (2 * sigma*tau_valid)) +
+                  (((exp(nu_valid+b_valid)))/(sigma))-(((exp(2*nu_valid))%tau_valid)/(2*sigma)));
 
   result.elem(valid_idx) = partial_result;
   }
@@ -232,12 +236,13 @@ vec log_dens_s(const double sigma, const vec &tau, const vec &tau_s, const vec &
 
   if (!result.is_finite()) {
     Rcpp::Rcout << "NaN in final result (log_dens + lp)\n";
+    cout << "DEL: " << DEL << ", DEL_s: " << DEL_s << ", lt: " << lt << "\n";
     Rcpp::Rcout << "result_log_dens_s: " << result.t();
 
     // Print all input parameters again
     cout << "--- Input Parameters ---\n";
     cout << "sigma: " << sigma << "\n";
-    cout << "DEL: " << DEL << ", DEL_s: " << DEL_s << ", lt: " << lt << "\n";
+    
     cout << "tau: " << tau.t();
     cout << "tau_s: " << tau_s.t();
     cout << "SSD: " << SSD.t();
