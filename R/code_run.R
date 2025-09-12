@@ -149,7 +149,7 @@ code_run<-function(save_location,dat,cluster_label,Anxiety_status,sub_type,sampl
 
   P=ncol(X1[[1]])
   N=length(Go_RT)
-  m=length(lambda)
+  #m=length(lambda)
 
 
   mu_bl<-mu_br<-mu_gl<-mu_gr<-c(rep(0,P))
@@ -289,12 +289,12 @@ prob_hyp <- 40 * c(PGF = 0.02, P00 = 0.95, PTF = 0.03)   # a = (0.8, 38, 1.2)
   ## Initializing
 
 set.seed (1451)
-l<-log(runif(N, min = penal_param.int[1], max = penal_param.int[2]))
-a<-log(runif(N, penal_param.int[1], max = penal_param.int[2]))
+penal1<-log(runif(N, min = penal_param.int[1], max = penal_param.int[2]))
+penal2<-log(runif(N, penal_param.int[1], max = penal_param.int[2]))
 
-penal_param<-as.matrix(rbind(l,a))
+penal_param<-as.matrix(rbind(penal1,penal2))
 
-delta_prime<-matrix(c(rep(delta_prime.int,2*N)),nrow=2,ncol=N)
+delta_param<-matrix(c(rep(delta_prime.int,2*N)),nrow=2,ncol=N)
 
 
 b_stop=rep(stop_param.int[1],N)
@@ -311,7 +311,7 @@ TF1.int<-rep(prob_param.int[2],N)
 
 TF2.int<-rep(prob_param.int[3],N)
 
-prob_param.int<-as.matrix(rbind(GF.int,TF1.int,TF2.int),ncol=N,nrow=3)
+prob_param<-as.matrix(rbind(GF.int,TF1.int,TF2.int),ncol=N,nrow=3)
 
 
 
