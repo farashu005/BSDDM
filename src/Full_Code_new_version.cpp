@@ -2208,20 +2208,11 @@ vec log_density_I(const double sigma, const vec &u, const double b,const vec &m)
 
   // Rcpp::Rcout<<"A"<< endl;
 
-  uvec Ind=find(u<=0);
-
-
 
   vec x = exponent_1_I(sigma,u,m,b);
 
-  vec result = b-(log(sigma)/2)- ((3 * trunc_log(u)) / 2)+
+  vec result = b-(log(sigma)/2)- ((3 * log(u)) / 2)+
                log_normpdf(x);
-
-  result(Ind).fill(trunc_log(0)); // If u is negative or <=0,
-
-
-
-
 
 
   return  result;
