@@ -102,9 +102,9 @@ if (!valid_idx.is_empty()) {
   // Rcpp::Rcout<<"result"<<result<<endl;
 
   if(!result.is_finite()){
+    cout << " tau:" << tau.t() << std::endl;
     (result.t()).print("result_log_dens: ");
     cout << " b:" << b.t()<< std::endl;
-    cout << " tau:" << tau.t() << std::endl;
     cout << " exp(2 * b):" <<   exp(2 * b).t()<< std::endl;
     cout << " nu:" <<   nu.t()<< std::endl;
     Rcpp::stop("Error in log-density:");
