@@ -8576,7 +8576,10 @@ void update_penal_param(const field <vec> &tau,const field <vec> &tau_s,const do
 /////////////////////////////////////////////////////////////////////////////////////// Delta_prime /////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////////// Delta_prime /////////////////////////////////////////////////////////////////////////////////////////////
-
+// Clamp helper
+inline double clamp(double x, double lo, double hi) {
+    return std::max(lo, std::min(x, hi));
+}
 
 //Leapfrog algorithm
 
@@ -8600,13 +8603,16 @@ void leap_frog_delta_param(const vec &tau,const vec &tau_stop,const double sigma
   for (unsigned j = 0; j < L; ++j){
 
 
-    delta_param+=delta*(p-(delta/2)*v_old);
+ delta_param+=delta*(p-(delta/2)*v_old);
 
-// --- compute DEL_s ---
-double DEL_s = U * EXPITE(delta_param(0));
 
-// --- compute DEL ---
-double DEL = (SSD_min + DEL_s) * EXPITE(delta_param(1));
+
+// When computing DEL_s and DEL:
+double delta0_clamped = clamp(delta_param(0), -20.0, 20.0);
+double delta1_clamped = clamp(delta_param(1), -20.0, 20.0);
+
+double DEL_s = U * EXPITE(delta0_clamped);
+double DEL   = (SSD_min + DEL_s) * EXPITE(delta1_clamped);
 
     
     vec tau_prime(tau.n_elem, fill::zeros);
