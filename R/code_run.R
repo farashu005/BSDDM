@@ -270,10 +270,10 @@ prob_hyp <- 40 * c(PGF = 0.02, P00 = 0.95, PTF = 0.03)   # a = (0.8, 38, 1.2)
 
 
   rate_b_l=b+(t(gama.int[,1])%*%sigma_gl_inv%*%gama.int[,1])/2
-  rate_b_r=b+(t(gama.int[,2])%*%sigma_gl_inv%*%gama.int[,2])/2
+  rate_b_r=b+(t(gama.int[,2])%*%sigma_gr_inv%*%gama.int[,2])/2
 
-  rate_nu_l=b+(t(beta.int[,1])%*%sigma_gl_inv%*%beta.int[,1])/2
-  rate_nu_r=b+(t(beta.int[,2])%*%sigma_gl_inv%*%beta.int[,2])/2
+  rate_nu_l=b+(t(beta.int[,1])%*%sigma_bl_inv%*%beta.int[,1])/2
+  rate_nu_r=b+(t(beta.int[,2])%*%sigma_br_inv%*%beta.int[,2])/2
 
   eta_b_l=rgamma(1,shape,1/rate_b_l)
   eta_b_r=rgamma(1,shape,1/rate_b_r)
