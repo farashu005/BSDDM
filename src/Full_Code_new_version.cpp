@@ -78,27 +78,12 @@ vec log_dens(const double sigma,const vec &tau, const vec &b, const vec &nu){
 
   // Rcpp::Rcout<<"A"<< endl;
 
-vec result(tau.n_elem);
-result.fill(trunc_log(0.0));  // if trunc_log(0.0) = -1e10 or similar
 
-// Logical index for tau_s > 0
-uvec valid_idx = find(tau > 0);
+  vec result =(b -  ((log(2 * datum::pi*sigma))/2)
+                - ((3 * log(tau)) / 2) - ((exp(2 * b)) / (2 * sigma*tau)) +
+                  (((exp(nu+b)))/(sigma))-(((exp(2*nu))%tau)/(2*sigma)));
 
-
-if (!valid_idx.is_empty()) {
-  vec tau_valid = tau.elem(valid_idx);
-
-  vec b_valid = b.elem(valid_idx);
-
-  vec nu_valid = nu.elem(valid_idx);
-
-  vec partial_result =(b_valid -  ((log(2 * datum::pi*sigma))/2)
-                - ((3 * log(tau_valid)) / 2) - ((exp(2 * b_valid)) / (2 * sigma*tau_valid)) +
-                  (((exp(nu_valid+b_valid)))/(sigma))-(((exp(2*nu_valid))%tau_valid)/(2*sigma)));
-
-  result.elem(valid_idx) = partial_result;
-  }
-
+  
   // Rcpp::Rcout<<"result"<<result<<endl;
 
   if(!result.is_finite()){
@@ -115,7 +100,46 @@ if (!valid_idx.is_empty()) {
 
 }
 
-
+// vec log_dens(const double sigma,const vec &tau, const vec &b, const vec &nu){
+//   
+//   // Rcpp::Rcout<<"A"<< endl;
+//   
+//   vec result(tau.n_elem);
+//   result.fill(trunc_log(0.0));  // if trunc_log(0.0) = -1e10 or similar
+//   
+//   // Logical index for tau_s > 0
+//   uvec valid_idx = find(tau > 0);
+//   
+//   
+//   if (!valid_idx.is_empty()) {
+//     vec tau_valid = tau.elem(valid_idx);
+//     
+//     vec b_valid = b.elem(valid_idx);
+//     
+//     vec nu_valid = nu.elem(valid_idx);
+//     
+//     vec partial_result =(b_valid -  ((log(2 * datum::pi*sigma))/2)
+//                            - ((3 * log(tau_valid)) / 2) - ((exp(2 * b_valid)) / (2 * sigma*tau_valid)) +
+//                              (((exp(nu_valid+b_valid)))/(sigma))-(((exp(2*nu_valid))%tau_valid)/(2*sigma)));
+//     
+//     result.elem(valid_idx) = partial_result;
+//   }
+//   
+//   // Rcpp::Rcout<<"result"<<result<<endl;
+//   
+//   if(!result.is_finite()){
+//     cout << " tau:" << tau.t() << std::endl;
+//     (result.t()).print("result_log_dens: ");
+//     cout << " b:" << b.t()<< std::endl;
+//     cout << " exp(2 * b):" <<   exp(2 * b).t()<< std::endl;
+//     cout << " nu:" <<   nu.t()<< std::endl;
+//     Rcpp::stop("Error in log-density:");
+//   }
+//   
+//   return  result;
+//   
+//   
+// }
 
 // Exponent1 function
 
