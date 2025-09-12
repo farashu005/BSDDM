@@ -81,6 +81,24 @@ data_prep<-function(newdat,sub,nknots,m,run,scale){
 
 
 
+  library(dplyr)
+
+  main_dat <- main_dat %>%
+    group_by(subject) %>%
+    mutate(PGF = mean(GF, na.rm = TRUE)*100)%>%
+    ungroup()
+
+
+
+  main_dat <- main_dat[!(main_dat$PGF>=25),]
+
+  main_dat <- main_dat %>%
+    group_by(subject) %>%
+    mutate(Inhib_acc = mean(sst_inhibitacc[sst_expcon == "VariableStopTrial"], na.rm = TRUE) * 100) %>%
+    ungroup()
+
+
+  main_dat <- main_dat[!(main_dat$Inhib_acc<=25),]
 
   ## Spliting dataset with respect to Subject
   B<-split(main_dat,main_dat$subject)
