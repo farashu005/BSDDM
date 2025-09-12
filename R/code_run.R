@@ -283,6 +283,39 @@ prob_hyp <- 40 * c(PGF = 0.02, P00 = 0.95, PTF = 0.03)   # a = (0.8, 38, 1.2)
   eta_nu_r=rgamma(1,shape,1/rate_nu_r)
 
 
+
+
+
+  ## Initializing
+
+set.seed (1451)
+l<-log(runif(N, min = penal_param.int[1], max = penal_param.int[2]))
+a<-log(runif(N, penal_param.int[1], max = penal_param.int[2]))
+
+penal_param<-as.matrix(rbind(l,a))
+
+delta_prime<-matrix(c(rep(delta_prime.int,2*N)),nrow=2,ncol=N)
+
+
+b_stop=rep(stop_param.int[1],N)
+
+
+nu_stop=rep(stop_param.int[2],N)
+
+stop_param<-as.matrix(rbind(b_stop,nu_stop))
+
+
+GF.int<-rep(prob_param.int[1],N)
+
+TF1.int<-rep(prob_param.int[2],N)
+
+TF2.int<-rep(prob_param.int[3],N)
+
+prob_param.int<-as.matrix(rbind(GF.int,TF1.int,TF2.int),ncol=N,nrow=3)
+
+
+
+
   library(RcppArmadillo)
 
   print(Sys.time()); message("Starting model...")
@@ -291,11 +324,11 @@ prob_hyp <- 40 * c(PGF = 0.02, P00 = 0.95, PTF = 0.03)   # a = (0.8, 38, 1.2)
   start_time <- Sys.time()
 
   model<-hmc(X1,Go_RT=Go_RT,Go_RT_S=Go_RT_S,SSD_min=SSD_min, U=U,Ind_G=Ind_G,Stop_S_D=Stop_S_D,
-             sigma,delta_param=delta_prime.int,gama=gama.int,beta=beta.int,
-             stop_param=stop_param.int,prob_param=prob_param.int,
+             sigma,delta_param,gama=gama.int,beta=beta.int,
+             stop_param,prob_param,
              Indicator=Indicator,
              mean_priors_main,var_priors_main,
-             penal_param.int, prior_penal_stop,
+             penal_param, prior_penal_stop,
              T_Go,FT,T_Total,
              a,b,prob_hyp,
              eta_b_l,eta_b_r,eta_nu_l,eta_nu_r,
