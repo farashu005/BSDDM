@@ -139,8 +139,7 @@ code_run<-function(save_location,dat,cluster_label,Anxiety_status,sub_type,sampl
 
   lambda<-M_I1_Non_Anx_dat$lambda
 
-  U<-M_I1_Non_Anx_dat$U
-
+  
 
   lower_bound<-M_I1_Non_Anx_dat$l_lim
 
@@ -149,6 +148,10 @@ code_run<-function(save_location,dat,cluster_label,Anxiety_status,sub_type,sampl
 
   P=ncol(X1[[1]])
   N=length(Go_RT)
+
+  #U<-M_I1_Non_Anx_dat$U
+
+  U<-c(rep(150,N))
   #m=length(lambda)
 
 
