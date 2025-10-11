@@ -188,8 +188,8 @@ code_run<-function(save_location,dat,cluster_label,Anxiety_status,sub_type,sampl
   var_priors_main<-list(sigma_gl_inv,sigma_gr_inv,sigma_bl_inv,sigma_br_inv);
 
 
-  #gama_Ind<-replicate(N, matrix(0, nrow = m, ncol = 2), simplify = FALSE)
-  #beta_Ind<-replicate(N, matrix(0, nrow = m, ncol = 2), simplify = FALSE)
+  gama_Ind<-replicate(N, matrix(0, nrow = m, ncol = 2), simplify = FALSE)
+  beta_Ind<-replicate(N, matrix(0, nrow = m, ncol = 2), simplify = FALSE)
 
 
 
@@ -294,30 +294,30 @@ code_run<-function(save_location,dat,cluster_label,Anxiety_status,sub_type,sampl
 
   ## Initializing
 
-#set.seed (1451)
-#penal1<-log(runif(N, min = penal_param.int[1], max = penal_param.int[2]))
-#penal2<-log(runif(N, penal_param.int[1], max = penal_param.int[2]))
+set.seed (1451)
+penal1<-log(runif(N, min = penal_param.int[1], max = penal_param.int[2]))
+penal2<-log(runif(N, penal_param.int[1], max = penal_param.int[2]))
 
-#penal_param<-as.matrix(rbind(penal1,penal2))
+penal_param<-as.matrix(rbind(penal1,penal2))
 
-#delta_param<-matrix(c(rep(delta_prime.int,2*N)),nrow=2,ncol=N)
-
-
-#b_stop=rep(stop_param.int[1],N)
+delta_param<-matrix(c(rep(delta_prime.int,2*N)),nrow=2,ncol=N)
 
 
-#nu_stop=rep(stop_param.int[2],N)
-
-#stop_param<-as.matrix(rbind(b_stop,nu_stop))
+b_stop=rep(stop_param.int[1],N)
 
 
-#GF.int<-rep(prob_param.int[1],N)
+nu_stop=rep(stop_param.int[2],N)
 
-#TF1.int<-rep(prob_param.int[2],N)
+stop_param<-as.matrix(rbind(b_stop,nu_stop))
 
-#TF2.int<-rep(prob_param.int[3],N)
 
-#prob_param<-as.matrix(rbind(GF.int,TF1.int,TF2.int),ncol=N,nrow=3)
+GF.int<-rep(prob_param.int[1],N)
+
+TF1.int<-rep(prob_param.int[2],N)
+
+TF2.int<-rep(prob_param.int[3],N)
+
+prob_param<-as.matrix(rbind(GF.int,TF1.int,TF2.int),ncol=N,nrow=3)
 
 
 
@@ -330,11 +330,11 @@ code_run<-function(save_location,dat,cluster_label,Anxiety_status,sub_type,sampl
   start_time <- Sys.time()
 
   model<-hmc(X1,Go_RT=Go_RT,Go_RT_S=Go_RT_S,SSD_min=SSD_min, U=U,Ind_G=Ind_G,Stop_S_D=Stop_S_D,
-             sigma,delta_param.int,gama=gama.int,beta=beta.int,
-             stop_param.int,prob_param.int,
+             sigma,delta_param,gama=gama.int,beta=beta.int,
+             stop_param,prob_param,
              Indicator=Indicator,
              mean_priors_main,var_priors_main,
-             penal_param.int, prior_penal_stop,
+             penal_param, prior_penal_stop,
              T_Go,FT,T_Total,
              a,b,prob_hyp,
              eta_b_l,eta_b_r,eta_nu_l,eta_nu_r,
