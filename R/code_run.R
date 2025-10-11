@@ -58,8 +58,9 @@ code_run<-function(save_location,dat,cluster_label,Anxiety_status,sub_type,sampl
                    range_main_eff,range_p,range_d,range_stop_prob,range_rand_eff,
                    range_rand_g_l,range_rand_g_r,range_rand_b_l,range_rand_b_r,
 
-                   gama.int=NULL,beta.int=NULL,penal_param.int,delta_prime.int,stop_param.int,prob_param.int,
-                   gama.ind,beta.ind,
+                   gama.int=NULL,beta.int=NULL,gama_Ind,beta_Ind,
+                   penal_param.int,delta_prime.int,stop_param.int,prob_param.int,
+                   
                    rand_param_g_l.int,rand_param_g_r.int,rand_param_b_l.int,rand_param_b_r.int,
 
 
@@ -329,7 +330,7 @@ code_run<-function(save_location,dat,cluster_label,Anxiety_status,sub_type,sampl
   start_time <- Sys.time()
 
   model<-hmc(X1,Go_RT=Go_RT,Go_RT_S=Go_RT_S,SSD_min=SSD_min, U=U,Ind_G=Ind_G,Stop_S_D=Stop_S_D,
-             sigma,delta_param,gama=gama.int,beta=beta.int,
+             sigma,delta_param.int,gama=gama.int,beta=beta.int,
              stop_param.int,prob_param.int,
              Indicator=Indicator,
              mean_priors_main,var_priors_main,
