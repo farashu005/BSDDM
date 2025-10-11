@@ -58,7 +58,6 @@ code_run<-function(save_location,dat,cluster_label,Anxiety_status,sub_type,sampl
                    range_main_eff,range_p,range_d,range_stop_prob,range_rand_eff,
                    range_rand_g_l,range_rand_g_r,range_rand_b_l,range_rand_b_r,
 
-                   gama.int=NULL,beta.int=NULL,gama_Ind,beta_Ind,
                    penal_param.int,delta_prime.int,stop_param.int,prob_param.int,
                    
                    rand_param_g_l.int,rand_param_g_r.int,rand_param_b_l.int,rand_param_b_r.int,
