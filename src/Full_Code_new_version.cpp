@@ -9045,6 +9045,7 @@ void update_delta_param(const field <vec> &tau,const field <vec> &tau_stop,
 
 
 
+
     double DEL_s_new=U(i)*EXPITE(delta_param_new(0));
 
     double DEL_new=(SSD_min+DEL_s_new)*EXPITE(delta_param_new(1));
@@ -9083,7 +9084,7 @@ void update_delta_param(const field <vec> &tau,const field <vec> &tau_stop,
                                         nu_l_s(i),nu_r_s(i),
                                         Ind_L(i),Ind_R(i),Ind_LCR(i),Ind_LIR(i),Ind_RCR(i),Ind_RIR(i),
                                         Ind_S_LCR(i),Ind_S_LIR(i),Ind_S_RCR(i),Ind_S_RIR(i),
-                                        stop_param.col(i),prob_param.col(i),DEL,DEL_s,lt);
+                                        stop_param.col(i),prob_param.col(i),DEL_new,DEL_s_new,lt);
 
     vec lk_LCR_FS_new=lk_FS_new(0);
     vec lk_LIR_FS_new=lk_FS_new(1);
