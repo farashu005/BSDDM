@@ -2483,6 +2483,113 @@ field<vec> integral_likelihood(const double sigma,
 
 
 
+
+
+// Saving the Integral of likelihood
+
+field<vec> integral_likelihood2(const double sigma,
+                               const vec &SSD,const double DEL,const double DEL_s,
+                               const vec &stop_param,const vec &penal_param,const vec &prob_param,
+                               const vec &b_l,const vec &nu_l,const vec &nu_l_s,
+                               const vec &b_r,const vec &nu_r_p,const vec &nu_r_s,
+                               const vec &nu_r,const vec &nu_l_p,
+                               const uvec &Ind_L,const uvec &Ind_R,const uvec &Ind_I_L,const uvec &Ind_I_R,
+                               const vec &lower_bound,const double upper_bound,const bool lt = true) {
+
+
+  // Rcpp::Rcout<<"Y"<< endl;
+
+  vec SSD_I_L=g(SSD, Ind_L, Ind_I_L );
+  vec SSD_I_R=g(SSD, Ind_R, Ind_I_R );
+
+  vec b_l_I_L=g(b_l, Ind_L, Ind_I_L );
+  vec b_l_I_R=g(b_l, Ind_R, Ind_I_R );
+
+  vec b_r_I_L=g(b_r, Ind_L, Ind_I_L );
+  vec b_r_I_R=g(b_r, Ind_R, Ind_I_R );
+
+  vec nu_l_I_L=g(nu_l, Ind_L, Ind_I_L );
+  vec nu_r_I_R=g(nu_r, Ind_R, Ind_I_R );
+
+  vec nu_l_s_I_L=g(nu_l_s, Ind_L, Ind_I_L );
+  vec nu_l_s_I_R=g(nu_l_s, Ind_R, Ind_I_R );
+
+  vec nu_r_s_I_L=g(nu_r_s, Ind_L, Ind_I_L );
+  vec nu_r_s_I_R=g(nu_r_s, Ind_R, Ind_I_R );
+
+  vec nu_r_p_I_L=h(nu_r_p, Ind_I_L );
+  vec nu_l_p_I_R=h(nu_l_p, Ind_I_R );
+
+  vec lower_bound_I_L=g(lower_bound, Ind_L, Ind_I_L );
+  vec lower_bound_I_R=g(lower_bound, Ind_R, Ind_I_R );
+
+
+  // Initialize result vector
+  vec Stim_L(b_l_I_L.size());
+
+
+  vec Stim_L_int_dens(b_l_I_L.size());
+
+
+  // Loop over parameter vectors
+  // #pragma omp parallel num_threads(2)
+  for (unsigned i = 0; i < b_l_I_L.size(); ++i) {
+    // Perform integration for current parameter values
+
+    double int_dens=trunc_log(integrate_integral_likelihood(sigma,SSD_I_L(i),DEL,DEL_s,stop_param,
+                                                            b_l_I_L(i),nu_l_I_L(i), nu_l_s_I_L(i),
+                                                            b_r_I_L(i),nu_r_p_I_L(i),nu_r_s_I_L(i),
+                                                            lower_bound_I_L(i),upper_bound,lt ));
+
+
+
+
+    // cout<<"int_dens: "<<int_dens<<endl;
+
+    Stim_L[i] = mlpack::LogAdd(prob_param(0),(prob_param(1)+int_dens));
+
+    Stim_L_int_dens[i]=int_dens;
+
+  }
+
+
+  // Initialize result vector
+  vec Stim_R(b_r_I_R.size());
+  vec Stim_R_int_dens(b_r_I_R.size());
+
+  // Loop over parameter vectors
+  // #pragma omp parallel num_threads(2)
+  for (unsigned i = 0; i < b_r_I_R.size(); ++i) {
+    // Perform integration for current parameter values
+
+    double int_dens=trunc_log(integrate_integral_likelihood(sigma,SSD_I_R(i),DEL,DEL_s,stop_param,
+                                                            b_r_I_R(i),nu_r_I_R(i),nu_r_s_I_R(i),
+                                                            b_l_I_R(i),nu_l_p_I_R(i),nu_l_s_I_R(i),
+                                                            lower_bound_I_R(i),upper_bound,lt));
+    // cout<<"int_dens2: "<<int_dens<<endl;
+
+    Stim_R[i] =mlpack::LogAdd(prob_param(0),(prob_param(1)+int_dens));
+
+    Stim_R_int_dens[i]=int_dens;
+
+  }
+
+
+
+  field<vec> result(4);
+
+  result(0)=Stim_L;
+  result(1)=Stim_R;
+  result(2)=Stim_L_int_dens;
+  result(3)=Stim_R_int_dens;
+
+  return result;
+
+}
+
+
+
+
 ////////////////////////////////////////////////////////////////////////////////////gama/////////////////////////////////////////////////////////////////////////
 
 
@@ -6721,11 +6828,14 @@ vec grad_prob_param(const vec &tau_s,const double sigma,
   double w_00=prob_param(1);
   double w_10=prob_param(2);
 
-  vec V_I_L=(w_00+Int_dens(0));
-  vec V_I_R=(w_00+Int_dens(1));
+  vec V_I_L=(w_00+Int_dens(2));
+  vec V_I_R=(w_00+Int_dens(3));
 
+  
   vec V_L=compute_log_add2(w_01,V_I_L);
   vec V_R=compute_log_add2(w_01,V_I_R);
+
+ 
 
   double u=mlpack::LogAdd(w_00,w_10);
 
@@ -6771,9 +6881,6 @@ vec grad_prob_param(const vec &tau_s,const double sigma,
   if(V_I_R.n_elem){
     grad_w_00+=exp(mlpack::AccuLog((V_I_R-V_R)));
   }
-
-
-
 
 
 
@@ -8635,7 +8742,6 @@ double DEL   = (SSD_min + DEL_s) * EXPITE(delta1_clamped);
     tau_s.elem(idx_tau_stop_pos) = tau_stop.elem(idx_tau_stop_pos) - DEL_s;
 
 
-
     vec lower_bound=lower_bound_init+DEL_s;
 
     double deriv_delta=(SSD_min+DEL_s)*EXPITE_sq(delta_param(1));
@@ -8652,7 +8758,7 @@ double DEL   = (SSD_min + DEL_s) * EXPITE(delta1_clamped);
 
 
 
-
+    
     vec weight_LCR_G_FS=weight(sigma,g(tau_prime, Ind_L, Ind_S_LCR ),h(nu_r_p, Ind_S_LCR ),g(b_r, Ind_L, Ind_S_LCR ));
 
     vec weight_LIR_G_FS=weight(sigma,g(tau_prime, Ind_L, Ind_S_LIR ),g(nu_l, Ind_L, Ind_S_LIR ),g(b_l, Ind_L, Ind_S_LIR ));
@@ -8660,7 +8766,6 @@ double DEL   = (SSD_min + DEL_s) * EXPITE(delta1_clamped);
     vec weight_RCR_G_FS=weight(sigma,g(tau_prime, Ind_R, Ind_S_RCR ),h(nu_l_p, Ind_S_RCR ),g(b_l, Ind_R, Ind_S_RCR ));
 
     vec weight_RIR_G_FS=weight(sigma,g(tau_prime, Ind_R, Ind_S_RIR ),g(nu_r, Ind_R, Ind_S_RIR ),g(b_r, Ind_R, Ind_S_RIR ));
-
 
 
 
@@ -8681,7 +8786,6 @@ double DEL   = (SSD_min + DEL_s) * EXPITE(delta1_clamped);
                               g(nu_r_s,Ind_R, Ind_S_RIR ),DEL,DEL_s,lt);
 
 
-
     vec weight_FS_LCR=weight_stop(g(tau_s, Ind_L, Ind_S_LCR ), sigma,stop_param);
 
     vec weight_FS_LIR=weight_stop(g(tau_s, Ind_L, Ind_S_LIR ), sigma,stop_param);
@@ -8690,7 +8794,7 @@ double DEL   = (SSD_min + DEL_s) * EXPITE(delta1_clamped);
 
     vec weight_FS_RIR=weight_stop(g(tau_s, Ind_R, Ind_S_RIR ), sigma,stop_param);
 
-
+    
 
     field<vec> likelihood_integral=integral_likelihood(sigma,SSD,DEL,DEL_s,
                                                        stop_param,penal_param,prob_param,
@@ -8699,8 +8803,6 @@ double DEL   = (SSD_min + DEL_s) * EXPITE(delta1_clamped);
                                                        nu_r,nu_l_p,
                                                        Ind_L,Ind_R,Ind_I_L,Ind_I_R,
                                                        lower_bound,upper_bound,lt);
-
-
 
 
     field<vec> delta_prime_Stim=    integrate_delta_prime(likelihood_integral,sigma,
@@ -8730,7 +8832,6 @@ double DEL   = (SSD_min + DEL_s) * EXPITE(delta1_clamped);
                                    Ind_L,Ind_R,Ind_LCR, Ind_LIR,Ind_RCR,Ind_RIR,
                                    Ind_S_LCR,Ind_S_LIR,Ind_S_RCR,Ind_S_RIR,
                                    stop_param,prob_param,DEL,DEL_s,lt);
-
 
 
 
@@ -8954,7 +9055,6 @@ void update_delta_param(const field <vec> &tau,const field <vec> &tau_stop,
 
 
 
-
     //delta_prime update steps
 
 
@@ -8979,7 +9079,6 @@ void update_delta_param(const field <vec> &tau,const field <vec> &tau_stop,
     // Rcpp::Rcout<<"U_old"<<U_old<<endl;
 
     double H_old = U_old+ (dot(p,p)/2);
-
 
 
     vec v_old =-    grad_delta(tau_prime,tau_s,sigma,SSD(i),DEL,DEL_s,
@@ -9014,8 +9113,7 @@ void update_delta_param(const field <vec> &tau,const field <vec> &tau_stop,
     // int pois_draw=(unsigned) R::rpois(L);
     // int nstep =  GSL_MAX_INT(1, pois_draw);
     // nstep=GSL_MIN_INT(nstep,leapmax);
-    //
-
+    
     int nstep=std::clamp((int) R::rpois(L),1,leapmax);
 
     leap_frog_delta_param(tau(i),tau_stop(i),sigma,SSD(i),SSD_min,U(i),
@@ -9158,10 +9256,6 @@ void leap_frog_stop_prob_param(const vec &tau, const vec &tau_s, const double si
     prob_param += delta * (p_prob - (delta / 2) * v_old_prob);
 
 
-
-
-
-
     double sum_Prob = mlpack::AccuLog(prob_param);
 
 
@@ -9196,7 +9290,7 @@ void leap_frog_stop_prob_param(const vec &tau, const vec &tau_s, const double si
 
 
 
-    field<vec> likelihood_integral =integral_likelihood(sigma,SSD,DEL,DEL_s,
+    field<vec> likelihood_integral =integral_likelihood2(sigma,SSD,DEL,DEL_s,
                                                         stop_param,penal_param,prob_param,
                                                         b_l,nu_l,nu_l_s,
                                                         b_r,nu_r_p,nu_r_s,
@@ -9262,8 +9356,8 @@ void leap_frog_stop_prob_param(const vec &tau, const vec &tau_s, const double si
     vec v_new_prob= -grad_prob_param(tau_s,sigma,likelihood_integral,
                                      stop_param,prob_param,sum_Prob,prob_hyp,
                                      T_Go,k,T_Total,
-                                     diff_X_LCR,diff_Y_LCR,diff_X_LIR,diff_Y_LIR,
-                                     diff_X_RCR,diff_Y_RCR,diff_X_RIR,diff_Y_RIR);
+                                     log(diff_X_LCR),log(diff_Y_LCR),log(diff_X_LIR),log(diff_Y_LIR),
+                                     log(diff_X_RCR),log(diff_Y_RCR),log(diff_X_RIR),log(diff_Y_RIR));
 
 
     p_stop -= (delta / 2) * (v_old_stop + v_new_stop);
@@ -9351,7 +9445,7 @@ void update_stop_prob_param(const field<vec> &tau, const field<vec> &tau_s, cons
 
 
 
-    field<vec> likelihood_integral =  integral_likelihood(sigma,SSD(i),DEL(i),DEL_s(i),
+    field<vec> likelihood_integral =  integral_likelihood2(sigma,SSD(i),DEL(i),DEL_s(i),
                                                           stop_param.col(i),penal_param.col(i),prob_param.col(i),
                                                           b_l(i),nu_l(i),nu_l_s_i,
                                                           b_r(i),nu_r_p(i),nu_r_s_i,
@@ -9470,8 +9564,8 @@ void update_stop_prob_param(const field<vec> &tau, const field<vec> &tau_s, cons
                                     stop_param.col(i),prob_param.col(i),sum_prob,
                                     prob_hyp,
                                     T_Go(i),k(i),T_Total(i),
-                                    diff_X_LCR,diff_Y_LCR,diff_X_LIR,diff_Y_LIR,
-                                    diff_X_RCR,diff_Y_RCR,diff_X_RIR,diff_Y_RIR);
+                                    log(diff_X_LCR),log(diff_Y_LCR),log(diff_X_LIR),log(diff_Y_LIR),
+                                    log(diff_X_RCR),log(diff_Y_RCR),log(diff_X_RIR),log(diff_Y_RIR));
 
 
     vec stop_param_new=stop_param.col(i);
@@ -9515,7 +9609,7 @@ void update_stop_prob_param(const field<vec> &tau, const field<vec> &tau_s, cons
     vec nu_r_s_i_new = nu_r(i) - penalty_fun_s(stop_param_new(1), penal_param.col(i));
 
 
-    field<vec> likelihood_integral_new = integral_likelihood(sigma,SSD(i),DEL(i),DEL_s(i),stop_param_new,
+    field<vec> likelihood_integral_new = integral_likelihood2(sigma,SSD(i),DEL(i),DEL_s(i),stop_param_new,
                                                              penal_param.col(i),prob_param_new,
                                                              b_l(i),nu_l(i),nu_l_s_i_new,
                                                              b_r(i),nu_r_p(i),nu_r_s_i_new,
