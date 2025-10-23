@@ -5996,9 +5996,6 @@ inline vec deriv_log_dens_delta_prime(const vec &tau,const double sigma,const ve
 
 
 
-
-
-
 // derivative of exponent w.r.t. delta
 
 
@@ -6035,11 +6032,11 @@ vec deriv_exp_delta_prime2(const double sigma,const vec &tau,
 
 
 
-inline vec deriv_nu_diff_delta_prime(double sigma,const vec &tau,const vec &nu1,const vec &SSD_diff){
+//inline vec deriv_nu_diff_delta_prime(double sigma,const vec &tau,const vec &nu1,const vec &SSD_diff){
 
-  return (((sqrt(tau)%exp(nu1))+ ((sigma*SSD_diff)/4))/tau);
+  //return (((sqrt(tau)%exp(nu1))+ ((sigma*SSD_diff)/4))/tau);
 
-}
+//}
 
 
 inline vec deriv_nu_diff_delta_prime(const vec &tau,const vec &SSD,const vec &nu1,const vec &nu2,const double DEL, const double DEL_s){
@@ -6101,7 +6098,9 @@ mat deriv_log_dens_delta_fs(const double sigma,const vec &tau,const vec &tau_s,
 
 
 
-// Cube consisting of derivative of log dense w.r.t. delta_prime for Correct and Incorrect responses (Go Trial)
+// Cube consisting of derivative of log dense w.r.t. delta_prime for Correct and Incorrect responses (Go Trial) 
+
+//whether its delta or delta_s that depends on the deriv term. 
 
 mat grad_vec(const vec &tau,const double sigma,const vec &nu_CR,const vec &nu_IR,
                  const vec &b_CR,const vec &b_IR,const double deriv_delta){
@@ -6123,10 +6122,14 @@ mat grad_vec(const vec &tau,const double sigma,const vec &nu_CR,const vec &nu_IR
 
 
 
+
+
 // Cube consisting of derivative of log dense w.r.t. delta_prime for Correct and Incorrect responses (Go Trial- Stop Process)
 
-mat grad_vec_delta(const double sigma,const vec &tau,const vec &tau_s,const vec &SSD,const vec &b_CR,const vec &nu1_CR,const vec &nu2_CR,
-               const vec &b_IR,const vec &nu1_IR,const vec &nu2_IR,const double deriv_delta,const double DEL,const double DEL_s,const bool lt=1){
+mat grad_vec_delta(const double sigma,const vec &tau,const vec &tau_s,const vec &SSD,
+                   const vec &b_CR,const vec &nu1_CR,const vec &nu2_CR,
+                   const vec &b_IR,const vec &nu1_IR,const vec &nu2_IR,const double deriv_delta,
+                   const double DEL,const double DEL_s,const bool lt=1){
 
   //Rcpp::Rcout<<"AAQ"<< endl;
 
@@ -6139,6 +6142,8 @@ mat grad_vec_delta(const double sigma,const vec &tau,const vec &tau_s,const vec 
   return result;
 
 }
+
+
 
 
 
@@ -6162,7 +6167,7 @@ vec deriv_log_dens_stop_delta_prime_s(const vec &tau_s, const double sigma, cons
     vec tau_sq = square(tau_valid);
 
     vec partial_C = ((3 / 2) * (1 / tau_valid) -
-      (exp(b_stop) / (2 * sigma * tau_sq)) +
+      (exp(2*b_stop) / (2 * sigma * tau_sq)) +
       (exp(2 * nu_stop) / (2 * sigma))) * deriv_delta;
 
     C.elem(valid_idx) = partial_C;
@@ -6233,6 +6238,7 @@ mat grad_vec_delta_s(const double sigma,const vec &tau,const vec &tau_s,const ve
 
 
 
+
 // Gradient function for delta_prime
 
 vec grad_delta(const vec &tau,const vec &tau_s,const double sigma,const vec &SSD,const double DEL,const double DEL_s,
@@ -6264,8 +6270,7 @@ vec grad_delta(const vec &tau,const vec &tau_s,const double sigma,const vec &SSD
 
 
   mat grad_L_delta_prime_s = grad_vec(tau(Ind_L),sigma,nu_l(Ind_L),nu_r_p,b_l(Ind_L),b_r(Ind_L),deriv_delta_s);
-  mat grad_R_delta_prime_s = grad_vec(tau(Ind_R),sigma,nu_r(Ind_R),nu_l_p, b_r(Ind_R),b_l(Ind_R),deriv_delta_s);
-
+  mat grad_R_delta_prime_s = grad_vec(tau(Ind_R),sigma,nu_r(Ind_R),nu_l_p,b_r(Ind_R),b_l(Ind_R),deriv_delta_s);
 
 
 
@@ -6277,11 +6282,12 @@ vec grad_delta(const vec &tau,const vec &tau_s,const double sigma,const vec &SSD
 
 
 
-  mat grad_LS_delta_prime_s=grad_vec_delta_s(sigma,tau(Ind_L),tau_s(Ind_L),SSD(Ind_L),b_l(Ind_L),nu_l(Ind_L),nu_l_s(Ind_L),
-                                       b_r(Ind_L),nu_r_p,nu_r_s(Ind_L),deriv_delta_s,DEL,DEL_s,lt);
+  mat grad_LS_delta_prime_s = grad_vec_delta_s(sigma,tau(Ind_L),tau_s(Ind_L),SSD(Ind_L),b_l(Ind_L),nu_l(Ind_L),nu_l_s(Ind_L),
+                                               b_r(Ind_L),nu_r_p,nu_r_s(Ind_L),deriv_delta_s,DEL,DEL_s,lt);
 
-  mat grad_RS_delta_prime_s=grad_vec_delta_s(sigma,tau(Ind_R),tau_s(Ind_R),SSD(Ind_R),b_r(Ind_R),nu_r(Ind_R),nu_r_s(Ind_R),
-                                       b_l(Ind_R),nu_l_p,nu_l_s(Ind_R),deriv_delta_s,DEL,DEL_s,lt);
+  mat grad_RS_delta_prime_s = grad_vec_delta_s(sigma,tau(Ind_R),tau_s(Ind_R),SSD(Ind_R),b_r(Ind_R),nu_r(Ind_R),nu_r_s(Ind_R),
+                                               b_l(Ind_R),nu_l_p,nu_l_s(Ind_R),deriv_delta_s,DEL,DEL_s,lt);
+
 
 
   vec LCR_S_delta_prime_s = grad_LS_delta_prime_s.col(0);
@@ -6289,8 +6295,6 @@ vec grad_delta(const vec &tau,const vec &tau_s,const double sigma,const vec &SSD
 
   vec RCR_S_delta_prime_s = grad_RS_delta_prime_s.col(0);
   vec RIR_S_delta_prime_s = grad_RS_delta_prime_s.col(1);
-
-
 
 
 
@@ -6304,8 +6308,6 @@ vec grad_delta(const vec &tau,const vec &tau_s,const double sigma,const vec &SSD
 
 
 
-
-
   vec deriv_d_s_LCR=deriv_log_dens_stop_delta_prime_s(g(tau_s, Ind_L, Ind_S_LCR ),sigma,stop_param(0),stop_param(1),deriv_delta_s_stop);
 
   vec deriv_d_s_LIR=deriv_log_dens_stop_delta_prime_s(g(tau_s, Ind_L, Ind_S_LIR ),sigma,stop_param(0),stop_param(1),deriv_delta_s_stop);
@@ -6313,9 +6315,6 @@ vec grad_delta(const vec &tau,const vec &tau_s,const double sigma,const vec &SSD
   vec deriv_d_s_RCR=deriv_log_dens_stop_delta_prime_s(g(tau_s, Ind_R, Ind_S_RCR ),sigma,stop_param(0),stop_param(1),deriv_delta_s_stop);
 
   vec deriv_d_s_RIR=deriv_log_dens_stop_delta_prime_s(g(tau_s, Ind_R, Ind_S_RIR ),sigma,stop_param(0),stop_param(1),deriv_delta_s_stop);
-
-
-
 
 
 
@@ -8699,7 +8698,6 @@ double DEL   = (SSD_min + DEL_s) * EXPITE(delta1_clamped);
 
 
 
-
     field<vec> likelihood_integral=integral_likelihood(sigma,SSD,DEL,DEL_s,
                                                        stop_param,penal_param,prob_param,
                                                        b_l,nu_l,nu_l_s,
@@ -8727,9 +8725,6 @@ double DEL   = (SSD_min + DEL_s) * EXPITE(delta1_clamped);
                                                         deriv_delta_s,deriv_delta_s_stop,
                                                         Ind_L,Ind_R,Ind_I_L,Ind_I_R,
                                                         lower_bound,upper_bound,lt);
-
-
-
 
 
 
@@ -8894,20 +8889,16 @@ void update_delta_param(const field <vec> &tau,const field <vec> &tau_stop,
                               g(b_r(i), Ind_R(i), Ind_S_RIR(i) ),g(nu_r(i), Ind_R(i), Ind_S_RIR(i) ),
                               g(nu_r_s(i),Ind_R(i), Ind_S_RIR(i) ),DEL,DEL_s,lt);
 
+      
 
+    vec weight_FS_LCR=weight_stop(g(tau_s, Ind_L(i), Ind_S_LCR(i) ), sigma,stop_param.col(i));
     vec weight_FS_LIR=weight_stop(g(tau_s, Ind_L(i), Ind_S_LIR(i) ), sigma,stop_param.col(i));
-
-
-
     vec weight_FS_RCR=weight_stop(g(tau_s, Ind_R(i), Ind_S_RCR(i) ), sigma,stop_param.col(i));
-
-
     vec weight_FS_RIR=weight_stop(g(tau_s, Ind_R(i), Ind_S_RIR(i) ), sigma,stop_param.col(i));
 
 
 
-    vec weight_FS_LCR=weight_stop(g(tau_s, Ind_L(i), Ind_S_LCR(i) ), sigma,stop_param.col(i));
-
+    
 
     field<vec> likelihood_integral=integral_likelihood(sigma,SSD(i),DEL,DEL_s,
                                                        stop_param.col(i),penal_param.col(i),prob_param.col(i),
