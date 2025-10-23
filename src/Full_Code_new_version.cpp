@@ -3555,9 +3555,6 @@ field<vec> integrate_delta_prime(const field<vec> &integral_likelihood,const dou
 
 //////////////////////////////////////////////////////////////////////////////////////// delta_prime_s /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-
 // Derivative of log dense stop w.r.t. delta_prime_s
 
 vec deriv_log_dens_stop_delta_prime_s_I(const vec &u,
@@ -3657,7 +3654,6 @@ vec IntegrandFunc_delta_prime_s(const vec &u,double sigma,double SSD,double DEL,
   vec A=exp(dens+surv_CR+surv_IR);
 
   vec deriv_delta_prime_s_stop=deriv_log_dens_stop_delta_prime_s_I(u,sigma,SSD,DEL_s,b_stop,nu_stop,deriv_delta_s_stop);
-
 
   vec dens_s_CR=log_dens_s_I(sigma,u,SSD,DEL,DEL_s,b_CR,nu1_CR,nu2_CR,lt);
 
