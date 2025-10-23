@@ -6377,14 +6377,12 @@ vec grad_delta(const vec &tau,const vec &tau_s,const double sigma,const vec &SSD
 
 
 
-
   mat grad_LS_delta_prime=grad_vec_delta(sigma,tau(Ind_L),tau_s(Ind_L),SSD(Ind_L),b_l(Ind_L),nu_l(Ind_L),nu_l_s(Ind_L),
                                      b_r(Ind_L),nu_r_p,nu_r_s(Ind_L),deriv_delta,DEL,DEL_s,lt);
 
   mat grad_RS_delta_prime=grad_vec_delta(sigma,tau(Ind_R),tau_s(Ind_R),SSD(Ind_R),b_r(Ind_R),nu_r(Ind_R),nu_r_s(Ind_R),
                                      b_l(Ind_R),nu_l_p,nu_l_s(Ind_R),deriv_delta,DEL,DEL_s,lt);
-
-
+           
 
   vec LCR_S_delta_prime = grad_LS_delta_prime.col(0);
   vec LIR_S_delta_prime = grad_LS_delta_prime.col(1);
@@ -9004,6 +9002,7 @@ void update_delta_param(const field <vec> &tau,const field <vec> &tau_stop,
 
                                Ind_L(i),Ind_R(i),Ind_LCR(i),Ind_LIR(i),Ind_RCR(i),Ind_RIR(i),
                                Ind_S_LCR(i),Ind_S_LIR(i),Ind_S_RCR(i),Ind_S_RIR(i),lt);
+
 
 
     // Rcpp::Rcout<<"v_old"<<v_old<<endl;
