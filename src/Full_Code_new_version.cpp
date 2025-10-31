@@ -54,20 +54,20 @@ vec compute_log_add2(const double X, vec Y) {
 
 
 inline double EXPITE(double x) {
-   if (x >= 0.0) {
-        double z = std::exp(-x);
-        return 1.0 / (1.0 + z);   // case x >= 0
-    } else {
-        double z = std::exp(x);
-        return z / (1.0 + z);     // case x < 0
-    }
+  if (x >= 0.0) {
+    double z = std::exp(-x);
+    return 1.0 / (1.0 + z);   // case x >= 0
+  } else {
+    double z = std::exp(x);
+    return z / (1.0 + z);     // case x < 0
+  }
 }
 
 
 
 inline double EXPITE_sq(double x) {
   double s = EXPITE(x);
-    return s * (1.0 - s);   // numerically stable derivative
+  return s * (1.0 - s);   // numerically stable derivative
 }
 
 
@@ -80,10 +80,10 @@ vec log_dens(const double sigma,const vec &tau, const vec &b, const vec &nu){
 
 
   vec result =(b -  ((log(2 * datum::pi*sigma))/2)
-                - ((3 * log(tau)) / 2) - ((exp(2 * b)) / (2 * sigma*tau)) +
-                  (((exp(nu+b)))/(sigma))-(((exp(2*nu))%tau)/(2*sigma)));
+                 - ((3 * log(tau)) / 2) - ((exp(2 * b)) / (2 * sigma*tau)) +
+                   (((exp(nu+b)))/(sigma))-(((exp(2*nu))%tau)/(2*sigma)));
 
-  
+
   // Rcpp::Rcout<<"result"<<result<<endl;
 
   if(!result.is_finite()){
@@ -101,32 +101,32 @@ vec log_dens(const double sigma,const vec &tau, const vec &b, const vec &nu){
 }
 
 // vec log_dens(const double sigma,const vec &tau, const vec &b, const vec &nu){
-//   
+//
 //   // Rcpp::Rcout<<"A"<< endl;
-//   
+//
 //   vec result(tau.n_elem);
 //   result.fill(trunc_log(0.0));  // if trunc_log(0.0) = -1e10 or similar
-//   
+//
 //   // Logical index for tau_s > 0
 //   uvec valid_idx = find(tau > 0);
-//   
-//   
+//
+//
 //   if (!valid_idx.is_empty()) {
 //     vec tau_valid = tau.elem(valid_idx);
-//     
+//
 //     vec b_valid = b.elem(valid_idx);
-//     
+//
 //     vec nu_valid = nu.elem(valid_idx);
-//     
+//
 //     vec partial_result =(b_valid -  ((log(2 * datum::pi*sigma))/2)
 //                            - ((3 * log(tau_valid)) / 2) - ((exp(2 * b_valid)) / (2 * sigma*tau_valid)) +
 //                              (((exp(nu_valid+b_valid)))/(sigma))-(((exp(2*nu_valid))%tau_valid)/(2*sigma)));
-//     
+//
 //     result.elem(valid_idx) = partial_result;
 //   }
-//   
+//
 //   // Rcpp::Rcout<<"result"<<result<<endl;
-//   
+//
 //   if(!result.is_finite()){
 //     cout << " tau:" << tau.t() << std::endl;
 //     (result.t()).print("result_log_dens: ");
@@ -135,10 +135,10 @@ vec log_dens(const double sigma,const vec &tau, const vec &b, const vec &nu){
 //     cout << " nu:" <<   nu.t()<< std::endl;
 //     Rcpp::stop("Error in log-density:");
 //   }
-//   
+//
 //   return  result;
-//   
-//   
+//
+//
 // }
 
 // Exponent1 function
@@ -197,7 +197,7 @@ vec phi_rat(const vec q2,const bool lt = 1){
 
 inline vec SSD_Dif(const double sigma,const vec &tau,const vec &SSD,const vec &nu1,const vec &nu2,const double DEL,const double DEL_s){
 
-   return ((2*(SSD+DEL_s-DEL)%(exp(nu2)-exp(nu1)))/(sqrt(sigma*tau)));
+  return ((2*(SSD+DEL_s-DEL)%(exp(nu2)-exp(nu1)))/(sqrt(sigma*tau)));
 
   // return (((SSD+DEL_s-DEL)%(exp(nu2)-exp(nu1)))/(sqrt(sigma*tau)));
 
@@ -266,7 +266,7 @@ vec log_dens_s(const double sigma, const vec &tau, const vec &tau_s, const vec &
     // Print all input parameters again
     cout << "--- Input Parameters ---\n";
     cout << "sigma: " << sigma << "\n";
-    
+
     cout << "tau: " << tau.t();
     cout << "tau_s: " << tau_s.t();
     cout << "SSD: " << SSD.t();
@@ -355,9 +355,9 @@ vec log_survival(const double sigma, const vec &tau, const vec &b, const vec &nu
   vec val = -exp(y3 - y1);
 
   val.clamp(-0.999,datum::inf);
-  
+
   vec result = y1 + log1p(val);
-  
+
 
   if(any(val<-1)){
     (val.t()).print("val_log_survival: ");
@@ -683,7 +683,7 @@ double log_lhood(const double Inhib_likelihood,
     cout << "lk_RIR_FS:" << sum(lk_RIR_FS) << std::endl;
     cout << "W:" << W << std::endl;
 
-  Rcpp::stop("Error in log-likelihood:");
+    Rcpp::stop("Error in log-likelihood:");
   }
 
 
@@ -760,7 +760,7 @@ double mvn_prior2(const double alpha_gama_l,const double alpha_gama_r,
 
 
   double result=-((m*alpha_gama_l)/2)-(accu(S_gama_l)/2)-(D_gl/2)
-                -((m*alpha_gama_r)/2)-(accu(S_gama_r)/2)-(D_gr/2);
+    -((m*alpha_gama_r)/2)-(accu(S_gama_r)/2)-(D_gr/2);
 
   return result;
 
@@ -1386,6 +1386,20 @@ field<vec> update_lk_FS4(const vec &tau,const vec &tau_s,
   vec diff_Y_RIR=exp(Y_RIR- lk_RIR_FS);
 
 
+  // vec diff_X_LCR2 = X_LCR- lk_LCR_FS;
+  // vec diff_Y_LCR2 = Y_LCR- lk_LCR_FS;
+  //
+  // vec diff_X_LIR2 = X_LIR- lk_LIR_FS;
+  // vec diff_Y_LIR2 = Y_LIR- lk_LIR_FS;
+  //
+  // vec diff_X_RCR2 = X_RCR- lk_RCR_FS;
+  // vec diff_Y_RCR2 = Y_RCR- lk_RCR_FS;
+  //
+  // vec diff_X_RIR2 = X_RIR- lk_RIR_FS;
+  // vec diff_Y_RIR2 =  Y_RIR- lk_RIR_FS;
+
+
+
 
   field<vec> result(12);
 
@@ -1406,6 +1420,18 @@ field<vec> update_lk_FS4(const vec &tau,const vec &tau_s,
 
   result(10)=diff_X_RIR;
   result(11)=diff_Y_RIR;
+
+  // result(12)=diff_X_LCR2;
+  // result(13)=diff_Y_LCR2;
+  //
+  // result(14)=diff_X_LIR2;
+  // result(15)=diff_Y_LIR2;
+  //
+  // result(16)=diff_X_RCR2;
+  // result(17)=diff_Y_RCR2;
+  //
+  // result(18)=diff_X_RIR2;
+  // result(19)=diff_Y_RIR2;
 
 
   return result;
@@ -1934,17 +1960,17 @@ field <field<vec>>  update_beta_param_ess5(const field <mat> &t,const mat &beta)
 
 inline vec expit(vec x) {
   arma::vec out(x.n_elem);
-    for (arma::uword i = 0; i < x.n_elem; ++i) {
-        double v = x(i);
-        if (v >= 0.0) {
-            double z = std::exp(-v);
-            out(i) = 1.0 / (1.0 + z);
-        } else {
-            double z = std::exp(v);
-            out(i) = z / (1.0 + z);
-        }
+  for (arma::uword i = 0; i < x.n_elem; ++i) {
+    double v = x(i);
+    if (v >= 0.0) {
+      double z = std::exp(-v);
+      out(i) = 1.0 / (1.0 + z);
+    } else {
+      double z = std::exp(v);
+      out(i) = z / (1.0 + z);
     }
-    return out;
+  }
+  return out;
 }
 
 
@@ -1985,31 +2011,31 @@ field <field<vec>> update_delta_prime_param_ess(const field<vec> &tau,const fiel
     tau_prime(i).elem(idx_tau_pos) = tau(i).elem(idx_tau_pos) - DEL(i);
 
 
-// ===== Check tau_prime =====
-const vec  &tp = tau_prime(i);
-const vec  &t  = tau(i);
+    // ===== Check tau_prime =====
+    const vec  &tp = tau_prime(i);
+    const vec  &t  = tau(i);
 
-uvec bad_neg_p = find(tp < 0);
-uvec bad_nf_p  = find_nonfinite(tp);
-uvec bad_idx_p = unique(join_cols(bad_neg_p, bad_nf_p));
+    uvec bad_neg_p = find(tp < 0);
+    uvec bad_nf_p  = find_nonfinite(tp);
+    uvec bad_idx_p = unique(join_cols(bad_neg_p, bad_nf_p));
 
-if (!bad_idx_p.is_empty()) {
-  Rcpp::Rcout << "WARNING: Invalid tau_prime at i=" << i 
-              << " (DEL=" << DEL(i) << ")\n";
-  for (uword k = 0; k < bad_idx_p.n_elem; ++k) {
-    uword j = bad_idx_p(k);
-    Rcpp::Rcout << "  j=" << j
-                << "  tau_prime=" << tp(j)   // bad value
-                << "  tau=" << t(j)          // original tau
-                << "  DEL=" << DEL(i)        // scalar used
-                << "\n";
+    if (!bad_idx_p.is_empty()) {
+      Rcpp::Rcout << "WARNING: Invalid tau_prime at i=" << i
+                  << " (DEL=" << DEL(i) << ")\n";
+      for (uword k = 0; k < bad_idx_p.n_elem; ++k) {
+        uword j = bad_idx_p(k);
+        Rcpp::Rcout << "  j=" << j
+                    << "  tau_prime=" << tp(j)   // bad value
+                    << "  tau=" << t(j)          // original tau
+                    << "  DEL=" << DEL(i)        // scalar used
+                    << "\n";
+      }
+    }
+
   }
-}
-
-  }
 
 
-   
+
 
 
   field<field<vec>> result(3);
@@ -2212,7 +2238,7 @@ vec log_density_I(const double sigma, const vec &u, const double b,const vec &m)
   vec x = exponent_1_I(sigma,u,m,b);
 
   vec result = b-(log(sigma)/2)- ((3 * log(u)) / 2)+
-               log_normpdf(x);
+    log_normpdf(x);
 
 
   return  result;
@@ -2488,13 +2514,13 @@ field<vec> integral_likelihood(const double sigma,
 // Saving the Integral of likelihood
 
 field<vec> integral_likelihood2(const double sigma,
-                               const vec &SSD,const double DEL,const double DEL_s,
-                               const vec &stop_param,const vec &penal_param,const vec &prob_param,
-                               const vec &b_l,const vec &nu_l,const vec &nu_l_s,
-                               const vec &b_r,const vec &nu_r_p,const vec &nu_r_s,
-                               const vec &nu_r,const vec &nu_l_p,
-                               const uvec &Ind_L,const uvec &Ind_R,const uvec &Ind_I_L,const uvec &Ind_I_R,
-                               const vec &lower_bound,const double upper_bound,const bool lt = true) {
+                                const vec &SSD,const double DEL,const double DEL_s,
+                                const vec &stop_param,const vec &penal_param,const vec &prob_param,
+                                const vec &b_l,const vec &nu_l,const vec &nu_l_s,
+                                const vec &b_r,const vec &nu_r_p,const vec &nu_r_s,
+                                const vec &nu_r,const vec &nu_l_p,
+                                const uvec &Ind_L,const uvec &Ind_R,const uvec &Ind_I_L,const uvec &Ind_I_R,
+                                const vec &lower_bound,const double upper_bound,const bool lt = true) {
 
 
   // Rcpp::Rcout<<"Y"<< endl;
@@ -3704,10 +3730,10 @@ vec deriv_log_dens_stop_delta_prime_s_I(const vec &u,
 // Derivative of log dense w.r.t. delta (Go Proces-Failed Stop Trial)
 
 vec deriv_log_dens_delta_prime_s_I(const double sigma,const vec &u,
-                                 const double SSD,const double DEL,const double DEL_s,
-                                 const double b,const double nu1,const double nu2,
-                                 const double deriv_delta_s,
-                                 const bool lt=1){
+                                   const double SSD,const double DEL,const double DEL_s,
+                                   const double b,const double nu1,const double nu2,
+                                   const double deriv_delta_s,
+                                   const bool lt=1){
 
   // Rcpp::Rcout<<"AW"<< endl;
 
@@ -4311,11 +4337,11 @@ mat integrate_penalty_Left_Stim(const field<vec> &integral_likelihood,const doub
 
 
     Penal.row(i) = integrate_integral_penal(sigma,SSD_I_L(i),DEL,DEL_s,
-                                            b_l_I_L(i),nu_l_I_L(i),nu_l_s_I_L(i),
-                                            b_r_I_L(i),nu_r_p_I_L(i),nu_r_s_I_L(i),
-                                            nu_l_I_L(i), nu_l_squared_I_L(i),
-                                            penal_param,stop_param,
-                                            lower_bound_I_L(i), upper_bound, lt);
+              b_l_I_L(i),nu_l_I_L(i),nu_l_s_I_L(i),
+              b_r_I_L(i),nu_r_p_I_L(i),nu_r_s_I_L(i),
+              nu_l_I_L(i), nu_l_squared_I_L(i),
+              penal_param,stop_param,
+              lower_bound_I_L(i), upper_bound, lt);
   }
 
 
@@ -4379,11 +4405,11 @@ mat integrate_penal_Right_Stim(const field<vec> &integral_likelihood,const doubl
   for (unsigned i = 0; i < SSD_I_R.n_rows; ++i) {
     // Perform integration for current parameter values
     Penal.row(i) =integrate_integral_penal(sigma,SSD_I_R(i),DEL, DEL_s,
-                                           b_r_I_R(i),nu_r_I_R(i),nu_r_s_I_R(i),
-                                           b_l_I_R(i),nu_l_p_I_R(i),nu_l_s_I_R(i),
-                                           nu_r_I_R(i), nu_r_squared_I_R(i),
-                                           penal_param,stop_param,
-                                           lower_bound_I_R(i), upper_bound, lt);
+              b_r_I_R(i),nu_r_I_R(i),nu_r_s_I_R(i),
+              b_l_I_R(i),nu_l_p_I_R(i),nu_l_s_I_R(i),
+              nu_r_I_R(i), nu_r_squared_I_R(i),
+              penal_param,stop_param,
+              lower_bound_I_R(i), upper_bound, lt);
 
   }
 
@@ -4413,7 +4439,7 @@ vec deriv_log_dens_b_stop_I(const vec u,double DEL_s,double SSD,double sigma,dou
 
   // Rcpp::Rcout<<"AAAK"<< endl;
 
-   vec u_s=u-SSD-DEL_s;
+  vec u_s=u-SSD-DEL_s;
 
 
   vec C= 1-(((exp(2*b_stop))-(exp(b_stop+nu_stop)*u_s))/(sigma*u_s));
@@ -4548,13 +4574,15 @@ field<vec> integrate_b_stop(const field<vec> &integral_likelihood,const double s
 
 
 
+
+
   // Initialize result vector
   vec Stim_R(b_r_I_R.size());
 
   // Loop over parameter vectors
   // #pragma omp parallel num_threads(2)
   for (unsigned i = 0; i < b_r_I_R.size(); ++i) {
-    // Perform integration for current parameter values
+
     Stim_R[i] =(integrate_integral_b_stop(sigma,SSD_I_R[i],DEL,DEL_s,stop_param,
                                           b_r_I_R[i],nu_r_I_R(i),nu_r_s_I_R(i),
                                           b_l_I_R(i),nu_l_p_I_R(i),nu_l_s_I_R(i),
@@ -4833,6 +4861,7 @@ field<vec> integrate_nu_stop(const field<vec> &integral_likelihood,const double 
 
 
 
+
   // Initialize result vector
   vec Stim_R(b_r_I_R.size());
 
@@ -4928,11 +4957,12 @@ field<field<vec>> update_likelihood(const double sigma,
   for (unsigned i = 0; i < N; ++i) {
 
     Inhib_likelihood(i) = integral_likelihood(sigma,SSD(i),DEL(i),DEL_s(i),
-                     stop_param.col(i),penal_param.col(i),prob_param.col(i),
-                     b_l(i), nu_l(i), nu_l_s(i), b_r(i), nu_r_p(i), nu_r_s(i),
-                     nu_r(i), nu_l_p(i),
-                     Ind_L(i), Ind_R(i), Ind_I_L(i), Ind_I_R(i),
-                     lower_bound(i), upper_bound, lt);
+                                              stop_param.col(i),penal_param.col(i),prob_param.col(i),
+                                              b_l(i), nu_l(i), nu_l_s(i), b_r(i), nu_r_p(i), nu_r_s(i),
+                                              nu_r(i), nu_l_p(i),
+                                              Ind_L(i), Ind_R(i), Ind_I_L(i), Ind_I_R(i),
+
+                                              lower_bound(i), upper_bound, lt);
   }
   omp_set_num_threads(6);
 
@@ -5845,7 +5875,7 @@ inline vec deriv_nu_diff_penal_p(double sigma,const vec &SSD,const vec &nu1,cons
                                  const vec &beta_deriv_penalty,const double nu_stop_deriv_penalty,
                                  const double DEL, const double DEL_s){
 
-        return ((SSD+DEL_s-DEL)%((exp(nu1)%beta_deriv_penalty)-(exp(nu2)*nu_stop_deriv_penalty)));
+  return ((SSD+DEL_s-DEL)%((exp(nu1)%beta_deriv_penalty)-(exp(nu2)*nu_stop_deriv_penalty)));
 
 
 }
@@ -5983,23 +6013,23 @@ vec grad_penal_param(const vec &tau,const vec &tau_s, const double sigma,const v
 
 
   double grad_lambda = - accu(L_lambda(Ind_LCR) % weight_LCR)+ accu(L_lambda(Ind_LIR))+
-                         accu(R_lambda(Ind_RIR))- accu(R_lambda(Ind_RCR) % weight_RCR)-
-                         ((penal_param(0) - mu_lambda_prime) / sigma_lambda_prime)-
+    accu(R_lambda(Ind_RIR))- accu(R_lambda(Ind_RCR) % weight_RCR)-
+    ((penal_param(0) - mu_lambda_prime) / sigma_lambda_prime)-
 
-                         accu(L_lambda(Ind_S_LCR) % weight_LCR_G_FS % diff_X_LCR)+
-                         accu((L_lambda_S(Ind_S_LCR)) % diff_Y_LCR)-accu(L_lambda_P_S(Ind_S_LCR) % weight_LCR_S % diff_Y_LCR)+
+    accu(L_lambda(Ind_S_LCR) % weight_LCR_G_FS % diff_X_LCR)+
+    accu((L_lambda_S(Ind_S_LCR)) % diff_Y_LCR)-accu(L_lambda_P_S(Ind_S_LCR) % weight_LCR_S % diff_Y_LCR)+
 
-                         accu(L_lambda(Ind_S_LIR) % diff_X_LIR)+
-                         accu(L_lambda_P_S(Ind_S_LIR) % diff_Y_LIR)- accu(L_lambda_S(Ind_S_LIR) % weight_LIR_S % diff_Y_LIR)+
+    accu(L_lambda(Ind_S_LIR) % diff_X_LIR)+
+    accu(L_lambda_P_S(Ind_S_LIR) % diff_Y_LIR)- accu(L_lambda_S(Ind_S_LIR) % weight_LIR_S % diff_Y_LIR)+
 
 
-                         accu(R_lambda(Ind_S_RIR)%diff_X_RIR)+
-                         accu(R_lambda_P_S(Ind_S_RIR)%diff_Y_RIR)- accu(R_lambda_S(Ind_S_RIR) % weight_RIR_S % diff_Y_RIR)-
+    accu(R_lambda(Ind_S_RIR)%diff_X_RIR)+
+    accu(R_lambda_P_S(Ind_S_RIR)%diff_Y_RIR)- accu(R_lambda_S(Ind_S_RIR) % weight_RIR_S % diff_Y_RIR)-
 
-                         accu(R_lambda(Ind_S_RCR) % weight_RCR_G_FS %diff_X_RCR)+
-                         accu(R_lambda_S(Ind_S_RCR) % diff_Y_RCR)- accu(R_lambda_P_S(Ind_S_RCR) % weight_RCR_S % diff_Y_RCR)+
+    accu(R_lambda(Ind_S_RCR) % weight_RCR_G_FS %diff_X_RCR)+
+    accu(R_lambda_S(Ind_S_RCR) % diff_Y_RCR)- accu(R_lambda_P_S(Ind_S_RCR) % weight_RCR_S % diff_Y_RCR)+
 
-                         accu(lambda_LS)+ accu(lambda_RS);
+    accu(lambda_LS)+ accu(lambda_RS);
 
 
 
@@ -6052,22 +6082,22 @@ vec grad_penal_param(const vec &tau,const vec &tau_s, const double sigma,const v
 
 
   double grad_alpha = - accu(L_alpha(Ind_LCR) % weight_LCR)+ accu(L_alpha(Ind_LIR))
-                      + accu(R_alpha(Ind_RIR))- accu(R_alpha(Ind_RCR) % weight_RCR)
-                      - ((penal_param(1) - mu_alpha_prime) / sigma_alpha_prime)-
+    + accu(R_alpha(Ind_RIR))- accu(R_alpha(Ind_RCR) % weight_RCR)
+    - ((penal_param(1) - mu_alpha_prime) / sigma_alpha_prime)-
 
-                      accu(L_alpha(Ind_S_LCR) % weight_LCR_G_FS % diff_X_LCR)+
-                      accu(L_alpha_S(Ind_S_LCR) % diff_Y_LCR)- accu(L_alpha_P_S(Ind_S_LCR) % weight_LCR_S % diff_Y_LCR)+
+    accu(L_alpha(Ind_S_LCR) % weight_LCR_G_FS % diff_X_LCR)+
+    accu(L_alpha_S(Ind_S_LCR) % diff_Y_LCR)- accu(L_alpha_P_S(Ind_S_LCR) % weight_LCR_S % diff_Y_LCR)+
 
-                      accu(L_alpha(Ind_S_LIR) % diff_X_LIR)+
-                      accu(L_alpha_P_S(Ind_S_LIR) % diff_Y_LIR)- accu(L_alpha_S(Ind_S_LIR) % weight_LIR_S % diff_Y_LIR)+
+    accu(L_alpha(Ind_S_LIR) % diff_X_LIR)+
+    accu(L_alpha_P_S(Ind_S_LIR) % diff_Y_LIR)- accu(L_alpha_S(Ind_S_LIR) % weight_LIR_S % diff_Y_LIR)+
 
-                      accu(R_alpha(Ind_S_RIR) % diff_X_RIR)+
-                      accu(R_alpha_P_S(Ind_S_RIR) % diff_Y_RIR)- accu(R_alpha_S(Ind_S_RIR) % weight_RIR_S % diff_Y_RIR)-
+    accu(R_alpha(Ind_S_RIR) % diff_X_RIR)+
+    accu(R_alpha_P_S(Ind_S_RIR) % diff_Y_RIR)- accu(R_alpha_S(Ind_S_RIR) % weight_RIR_S % diff_Y_RIR)-
 
-                      accu(R_alpha(Ind_S_RCR) % weight_RCR_G_FS % diff_X_RCR )+
-                      accu(R_alpha_S(Ind_S_RCR) % diff_Y_RCR )- accu(R_alpha_P_S(Ind_S_RCR) % weight_RCR_S % diff_Y_RCR)+
+    accu(R_alpha(Ind_S_RCR) % weight_RCR_G_FS % diff_X_RCR )+
+    accu(R_alpha_S(Ind_S_RCR) % diff_Y_RCR )- accu(R_alpha_P_S(Ind_S_RCR) % weight_RCR_S % diff_Y_RCR)+
 
-                      accu(alpha_LS) + accu(alpha_RS);
+    accu(alpha_LS) + accu(alpha_RS);
 
 
 
@@ -6089,7 +6119,7 @@ inline vec deriv_log_dens_delta_prime(const vec &tau,const double sigma,const ve
 
   // Rcpp::Rcout<<"AAN"<< endl;
 
-   return (((3/2)*(1/tau)-((exp(2*b))/(2*sigma*pow(tau,2)))+((exp(2*nu))/(2*sigma)))*deriv_delta);
+  return (((3/2)*(1/tau)-((exp(2*b))/(2*sigma*pow(tau,2)))+((exp(2*nu))/(2*sigma)))*deriv_delta);
 
 
 
@@ -6137,7 +6167,7 @@ vec deriv_exp_delta_prime2(const double sigma,const vec &tau,
 
 //inline vec deriv_nu_diff_delta_prime(double sigma,const vec &tau,const vec &nu1,const vec &SSD_diff){
 
-  //return (((sqrt(tau)%exp(nu1))+ ((sigma*SSD_diff)/4))/tau);
+//return (((sqrt(tau)%exp(nu1))+ ((sigma*SSD_diff)/4))/tau);
 
 //}
 
@@ -6201,12 +6231,12 @@ mat deriv_log_dens_delta_fs(const double sigma,const vec &tau,const vec &tau_s,
 
 
 
-// Cube consisting of derivative of log dense w.r.t. delta_prime for Correct and Incorrect responses (Go Trial) 
+// Cube consisting of derivative of log dense w.r.t. delta_prime for Correct and Incorrect responses (Go Trial)
 
-//whether its delta or delta_s that depends on the deriv term. 
+//whether its delta or delta_s that depends on the deriv term.
 
 mat grad_vec(const vec &tau,const double sigma,const vec &nu_CR,const vec &nu_IR,
-                 const vec &b_CR,const vec &b_IR,const double deriv_delta){
+             const vec &b_CR,const vec &b_IR,const double deriv_delta){
 
   //Rcpp::Rcout<<"AAQ"<< endl;
 
@@ -6284,9 +6314,9 @@ vec deriv_log_dens_stop_delta_prime_s(const vec &tau_s, const double sigma, cons
 
 
 mat deriv_log_dens_delta_s_fs(const double sigma,const vec &tau,const vec &tau_s,
-                            const vec &SSD, const vec &b,const vec &nu1,const vec &nu2,const double deriv_delta_s,
-                            const double DEL, const double DEL_s,
-                            const bool lt=1){
+                              const vec &SSD, const vec &b,const vec &nu1,const vec &nu2,const double deriv_delta_s,
+                              const double DEL, const double DEL_s,
+                              const bool lt=1){
 
   // Rcpp::Rcout<<"AW"<< endl;
 
@@ -6324,8 +6354,8 @@ mat deriv_log_dens_delta_s_fs(const double sigma,const vec &tau,const vec &tau_s
 // Cube consisting of derivative of log dense w.r.t. delta_prime for Correct and Incorrect responses (Go Trial- Stop Process)
 
 mat grad_vec_delta_s(const double sigma,const vec &tau,const vec &tau_s,const vec &SSD,const vec &b_CR,const vec &nu1_CR,const vec &nu2_CR,
-                   const vec &b_IR,const vec &nu1_IR,const vec &nu2_IR,const double deriv_delta_s,const double DEL, const double DEL_s,
-                   const bool lt=1){
+                     const vec &b_IR,const vec &nu1_IR,const vec &nu2_IR,const double deriv_delta_s,const double DEL, const double DEL_s,
+                     const bool lt=1){
 
   //Rcpp::Rcout<<"AAQ"<< endl;
 
@@ -6430,35 +6460,35 @@ vec grad_delta(const vec &tau,const vec &tau_s,const double sigma,const vec &SSD
   vec FS_RIR= weight_FS_RIR %  diff_Y_RIR;
 
   double grad_delta_prime_s = accu(LCR_delta_prime_s.elem(Ind_LCR)) - accu(LIR_delta_prime_s.elem(Ind_LCR) % weight_LCR) +
-                              accu(LIR_delta_prime_s.elem(Ind_LIR)) - accu(LCR_delta_prime_s.elem(Ind_LIR) % weight_LIR) +
-                              accu(RIR_delta_prime_s.elem(Ind_RIR)) - accu(RCR_delta_prime_s.elem(Ind_RIR) % weight_RIR) +
-                              accu(RCR_delta_prime_s.elem(Ind_RCR)) - accu(RIR_delta_prime_s.elem(Ind_RCR) % weight_RCR) +
+    accu(LIR_delta_prime_s.elem(Ind_LIR)) - accu(LCR_delta_prime_s.elem(Ind_LIR) % weight_LIR) +
+    accu(RIR_delta_prime_s.elem(Ind_RIR)) - accu(RCR_delta_prime_s.elem(Ind_RIR) % weight_RIR) +
+    accu(RCR_delta_prime_s.elem(Ind_RCR)) - accu(RIR_delta_prime_s.elem(Ind_RCR) % weight_RCR) +
 
 
-                              accu(LCR_delta_prime_s.elem(Ind_S_LCR) % diff_X_LCR) -
-                              accu(LIR_delta_prime_s.elem(Ind_S_LCR) % (weight_LCR_G_FS % diff_X_LCR)) +
+    accu(LCR_delta_prime_s.elem(Ind_S_LCR) % diff_X_LCR) -
+    accu(LIR_delta_prime_s.elem(Ind_S_LCR) % (weight_LCR_G_FS % diff_X_LCR)) +
 
-                              accu(LIR_delta_prime_s.elem(Ind_S_LIR) % diff_X_LIR) -
-                              accu(LCR_delta_prime_s.elem(Ind_S_LIR) % (weight_LIR_G_FS % diff_X_LIR)) +
+    accu(LIR_delta_prime_s.elem(Ind_S_LIR) % diff_X_LIR) -
+    accu(LCR_delta_prime_s.elem(Ind_S_LIR) % (weight_LIR_G_FS % diff_X_LIR)) +
 
-                              accu(RIR_delta_prime_s.elem(Ind_S_RIR) % diff_X_RIR) -
-                              accu(RCR_delta_prime_s.elem(Ind_S_RIR) % (weight_RIR_G_FS % diff_X_RIR)) +
+    accu(RIR_delta_prime_s.elem(Ind_S_RIR) % diff_X_RIR) -
+    accu(RCR_delta_prime_s.elem(Ind_S_RIR) % (weight_RIR_G_FS % diff_X_RIR)) +
 
-                              accu(RCR_delta_prime_s.elem(Ind_S_RCR) % diff_X_RCR) -
-                              accu(RIR_delta_prime_s.elem(Ind_S_RCR) % (weight_RCR_G_FS % diff_X_RCR)) +
+    accu(RCR_delta_prime_s.elem(Ind_S_RCR) % diff_X_RCR) -
+    accu(RIR_delta_prime_s.elem(Ind_S_RCR) % (weight_RCR_G_FS % diff_X_RCR)) +
 
-                              dot(diff_Y_LCR, deriv_LCR_delta_prime_s) +
-                              dot(diff_Y_LIR, deriv_LIR_delta_prime_s) +
-                              dot(diff_Y_RCR, deriv_RCR_delta_prime_s) +
-                              dot(diff_Y_RIR, deriv_RIR_delta_prime_s) -
+    dot(diff_Y_LCR, deriv_LCR_delta_prime_s) +
+    dot(diff_Y_LIR, deriv_LIR_delta_prime_s) +
+    dot(diff_Y_RCR, deriv_RCR_delta_prime_s) +
+    dot(diff_Y_RIR, deriv_RIR_delta_prime_s) -
 
-                              (dot(FS_LCR, deriv_d_s_LCR) +
-                              dot(FS_LIR, deriv_d_s_LIR) +
-                              dot(FS_RCR, deriv_d_s_RCR) +
-                              dot(FS_RIR, deriv_d_s_RIR)) +
+    (dot(FS_LCR, deriv_d_s_LCR) +
+    dot(FS_LIR, deriv_d_s_LIR) +
+    dot(FS_RCR, deriv_d_s_RCR) +
+    dot(FS_RIR, deriv_d_s_RIR)) +
 
-                              sum(delta_s_Integral(0)) + sum(delta_s_Integral(1)) +
-                              1- (2*EXPITE(delta_param(0)));
+    sum(delta_s_Integral(0)) + sum(delta_s_Integral(1)) +
+    1- (2*EXPITE(delta_param(0)));
 
 
 
@@ -6481,11 +6511,11 @@ vec grad_delta(const vec &tau,const vec &tau_s,const double sigma,const vec &SSD
 
 
   mat grad_LS_delta_prime=grad_vec_delta(sigma,tau(Ind_L),tau_s(Ind_L),SSD(Ind_L),b_l(Ind_L),nu_l(Ind_L),nu_l_s(Ind_L),
-                                     b_r(Ind_L),nu_r_p,nu_r_s(Ind_L),deriv_delta,DEL,DEL_s,lt);
+                                         b_r(Ind_L),nu_r_p,nu_r_s(Ind_L),deriv_delta,DEL,DEL_s,lt);
 
   mat grad_RS_delta_prime=grad_vec_delta(sigma,tau(Ind_R),tau_s(Ind_R),SSD(Ind_R),b_r(Ind_R),nu_r(Ind_R),nu_r_s(Ind_R),
-                                     b_l(Ind_R),nu_l_p,nu_l_s(Ind_R),deriv_delta,DEL,DEL_s,lt);
-           
+                                         b_l(Ind_R),nu_l_p,nu_l_s(Ind_R),deriv_delta,DEL,DEL_s,lt);
+
 
   vec LCR_S_delta_prime = grad_LS_delta_prime.col(0);
   vec LIR_S_delta_prime = grad_LS_delta_prime.col(1);
@@ -6507,29 +6537,29 @@ vec grad_delta(const vec &tau,const vec &tau_s,const double sigma,const vec &SSD
 
 
   double grad_delta_prime =accu(LCR_delta_prime.elem(Ind_LCR)) - accu(LIR_delta_prime.elem(Ind_LCR) % weight_LCR) +
-                           accu(LIR_delta_prime.elem(Ind_LIR)) - accu(LCR_delta_prime.elem(Ind_LIR) % weight_LIR) +
-                           accu(RIR_delta_prime.elem(Ind_RIR)) - accu(RCR_delta_prime.elem(Ind_RIR) % weight_RIR) +
-                           accu(RCR_delta_prime.elem(Ind_RCR)) - accu(RIR_delta_prime.elem(Ind_RCR) % weight_RCR) +
+    accu(LIR_delta_prime.elem(Ind_LIR)) - accu(LCR_delta_prime.elem(Ind_LIR) % weight_LIR) +
+    accu(RIR_delta_prime.elem(Ind_RIR)) - accu(RCR_delta_prime.elem(Ind_RIR) % weight_RIR) +
+    accu(RCR_delta_prime.elem(Ind_RCR)) - accu(RIR_delta_prime.elem(Ind_RCR) % weight_RCR) +
 
-                            accu(LCR_delta_prime.elem(Ind_S_LCR) % diff_X_LCR) -
-                            accu(LIR_delta_prime.elem(Ind_S_LCR) % (weight_LCR_G_FS % diff_X_LCR)) +
+    accu(LCR_delta_prime.elem(Ind_S_LCR) % diff_X_LCR) -
+    accu(LIR_delta_prime.elem(Ind_S_LCR) % (weight_LCR_G_FS % diff_X_LCR)) +
 
-                            accu(LIR_delta_prime.elem(Ind_S_LIR) % diff_X_LIR) -
-                            accu(LCR_delta_prime.elem(Ind_S_LIR) % (weight_LIR_G_FS % diff_X_LIR)) +
+    accu(LIR_delta_prime.elem(Ind_S_LIR) % diff_X_LIR) -
+    accu(LCR_delta_prime.elem(Ind_S_LIR) % (weight_LIR_G_FS % diff_X_LIR)) +
 
-                            accu(RIR_delta_prime.elem(Ind_S_RIR) % diff_X_RIR) -
-                            accu(RCR_delta_prime.elem(Ind_S_RIR) % (weight_RIR_G_FS % diff_X_RIR)) +
+    accu(RIR_delta_prime.elem(Ind_S_RIR) % diff_X_RIR) -
+    accu(RCR_delta_prime.elem(Ind_S_RIR) % (weight_RIR_G_FS % diff_X_RIR)) +
 
-                            accu(RCR_delta_prime.elem(Ind_S_RCR) % diff_X_RCR) -
-                            accu(RIR_delta_prime.elem(Ind_S_RCR) % (weight_RCR_G_FS % diff_X_RCR)) +
+    accu(RCR_delta_prime.elem(Ind_S_RCR) % diff_X_RCR) -
+    accu(RIR_delta_prime.elem(Ind_S_RCR) % (weight_RCR_G_FS % diff_X_RCR)) +
 
-                            dot(diff_Y_LCR, deriv_LCR_delta_prime) +
-                            dot(diff_Y_LIR, deriv_LIR_delta_prime) +
-                            dot(diff_Y_RCR, deriv_RCR_delta_prime) +
-                            dot(diff_Y_RIR, deriv_RIR_delta_prime) +
+    dot(diff_Y_LCR, deriv_LCR_delta_prime) +
+    dot(diff_Y_LIR, deriv_LIR_delta_prime) +
+    dot(diff_Y_RCR, deriv_RCR_delta_prime) +
+    dot(diff_Y_RIR, deriv_RIR_delta_prime) +
 
-                            sum(delta_prime_Integral(0)) + sum(delta_prime_Integral(1)) +
-                            1- (2*EXPITE(delta_param(1)));
+    sum(delta_prime_Integral(0)) + sum(delta_prime_Integral(1)) +
+    1- (2*EXPITE(delta_param(1)));
 
 
   vec grad = {grad_delta_prime_s,grad_delta_prime};
@@ -6600,7 +6630,7 @@ double g_nu_stop_stim_penal(const double &nu_stop, double lambda_prime,double al
 // derivative of exponent w.r.t. beta (without penalty)
 
 inline vec deriv_exp_nu_stop(double sigma,const vec &tau,const vec &SSD,const vec &nu2,
-                      const double &nu_stop, double lambda_prime,double alpha_prime){
+                             const double &nu_stop, double lambda_prime,double alpha_prime){
 
   return (exp(nu2)*g_nu_stop_stim_penal(nu_stop,lambda_prime,alpha_prime));
 
@@ -6622,8 +6652,7 @@ vec deriv_log_dens_nu_stop_s(const vec &tau,const vec &tau_s,const double sigma,
 
   vec m=(exp(nu1)%(SSD+DEL_s-DEL))+(exp(nu2)%tau_s);
 
-
-  vec q1=exponent_1(sigma,tau,m,b);
+  vec q1 = exponent_1(sigma, tau, m, b);
 
   vec q2 = exponent_2(sigma,tau,m,b);
 
@@ -6679,6 +6708,29 @@ mat grad_vec_nu_stop(const vec &tau,const vec &tau_s,const double sigma,const ve
 }
 
 
+//
+//
+// // Helper: report non-finite (NaN/±Inf) entries in a vector
+// void check_vec_nonfinite(const std::string& name, const arma::vec& v) {
+//   if (v.n_elem == 0) {
+//     Rcpp::Rcout << name << " is empty.\n";
+//     return;
+//   }
+//   arma::uvec bad = arma::find_nonfinite(v);  // catches NaN and ±Inf
+//   if (!bad.is_empty()) {
+//     Rcpp::Rcout << "Non-finite values in " << name
+//                 << " (count=" << bad.n_elem << ", n=" << v.n_elem << ")\n";
+//     arma::uword k = std::min<arma::uword>(bad.n_elem, (arma::uword)10);
+//     for (arma::uword i = 0; i < k; ++i) {
+//       arma::uword idx = bad(i);
+//       double val = v(idx);
+//       Rcpp::Rcout << "  [" << idx << "] " << val;
+//       if (std::isnan(val))      Rcpp::Rcout << " (NaN)";
+//       else if (std::isinf(val)) Rcpp::Rcout << (val > 0 ? " (+Inf)" : " (-Inf)");
+//       Rcpp::Rcout << "\n";
+//     }
+//   }
+// }
 
 
 // Gradient function for Stop Parameters
@@ -6735,10 +6787,19 @@ vec grad_stop_param(const vec &tau,const vec &tau_s,const double sigma,const vec
   double stim_sum = sum(b_stop_Stim(0)) + sum(b_stop_Stim(1));
 
   // Compute the gradient
-  double grad_b_stop = -(dot_LCR + dot_LIR + dot_RCR + dot_RIR)
-    - prior_term
+  double grad_b_stop = -(dot_LCR + dot_LIR + dot_RCR + dot_RIR)- prior_term
   + stim_sum;
 
+
+  // if (grad_b_stop < 0) {
+  //   Rcpp::Rcout << "grad_b_stop: " << grad_b_stop << std::endl;
+  //   Rcpp::Rcout << "dot_LCR: " << dot_LCR
+  //               << ", dot_LIR: " << dot_LIR
+  //               << ", dot_RCR: " << dot_RCR
+  //               << ", dot_RIR: " << dot_RIR << std::endl;
+  //   Rcpp::Rcout << "prior_term: " << prior_term
+  //               << ", stim_sum: " << stim_sum << std::endl;
+  // }
 
 
 
@@ -6754,6 +6815,10 @@ vec grad_stop_param(const vec &tau,const vec &tau_s,const double sigma,const vec
                                   b_r(Ind_R),nu_r(Ind_R),nu_r_s(Ind_R),
                                   b_l(Ind_R),nu_l_p,nu_l_s(Ind_R),
                                   stop_param(1),penal_param(0),penal_param(1),DEL,DEL_s,lt);
+
+
+
+
 
 
   vec LCR_S = grad_L_S.col(0);
@@ -6784,13 +6849,37 @@ vec grad_stop_param(const vec &tau,const vec &tau_s,const double sigma,const vec
 
 
 
-  double grad_nu_stop=dot(diff_Y_LCR,deriv_LCR)-dot(FS_LCR,deriv_nu_s_LCR)+
-                      dot(diff_Y_LIR,deriv_LIR)-dot(FS_LIR,deriv_nu_s_LIR)+
-                      dot(diff_Y_RCR,deriv_RCR)-dot(FS_RCR,deriv_nu_s_RCR)+
-                      dot(diff_Y_RIR,deriv_RIR)-dot(FS_RIR,deriv_nu_s_RIR)-
 
-                      ((stop_param(1)-mu_nu_stop)/sigma_nu_stop)+
-                      sum(nu_stop_Stim(0))+sum(nu_stop_Stim(1));
+
+  double grad_nu_stop=dot(diff_Y_LCR,deriv_LCR)-dot(FS_LCR,deriv_nu_s_LCR)+
+    dot(diff_Y_LIR,deriv_LIR)-dot(FS_LIR,deriv_nu_s_LIR)+
+    dot(diff_Y_RCR,deriv_RCR)-dot(FS_RCR,deriv_nu_s_RCR)+
+    dot(diff_Y_RIR,deriv_RIR)-dot(FS_RIR,deriv_nu_s_RIR)-
+
+    ((stop_param(1)-mu_nu_stop)/sigma_nu_stop)+
+    sum(nu_stop_Stim(0))+sum(nu_stop_Stim(1));
+
+
+  // //Debug: if grad_nu_stop is NaN, print all components
+  // if (grad_nu_stop > 0) {
+  //   // Rcpp::Rcout << "tau_s  " << tau_s.t() << std::endl;
+  //   Rcpp::Rcout << "diff_Y_LCR * deriv_LCR: " << dot(diff_Y_LCR, deriv_LCR) << std::endl;
+  //   Rcpp::Rcout << "FS_LCR * deriv_nu_s_LCR: " << dot(FS_LCR, deriv_nu_s_LCR) << std::endl;
+  //   Rcpp::Rcout << "diff_Y_LIR * deriv_LIR: " << dot(diff_Y_LIR, deriv_LIR) << std::endl;
+  //   Rcpp::Rcout << "FS_LIR * deriv_nu_s_LIR: " << dot(FS_LIR, deriv_nu_s_LIR) << std::endl;
+  //   Rcpp::Rcout << "diff_Y_RCR * deriv_RCR: " << dot(diff_Y_RCR, deriv_RCR) << std::endl;
+  //   Rcpp::Rcout << "FS_RCR * deriv_nu_s_RCR: " << dot(FS_RCR, deriv_nu_s_RCR) << std::endl;
+  //   Rcpp::Rcout << "diff_Y_RIR * deriv_RIR: " << dot(diff_Y_RIR, deriv_RIR) << std::endl;
+  //   Rcpp::Rcout << "FS_RIR * deriv_nu_s_RIR: " << dot(FS_RIR, deriv_nu_s_RIR) << std::endl;
+  //   Rcpp::Rcout << "Prior term: " << ((stop_param(1) - mu_nu_stop) / sigma_nu_stop) << std::endl;
+  //   Rcpp::Rcout << "sum(nu_stop_Stim(0)): " << sum(nu_stop_Stim(0)) << std::endl;
+  //   Rcpp::Rcout << "sum(nu_stop_Stim(1)): " << sum(nu_stop_Stim(1)) << std::endl;
+  //   Rcpp::Rcout << "stop_param(1): " << stop_param(1)
+  //               << ", mu_nu_stop: " << mu_nu_stop
+  //               << ", sigma_nu_stop: " << sigma_nu_stop << std::endl;
+
+  // }
+
 
 
   vec grad = {grad_b_stop,grad_nu_stop};
@@ -6798,10 +6887,7 @@ vec grad_stop_param(const vec &tau,const vec &tau_s,const double sigma,const vec
 
 
   return grad;
-
 }
-
-
 
 
 
@@ -6831,11 +6917,11 @@ vec grad_prob_param(const vec &tau_s,const double sigma,
   vec V_I_L=(w_00+Int_dens(2));
   vec V_I_R=(w_00+Int_dens(3));
 
-  
+
   vec V_L=compute_log_add2(w_01,V_I_L);
   vec V_R=compute_log_add2(w_01,V_I_R);
 
- 
+
 
   double u=mlpack::LogAdd(w_00,w_10);
 
@@ -6853,24 +6939,42 @@ vec grad_prob_param(const vec &tau_s,const double sigma,
 
   double grad_w_00=w_u(1),grad_w_10=w_u(2);
 
-  if(diff_Y_LCR.n_elem){
-    grad_w_00+=exp(mlpack::AccuLog(diff_Y_LCR));
-    grad_w_10+=exp(mlpack::AccuLog(diff_X_LCR));  /// Since length(diff_Y_LCR)=length(diff_X_LCR)
-  }
+  // if(diff_Y_LCR.n_elem){
+  //   grad_w_00+=exp(mlpack::AccuLog(diff_Y_LCR));
+  //   grad_w_10+=exp(mlpack::AccuLog(diff_X_LCR));  /// Since length(diff_Y_LCR)=length(diff_X_LCR)
+  // }
+  //
+  // if(diff_Y_LIR.n_elem){
+  //   grad_w_00+=exp(mlpack::AccuLog(diff_Y_LIR));
+  //   grad_w_10+=exp(mlpack::AccuLog(diff_X_LIR));
+  // }
+  //
+  // if(diff_Y_RCR.n_elem){
+  //   grad_w_00+=exp(mlpack::AccuLog(diff_Y_RCR));
+  //   grad_w_10+=exp(mlpack::AccuLog(diff_X_RCR));
+  // }
 
-  if(diff_Y_LIR.n_elem){
-    grad_w_00+=exp(mlpack::AccuLog(diff_Y_LIR));
-    grad_w_10+=exp(mlpack::AccuLog(diff_X_LIR));
-  }
+  // if(diff_Y_RIR.n_elem){
+  //   grad_w_00+=exp(mlpack::AccuLog(diff_Y_RIR));
+  //   grad_w_10+=exp(mlpack::AccuLog(diff_X_RIR));
+  // }
 
-  if(diff_Y_RCR.n_elem){
-    grad_w_00+=exp(mlpack::AccuLog(diff_Y_RCR));
-    grad_w_10+=exp(mlpack::AccuLog(diff_X_RCR));
-  }
 
-  if(diff_Y_RIR.n_elem){
-    grad_w_00+=exp(mlpack::AccuLog(diff_Y_RIR));
-    grad_w_10+=exp(mlpack::AccuLog(diff_X_RIR));
+  if (diff_Y_LCR.n_elem) {
+    grad_w_00 += accu(diff_Y_LCR);
+    grad_w_10 += accu(diff_X_LCR);
+  }
+  if (diff_Y_LIR.n_elem) {
+    grad_w_00 += accu(diff_Y_LIR);
+    grad_w_10 += accu(diff_X_LIR);
+  }
+  if (diff_Y_RCR.n_elem) {
+    grad_w_00 += accu(diff_Y_RCR);
+    grad_w_10 += accu(diff_X_RCR);
+  }
+  if (diff_Y_RIR.n_elem) {
+    grad_w_00 += accu(diff_Y_RIR);
+    grad_w_10 += accu(diff_X_RIR);
   }
 
 
@@ -8245,145 +8349,146 @@ void update_rand_effect(const field <mat> &Phi,
 
 //Leapfrog algorithm
 
-
-void leap_frog_penal_param(const vec &tau,const vec &tau_s,const double sigma,
-                           const vec &delta_prime,const vec &SSD,const double DEL,const double DEL_s,
-
-                           const vec &stop_param,const vec &prob_param,
-
-                           const vec &b_l,const vec &b_r,
-
-                           const vec &nu_l,const vec &nu_r,const vec &nu_l_squared,const vec &nu_r_squared,
-                           const uvec &Ind_L,const uvec &Ind_R,const uvec &Ind_LCR,const uvec &Ind_LIR,
-                           const uvec &Ind_RIR,const uvec &Ind_RCR,
-                           const uvec &Ind_S_LCR,const uvec &Ind_S_LIR,const uvec &Ind_S_RIR,const uvec &Ind_S_RCR,
-
-                           const uvec &Ind_I_L,const uvec &Ind_I_R,
-
-
-                           vec &penal_param,const double mu_lambda_prime,const double sigma_lambda_prime,
-                           const double mu_alpha_prime,const double sigma_alpha_prime,
-                           vec &v_old,const double L, const double delta,mat &p,
-
-                           const vec &lower_bound,const double upper_bound,const bool lt = true){
-
-  // Rcpp::Rcout<<"leap_frog"<< endl;
-
-  for (unsigned j = 0; j < L; ++j){
-    penal_param+=delta*(p-(delta/2)*v_old);
-
-
-    vec nu_l_p=h(nu_l, Ind_R ) - penalty_fun(h(nu_r, Ind_R),h(nu_r_squared, Ind_R ),penal_param);
-    vec nu_r_p=h(nu_r, Ind_L ) - penalty_fun(h(nu_l, Ind_L),h(nu_l_squared, Ind_L ),penal_param);
-
-
-    vec nu_l_s=nu_l-penalty_fun_s(stop_param(1),penal_param);
-    vec nu_r_s=nu_r-penalty_fun_s(stop_param(1),penal_param);
-
-
-    vec weight_LCR=weight(sigma,g(tau, Ind_L, Ind_LCR ),h(nu_r_p,Ind_LCR ),g(b_r, Ind_L, Ind_LCR ));
-    vec weight_RCR=weight(sigma,g(tau, Ind_R, Ind_RCR ),h(nu_l_p, Ind_RCR ),g(b_l, Ind_R, Ind_RCR));
-
-
-    vec weight_LCR_S=weight_s(sigma,g(tau, Ind_L, Ind_S_LCR ),g(tau_s, Ind_L, Ind_S_LCR ),g(SSD, Ind_L, Ind_S_LCR ),
-                              g(b_r, Ind_L, Ind_S_LCR ),h(nu_r_p, Ind_S_LCR ),
-                              g(nu_r_s, Ind_L, Ind_S_LCR ),DEL,DEL_s,lt);
-
-    vec weight_LIR_S=weight_s(sigma,g(tau, Ind_L, Ind_S_LIR ),g(tau_s, Ind_L, Ind_S_LIR ),g(SSD, Ind_L, Ind_S_LIR ),
-                              g(b_l, Ind_L, Ind_S_LIR ),g(nu_l,Ind_L, Ind_S_LIR ),
-                              g(nu_l_s, Ind_L, Ind_S_LIR ),DEL,DEL_s,lt);
-
-    vec weight_RCR_S=weight_s(sigma,g(tau, Ind_R, Ind_S_RCR ),g(tau_s, Ind_R, Ind_S_RCR ),g(SSD, Ind_R, Ind_S_RCR ),
-                              g(b_l, Ind_R, Ind_S_RCR ),h(nu_l_p, Ind_S_RCR ),
-                              g(nu_l_s,Ind_R, Ind_S_RCR ),DEL,DEL_s,lt);
-
-    vec weight_RIR_S=weight_s(sigma, g(tau, Ind_R, Ind_S_RIR ),g(tau_s, Ind_R, Ind_S_RIR ),g(SSD, Ind_R, Ind_S_RIR ),
-                              g(b_r, Ind_R, Ind_S_RIR ),g(nu_r, Ind_R, Ind_S_RIR ),
-                              g(nu_r_s,Ind_R, Ind_S_RIR ),DEL,DEL_s,lt);
-
-
-
-
-    vec weight_LCR_G_FS=weight(sigma,g(tau, Ind_L, Ind_S_LCR ),h(nu_r_p, Ind_S_LCR ),g(b_r, Ind_L, Ind_S_LCR ));
-
-    vec weight_RCR_G_FS=weight(sigma,g(tau, Ind_R, Ind_S_RCR ),h(nu_l_p, Ind_S_RCR ),g(b_l, Ind_R, Ind_S_RCR ));
-
-
-
-    field<vec> likelihood_integral=integral_likelihood(sigma,SSD,DEL,DEL_s,
-                                                       stop_param,penal_param,prob_param,
-                                                       b_l,nu_l,nu_l_s,
-                                                       b_r,nu_r_p,nu_r_s,
-                                                       nu_r,nu_l_p,
-                                                       Ind_L,Ind_R,Ind_I_L,Ind_I_R,
-                                                       lower_bound,upper_bound,lt);
-
-    mat Penal_LS=integrate_penalty_Left_Stim(likelihood_integral,sigma,SSD,DEL,DEL_s,
-                                             penal_param,stop_param,prob_param,
-                                             b_l,b_r,nu_l,nu_r,
-                                             nu_l_s,nu_r_s,
-                                             nu_r_p,nu_l_squared,
-                                             Ind_L,Ind_I_L,
-                                             lower_bound,upper_bound,lt);
-
-
-    mat Penal_RS =integrate_penal_Right_Stim(likelihood_integral,sigma,SSD,DEL,DEL_s,
-                                             penal_param,stop_param,prob_param,
-                                             b_l,b_r,nu_l,nu_r,
-                                             nu_l_s,nu_r_s,
-                                             nu_l_p,nu_r_squared,
-                                             Ind_R,Ind_I_R,
-                                             lower_bound,upper_bound,lt);
-
-
-
-
-    field<vec> lk_FS=update_lk_FS4(tau,tau_s, sigma,SSD,
-                                   b_l,b_r,nu_l,nu_r,
-                                   nu_r_p,nu_l_p,nu_l_s,nu_r_s,
-                                   Ind_L,Ind_R,Ind_LCR, Ind_LIR,Ind_RCR,Ind_RIR,
-                                   Ind_S_LCR,Ind_S_LIR,Ind_S_RCR,Ind_S_RIR,
-                                   stop_param,prob_param,DEL,DEL_s,lt);
-
-
-
-    vec diff_X_LCR = lk_FS(4);
-    vec diff_Y_LCR = lk_FS(5);
-    vec diff_X_LIR = lk_FS(6);
-    vec diff_Y_LIR = lk_FS(7);
-    vec diff_X_RCR = lk_FS(8);
-    vec diff_Y_RCR = lk_FS(9);
-    vec diff_X_RIR = lk_FS(10);
-    vec diff_Y_RIR = lk_FS(11);
-
-
-
-
-    //new gradient
-
-    vec v_new=-grad_penal_param(tau,tau_s,sigma,SSD,DEL,DEL_s,
-                                b_l,b_r,nu_l,nu_r,nu_r_p,nu_l_p,
-                                nu_l_squared,nu_r_squared,nu_l_s,nu_r_s,
-                                Ind_L,Ind_R,Ind_LCR,Ind_LIR,Ind_RIR,Ind_RCR,
-                                Ind_S_LCR,Ind_S_LIR,Ind_S_RIR,Ind_S_RCR,
-                                Ind_I_L,Ind_I_R,
-                                Penal_LS,Penal_RS,
-                                weight_LCR,weight_RCR,
-                                weight_LCR_G_FS,weight_RCR_G_FS,
-                                weight_LCR_S,weight_LIR_S,weight_RCR_S,weight_RIR_S,
-                                penal_param,stop_param,mu_lambda_prime,sigma_lambda_prime,
-                                mu_alpha_prime,sigma_alpha_prime,
-                                diff_X_LCR,diff_Y_LCR,diff_X_LIR,diff_Y_LIR,
-                                diff_X_RCR,diff_Y_RCR,diff_X_RIR,diff_Y_RIR,lt);
-
-
-    //momentum
-    p-=(delta/2)*(v_old+v_new);
-    v_old=v_new;
-
-
-  }
-}
+//
+// void leap_frog_penal_param(const vec &tau,const vec &tau_s,const double sigma,
+//                            const vec &delta_prime,const vec &SSD,const double DEL,const double DEL_s,
+//
+//                            const vec &stop_param,const vec &prob_param,
+//
+//                            const vec &b_l,const vec &b_r,
+//
+//                            const vec &nu_l,const vec &nu_r,const vec &nu_l_squared,const vec &nu_r_squared,
+//                            const uvec &Ind_L,const uvec &Ind_R,const uvec &Ind_LCR,const uvec &Ind_LIR,
+//                            const uvec &Ind_RIR,const uvec &Ind_RCR,
+//                            const uvec &Ind_S_LCR,const uvec &Ind_S_LIR,const uvec &Ind_S_RIR,const uvec &Ind_S_RCR,
+//
+//                            const uvec &Ind_I_L,const uvec &Ind_I_R,
+//
+//
+//                            vec &penal_param,const double mu_lambda_prime,const double sigma_lambda_prime,
+//                            const double mu_alpha_prime,const double sigma_alpha_prime,
+//                            vec &v_old,const double L, const double delta,mat &p,
+//
+//                            const vec &lower_bound,const double upper_bound,const bool lt = true){
+//
+//   // Rcpp::Rcout<<"leap_frog"<< endl;
+//
+//   for (unsigned j = 0; j < L; ++j){
+//     penal_param+=delta*(p-(delta/2)*v_old);
+//
+//
+//     vec nu_l_p=h(nu_l, Ind_R ) - penalty_fun(h(nu_r, Ind_R),h(nu_r_squared, Ind_R ),penal_param);
+//     vec nu_r_p=h(nu_r, Ind_L ) - penalty_fun(h(nu_l, Ind_L),h(nu_l_squared, Ind_L ),penal_param);
+//
+//
+//     vec nu_l_s=nu_l-penalty_fun_s(stop_param(1),penal_param);
+//     vec nu_r_s=nu_r-penalty_fun_s(stop_param(1),penal_param);
+//
+//
+//     vec weight_LCR=weight(sigma,g(tau, Ind_L, Ind_LCR ),h(nu_r_p,Ind_LCR ),g(b_r, Ind_L, Ind_LCR ));
+//     vec weight_RCR=weight(sigma,g(tau, Ind_R, Ind_RCR ),h(nu_l_p, Ind_RCR ),g(b_l, Ind_R, Ind_RCR));
+//
+//
+//     vec weight_LCR_S=weight_s(sigma,g(tau, Ind_L, Ind_S_LCR ),g(tau_s, Ind_L, Ind_S_LCR ),g(SSD, Ind_L, Ind_S_LCR ),
+//                               g(b_r, Ind_L, Ind_S_LCR ),h(nu_r_p, Ind_S_LCR ),
+//                               g(nu_r_s, Ind_L, Ind_S_LCR ),DEL,DEL_s,lt);
+//
+//     vec weight_LIR_S=weight_s(sigma,g(tau, Ind_L, Ind_S_LIR ),g(tau_s, Ind_L, Ind_S_LIR ),g(SSD, Ind_L, Ind_S_LIR ),
+//                               g(b_l, Ind_L, Ind_S_LIR ),g(nu_l,Ind_L, Ind_S_LIR ),
+//                               g(nu_l_s, Ind_L, Ind_S_LIR ),DEL,DEL_s,lt);
+//
+//     vec weight_RCR_S=weight_s(sigma,g(tau, Ind_R, Ind_S_RCR ),g(tau_s, Ind_R, Ind_S_RCR ),g(SSD, Ind_R, Ind_S_RCR ),
+//                               g(b_l, Ind_R, Ind_S_RCR ),h(nu_l_p, Ind_S_RCR ),
+//                               g(nu_l_s,Ind_R, Ind_S_RCR ),DEL,DEL_s,lt);
+//
+//     vec weight_RIR_S=weight_s(sigma, g(tau, Ind_R, Ind_S_RIR ),g(tau_s, Ind_R, Ind_S_RIR ),g(SSD, Ind_R, Ind_S_RIR ),
+//                               g(b_r, Ind_R, Ind_S_RIR ),g(nu_r, Ind_R, Ind_S_RIR ),
+//                               g(nu_r_s,Ind_R, Ind_S_RIR ),DEL,DEL_s,lt);
+//
+//
+//
+//
+//     vec weight_LCR_G_FS=weight(sigma,g(tau, Ind_L, Ind_S_LCR ),h(nu_r_p, Ind_S_LCR ),g(b_r, Ind_L, Ind_S_LCR ));
+//
+//     vec weight_RCR_G_FS=weight(sigma,g(tau, Ind_R, Ind_S_RCR ),h(nu_l_p, Ind_S_RCR ),g(b_l, Ind_R, Ind_S_RCR ));
+//
+//
+//
+//     field<vec> likelihood_integral=integral_likelihood(sigma,SSD,DEL,DEL_s,
+//                                                        stop_param,penal_param,prob_param,
+//                                                        b_l,nu_l,nu_l_s,
+//                                                        b_r,nu_r_p,nu_r_s,
+//                                                        nu_r,nu_l_p,
+//                                                        Ind_L,Ind_R,Ind_I_L,Ind_I_R,
+//                                                        lower_bound,upper_bound,lt);
+//
+//
+//     mat Penal_LS=integrate_penalty_Left_Stim(likelihood_integral,sigma,SSD,DEL,DEL_s,
+//                                              penal_param,stop_param,prob_param,
+//                                              b_l,b_r,nu_l,nu_r,
+//                                              nu_l_s,nu_r_s,
+//                                              nu_r_p,nu_l_squared,
+//                                              Ind_L,Ind_I_L,
+//                                              lower_bound,upper_bound,lt);
+//
+//
+//     mat Penal_RS =integrate_penal_Right_Stim(likelihood_integral,sigma,SSD,DEL,DEL_s,
+//                                              penal_param,stop_param,prob_param,
+//                                              b_l,b_r,nu_l,nu_r,
+//                                              nu_l_s,nu_r_s,
+//                                              nu_l_p,nu_r_squared,
+//                                              Ind_R,Ind_I_R,
+//                                              lower_bound,upper_bound,lt);
+//
+//
+//
+//
+//     field<vec> lk_FS=update_lk_FS4(tau,tau_s, sigma,SSD,
+//                                    b_l,b_r,nu_l,nu_r,
+//                                    nu_r_p,nu_l_p,nu_l_s,nu_r_s,
+//                                    Ind_L,Ind_R,Ind_LCR, Ind_LIR,Ind_RCR,Ind_RIR,
+//                                    Ind_S_LCR,Ind_S_LIR,Ind_S_RCR,Ind_S_RIR,
+//                                    stop_param,prob_param,DEL,DEL_s,lt);
+//
+//
+//
+//     vec diff_X_LCR = lk_FS(4);
+//     vec diff_Y_LCR = lk_FS(5);
+//     vec diff_X_LIR = lk_FS(6);
+//     vec diff_Y_LIR = lk_FS(7);
+//     vec diff_X_RCR = lk_FS(8);
+//     vec diff_Y_RCR = lk_FS(9);
+//     vec diff_X_RIR = lk_FS(10);
+//     vec diff_Y_RIR = lk_FS(11);
+//
+//
+//
+//
+//     //new gradient
+//
+//     vec v_new=-grad_penal_param(tau,tau_s,sigma,SSD,DEL,DEL_s,
+//                                 b_l,b_r,nu_l,nu_r,nu_r_p,nu_l_p,
+//                                 nu_l_squared,nu_r_squared,nu_l_s,nu_r_s,
+//                                 Ind_L,Ind_R,Ind_LCR,Ind_LIR,Ind_RIR,Ind_RCR,
+//                                 Ind_S_LCR,Ind_S_LIR,Ind_S_RIR,Ind_S_RCR,
+//                                 Ind_I_L,Ind_I_R,
+//                                 Penal_LS,Penal_RS,
+//                                 weight_LCR,weight_RCR,
+//                                 weight_LCR_G_FS,weight_RCR_G_FS,
+//                                 weight_LCR_S,weight_LIR_S,weight_RCR_S,weight_RIR_S,
+//                                 penal_param,stop_param,mu_lambda_prime,sigma_lambda_prime,
+//                                 mu_alpha_prime,sigma_alpha_prime,
+//                                 diff_X_LCR,diff_Y_LCR,diff_X_LIR,diff_Y_LIR,
+//                                 diff_X_RCR,diff_Y_RCR,diff_X_RIR,diff_Y_RIR,lt);
+//
+//
+//     //momentum
+//     p-=(delta/2)*(v_old+v_new);
+//     v_old=v_new;
+//
+//
+//   }
+// }
 
 
 
@@ -8391,300 +8496,300 @@ void leap_frog_penal_param(const vec &tau,const vec &tau_s,const double sigma,
 
 
 //Update penalty parameter
-
-void update_penal_param(const field <vec> &tau,const field <vec> &tau_s,const double sigma,const field <vec> &SSD,
-                        const vec &DEL,const vec &DEL_s,const field <vec> &Ind_GF,
-                        const mat &delta_prime,const mat &gama,const mat &beta,mat &penal_param,const mat &stop_param,
-                        const field <vec> &b_l,const field <vec> &b_r,
-                        const field <vec> &nu_l,const field <vec> &nu_r,
-                        const field <vec> &nu_l_squared,const field <vec> &nu_r_squared,
-                        const field <uvec> &Ind_L,const field <uvec> &Ind_R,
-                        const field <uvec> &Ind_LCR, const field <uvec> &Ind_LIR,
-                        const field <uvec> &Ind_RCR,const field <uvec> &Ind_RIR,
-                        const field <uvec> &Ind_S_LCR, const field <uvec> &Ind_S_LIR,
-                        const field <uvec> &Ind_S_RCR,const field <uvec> &Ind_S_RIR,
-                        const field <uvec> &Ind_I_L,const field <uvec> &Ind_I_R,
-                        const double mu_lambda_prime,const double sigma_lambda_prime,
-                        const double mu_alpha_prime,const double sigma_alpha_prime,
-
-                        const mat &prob_param,
-                        const vec &T_Go,const vec &k,
-                        const vec &range,const double L,const int leapmax,vec &acceptance_p,
-                        unsigned nparall,
-                        const field <vec> &lower_bound,const double upper_bound,const bool lt = true){
-
-  // Rcpp::Rcout<<"update"<< endl;
-
-  unsigned N=nu_l.n_elem;
-
-  omp_set_num_threads(1);
-#pragma omp parallel for num_threads(nparall)
-  for (unsigned i = 0; i < N; ++i){
-
-    // Rcpp::Rcout<< "subject: " << i <<endl;
-
-    //Updating neceassary vectors
-
-    vec nu_l_p_i= h(nu_l(i), Ind_R(i) ) - penalty_fun(h(nu_r(i), Ind_R(i) ),h(nu_r_squared(i), Ind_R(i) ),penal_param.col(i));
-    vec nu_r_p_i= h(nu_r(i), Ind_L(i) ) - penalty_fun(h(nu_l(i), Ind_L(i) ),h(nu_l_squared(i), Ind_L(i) ),penal_param.col(i));
-
-
-
-    vec nu_l_s_i=nu_l(i)-penalty_fun_s(stop_param(1,i),penal_param.col(i));
-    vec nu_r_s_i=nu_r(i)-penalty_fun_s(stop_param(1,i),penal_param.col(i));
-
-
-    vec weight_LCR=weight(sigma,g(tau(i), Ind_L(i), Ind_LCR(i) ),h(nu_r_p_i,Ind_LCR(i) ),g(b_r(i), Ind_L(i), Ind_LCR(i) ));
-    vec weight_RCR=weight(sigma,g(tau(i), Ind_R(i), Ind_RCR(i) ),h(nu_l_p_i, Ind_RCR(i) ),g(b_l(i), Ind_R(i), Ind_RCR(i) ));
-
-
-    vec weight_LCR_G_FS=weight(sigma,g(tau(i), Ind_L(i), Ind_S_LCR(i) ),h(nu_r_p_i, Ind_S_LCR(i) ),g(b_r(i), Ind_L(i), Ind_S_LCR(i) ));
-
-    vec weight_RCR_G_FS=weight(sigma,g(tau(i), Ind_R(i), Ind_S_RCR(i) ),h(nu_l_p_i, Ind_S_RCR(i) ),g(b_l(i), Ind_R(i), Ind_S_RCR(i) ));
-
-
-
-    vec weight_LCR_S=weight_s(sigma,g(tau(i), Ind_L(i), Ind_S_LCR(i) ),g(tau_s(i), Ind_L(i), Ind_S_LCR(i) ),g(SSD(i), Ind_L(i), Ind_S_LCR(i) ),
-                              g(b_r(i), Ind_L(i), Ind_S_LCR(i) ),h(nu_r_p_i, Ind_S_LCR(i) ),
-                              g(nu_r_s_i, Ind_L(i), Ind_S_LCR(i) ),DEL(i),DEL_s(i),lt);
-
-
-    vec weight_LIR_S=weight_s(sigma,g(tau(i), Ind_L(i), Ind_S_LIR(i) ),g(tau_s(i), Ind_L(i), Ind_S_LIR(i) ),g(SSD(i), Ind_L(i), Ind_S_LIR(i) ),
-                              g(b_l(i), Ind_L(i), Ind_S_LIR(i) ),g(nu_l(i),Ind_L(i), Ind_S_LIR(i) ),
-                              g(nu_l_s_i, Ind_L(i), Ind_S_LIR(i) ),DEL(i),DEL_s(i),lt);
-
-    vec weight_RCR_S=weight_s(sigma,g(tau(i), Ind_R(i), Ind_S_RCR(i) ),g(tau_s(i), Ind_R(i), Ind_S_RCR(i) ),g(SSD(i), Ind_R(i), Ind_S_RCR(i) ),
-                              g(b_l(i), Ind_R(i), Ind_S_RCR(i) ),h(nu_l_p_i, Ind_S_RCR(i) ),
-                              g(nu_l_s_i,Ind_R(i), Ind_S_RCR(i) ),DEL(i),DEL_s(i),lt);
-
-    vec weight_RIR_S=weight_s(sigma, g(tau(i), Ind_R(i), Ind_S_RIR(i) ),g(tau_s(i), Ind_R(i), Ind_S_RIR(i) ),g(SSD(i), Ind_R(i), Ind_S_RIR(i) ),
-                              g(b_r(i), Ind_R(i), Ind_S_RIR(i) ),g(nu_r(i), Ind_R(i), Ind_S_RIR(i) ),
-                              g(nu_r_s_i,Ind_R(i), Ind_S_RIR(i) ),DEL(i),DEL_s(i),lt);
-
-
-
-    field<vec> likelihood_integral=integral_likelihood(sigma,SSD(i),DEL(i),DEL_s(i),
-                                                       stop_param.col(i),penal_param.col(i),prob_param.col(i),
-                                                       b_l(i),nu_l(i),nu_l_s_i,
-                                                       b_r(i),nu_r_p_i,nu_r_s_i,
-                                                       nu_r(i),nu_l_p_i,
-                                                       Ind_L(i),Ind_R(i),Ind_I_L(i),Ind_I_R(i),
-                                                       lower_bound(i),upper_bound,lt);
-
-
-
-
-    double Inhibit_likelihood=sum(likelihood_integral(0))+sum(likelihood_integral(1));
-
-
-    // Rcpp::Rcout<<"Inhibit_likelihood"<<Inhibit_likelihood<<endl;
-
-
-    mat Penal_LS=integrate_penalty_Left_Stim(likelihood_integral,sigma,SSD(i),DEL(i),DEL_s(i),
-                                             penal_param.col(i),stop_param.col(i),prob_param.col(i),
-                                             b_l(i),b_r(i),nu_l(i),nu_r(i),
-                                             nu_l_s_i,nu_r_s_i,
-                                             nu_r_p_i,nu_l_squared(i),
-                                             Ind_L(i),Ind_I_L(i),
-                                             lower_bound(i),upper_bound,lt);
-
-
-    mat Penal_RS =integrate_penal_Right_Stim(likelihood_integral,sigma,SSD(i),DEL(i),DEL_s(i),
-                                             penal_param.col(i),stop_param.col(i),prob_param.col(i),
-                                             b_l(i),b_r(i),nu_l(i),nu_r(i),
-                                             nu_l_s_i,nu_r_s_i,
-                                             nu_l_p_i,nu_r_squared(i),
-                                             Ind_R(i),Ind_I_R(i),
-                                             lower_bound(i),upper_bound,lt);
-
-
-
-
-    field<vec> lk_FS=update_lk_FS4(tau(i),tau_s(i), sigma,SSD(i),
-                                   b_l(i),b_r(i),nu_l(i),nu_r(i),
-                                   nu_r_p_i,nu_l_p_i,nu_l_s_i,nu_r_s_i,
-                                   Ind_L(i),Ind_R(i),Ind_LCR(i), Ind_LIR(i),Ind_RCR(i),Ind_RIR(i),
-                                   Ind_S_LCR(i),Ind_S_LIR(i),Ind_S_RCR(i),Ind_S_RIR(i),
-                                   stop_param.col(i),prob_param.col(i),DEL(i),DEL_s(i),lt);
-
-
-
-    vec lk_LCR_FS=lk_FS(0);
-    vec lk_LIR_FS=lk_FS(1);
-
-    vec lk_RCR_FS=lk_FS(2);
-    vec lk_RIR_FS=lk_FS(3);
-
-
-    vec diff_X_LCR=lk_FS(4);
-    vec diff_Y_LCR=lk_FS(5);
-
-    vec diff_X_LIR=lk_FS(6);
-    vec diff_Y_LIR=lk_FS(7);
-
-    vec diff_X_RCR=lk_FS(8);
-    vec diff_Y_RCR=lk_FS(9);
-
-    vec diff_X_RIR=lk_FS(10);
-    vec diff_Y_RIR=lk_FS(11);
-
-
-
-
-    //penalty parameter update steps
-
-    vec p(size(penal_param.col(i)),fill::randn);
-
-
-    double U_old=-log_lhood(Inhibit_likelihood,
-                            sigma, tau(i), tau_s(i), SSD(i),Ind_GF(i),
-                            b_l(i), b_r(i), nu_l(i), nu_r(i), nu_l_p_i, nu_r_p_i, nu_l_s_i, nu_r_s_i,
-                            Ind_L(i), Ind_R(i), Ind_LCR(i), Ind_LIR(i), Ind_RIR(i), Ind_RCR(i),
-                            Ind_S_LCR(i), Ind_S_LIR(i), Ind_S_RIR(i), Ind_S_RCR(i),
-                            lk_LCR_FS, lk_LIR_FS,lk_RCR_FS,lk_RIR_FS,
-
-                            prob_param.col(i),T_Go(i),k(i));
-
-
-    double prior_main=log_normal_prior(penal_param.col(i),mu_lambda_prime,sigma_lambda_prime,
-                                       mu_alpha_prime,sigma_alpha_prime);
-
-    U_old-=prior_main;
-
-
-    // Rcpp::Rcout<<"U_old"<<U_old<<endl;
-
-    double H_old = U_old+(dot(p,p)/2);
-
-    vec v_old =- grad_penal_param(tau(i),tau_s(i),sigma,SSD(i),DEL(i),DEL_s(i),
-                                  b_l(i),b_r(i),nu_l(i),nu_r(i),nu_r_p_i,nu_l_p_i,
-                                  nu_l_squared(i),nu_r_squared(i),nu_l_s_i,nu_r_s_i,
-                                  Ind_L(i),Ind_R(i),Ind_LCR(i),Ind_LIR(i),Ind_RIR(i),Ind_RCR(i),
-                                  Ind_S_LCR(i),Ind_S_LIR(i),Ind_S_RIR(i),Ind_S_RCR(i),
-                                  Ind_I_L(i),Ind_I_R(i),
-                                  Penal_LS,Penal_RS,
-                                  weight_LCR,weight_RCR,
-                                  weight_LCR_G_FS,weight_RCR_G_FS,
-                                  weight_LCR_S,weight_LIR_S,weight_RCR_S,weight_RIR_S,
-                                  penal_param.col(i),stop_param.col(i),mu_lambda_prime,sigma_lambda_prime,
-                                  mu_alpha_prime,sigma_alpha_prime,
-                                  diff_X_LCR,diff_Y_LCR,diff_X_LIR,diff_Y_LIR,
-                                  diff_X_RCR,diff_Y_RCR,diff_X_RIR,diff_Y_RIR,lt);
-
-
-    vec penal_param_new=penal_param.col(i);
-    vec v_new=v_old;
-
-    double delta=randu(distr_param(range(0),range(1)));
-
-
-    // int pois_draw=(unsigned) R::rpois(L);
-    // int nstep =  GSL_MAX_INT(1, pois_draw);
-    // nstep=GSL_MIN_INT(nstep, leapmax);
-    //
-
-    int nstep=std::clamp((int) R::rpois(L),1,leapmax);
-
-    leap_frog_penal_param(tau(i),tau_s(i),sigma,delta_prime.col(i),SSD(i),DEL(i),DEL_s(i),
-                          stop_param.col(i),prob_param.col(i),
-                          b_l(i),b_r(i),
-                          nu_l(i),nu_r(i),nu_l_squared(i),nu_r_squared(i),
-                          Ind_L(i),Ind_R(i),Ind_LCR(i),Ind_LIR(i),Ind_RIR(i),Ind_RCR(i),
-                          Ind_S_LCR(i),Ind_S_LIR(i),Ind_S_RIR(i),Ind_S_RCR(i),
-
-                          Ind_I_L(i),Ind_I_R(i),
-
-                          penal_param_new,mu_lambda_prime,sigma_lambda_prime,
-                          mu_alpha_prime,sigma_alpha_prime,
-                          v_new,nstep,delta,p,
-                          lower_bound(i),upper_bound,lt);
-
-
-    vec nu_l_p_i_new= h(nu_l(i), Ind_R(i) ) - penalty_fun(h(nu_r(i), Ind_R(i) ),h(nu_r_squared(i), Ind_R(i) ),penal_param_new);
-    vec nu_r_p_i_new= h(nu_r(i), Ind_L(i) ) - penalty_fun(h(nu_l(i), Ind_L(i) ),h(nu_l_squared(i), Ind_L(i) ),penal_param_new);
-
-
-
-    vec nu_l_s_i_new=nu_l(i)-penalty_fun_s(stop_param(1,i),penal_param_new);
-    vec nu_r_s_i_new=nu_r(i)-penalty_fun_s(stop_param(1,i),penal_param_new);
-
-
-
-
-    field<vec> likelihood_integral_new=integral_likelihood(sigma,SSD(i),DEL(i),DEL_s(i),stop_param.col(i),
-                                                           penal_param_new,prob_param.col(i),
-                                                           b_l(i),nu_l(i),nu_l_s_i_new,
-                                                           b_r(i),nu_r_p_i_new,nu_r_s_i_new,
-                                                           nu_r(i),nu_l_p_i_new,
-                                                           Ind_L(i),Ind_R(i),Ind_I_L(i),Ind_I_R(i),
-                                                           lower_bound(i),upper_bound,lt);
-
-
-
-    double Inhib_likelihood_new=sum(likelihood_integral_new(0))+sum(likelihood_integral_new(1));
-
-
-    field<vec> lk_FS_new= update_lk_FS3(tau(i),tau_s(i),sigma,SSD(i),
-                                        b_l(i),b_r(i),nu_l(i),nu_r(i),nu_r_p_i_new,nu_l_p_i_new,
-                                        nu_l_s_i_new,nu_r_s_i_new,
-                                        Ind_L(i),Ind_R(i),Ind_LCR(i),Ind_LIR(i),Ind_RCR(i),Ind_RIR(i),
-                                        Ind_S_LCR(i),Ind_S_LIR(i),Ind_S_RCR(i),Ind_S_RIR(i),
-                                        stop_param.col(i),prob_param.col(i),DEL(i),DEL_s(i),lt);
-
-    vec lk_LCR_FS_new=lk_FS_new(0);
-    vec lk_LIR_FS_new=lk_FS_new(1);
-
-    vec lk_RCR_FS_new=lk_FS_new(2);
-    vec lk_RIR_FS_new=lk_FS_new(3);
-
-
-
-    double U_new=-  log_lhood(Inhib_likelihood_new,
-                              sigma, tau(i), tau_s(i), SSD(i),Ind_GF(i),
-                              b_l(i), b_r(i), nu_l(i), nu_r(i), nu_l_p_i_new,nu_r_p_i_new,
-                              nu_l_s_i_new,nu_r_s_i_new,
-                              Ind_L(i), Ind_R(i), Ind_LCR(i), Ind_LIR(i), Ind_RIR(i), Ind_RCR(i),
-                              Ind_S_LCR(i), Ind_S_LIR(i), Ind_S_RIR(i), Ind_S_RCR(i),
-                              lk_LCR_FS_new, lk_LIR_FS_new,lk_RCR_FS_new,lk_RIR_FS_new,
-                              prob_param.col(i),T_Go(i),k(i));
-
-
-    double prior_main_new=log_normal_prior(penal_param_new,mu_lambda_prime,sigma_lambda_prime,
-                                           mu_alpha_prime,sigma_alpha_prime);
-
-    U_new-=prior_main_new;
-
-    // Rcpp::Rcout<<"U_new"<<U_new<<endl;
-
-    double H_new=U_new+(dot(p,p)/2);
-
-
-    // Rcpp::Rcout<<"penal_param"<<penal_param.t()<<endl;
-
-
-    // bool bl= log(randu())< -(H_new-H_old);
-
-
-    // if(bl ){
-    if(log(randu())< -(H_new-H_old)){
-#pragma omp critical
-{
-  penal_param.col(i)=penal_param_new;
-  ++acceptance_p[i];
-}
-    }
-
-
-
-
-
-
-  }
-
-  omp_set_num_threads(6);
-}
-
-
+//
+// void update_penal_param(const field <vec> &tau,const field <vec> &tau_s,const double sigma,const field <vec> &SSD,
+//                         const vec &DEL,const vec &DEL_s,const field <vec> &Ind_GF,
+//                         const mat &delta_prime,const mat &gama,const mat &beta,mat &penal_param,const mat &stop_param,
+//                         const field <vec> &b_l,const field <vec> &b_r,
+//                         const field <vec> &nu_l,const field <vec> &nu_r,
+//                         const field <vec> &nu_l_squared,const field <vec> &nu_r_squared,
+//                         const field <uvec> &Ind_L,const field <uvec> &Ind_R,
+//                         const field <uvec> &Ind_LCR, const field <uvec> &Ind_LIR,
+//                         const field <uvec> &Ind_RCR,const field <uvec> &Ind_RIR,
+//                         const field <uvec> &Ind_S_LCR, const field <uvec> &Ind_S_LIR,
+//                         const field <uvec> &Ind_S_RCR,const field <uvec> &Ind_S_RIR,
+//                         const field <uvec> &Ind_I_L,const field <uvec> &Ind_I_R,
+//                         const double mu_lambda_prime,const double sigma_lambda_prime,
+//                         const double mu_alpha_prime,const double sigma_alpha_prime,
+//
+//                         const mat &prob_param,
+//                         const vec &T_Go,const vec &k,
+//                         const vec &range,const double L,const int leapmax,vec &acceptance_p,
+//                         unsigned nparall,
+//                         const field <vec> &lower_bound,const double upper_bound,const bool lt = true){
+//
+//   // Rcpp::Rcout<<"update"<< endl;
+//
+//   unsigned N=nu_l.n_elem;
+//
+//   omp_set_num_threads(1);
+// #pragma omp parallel for num_threads(nparall)
+//   for (unsigned i = 0; i < N; ++i){
+//
+//     // Rcpp::Rcout<< "subject: " << i <<endl;
+//
+//     //Updating neceassary vectors
+//
+//     vec nu_l_p_i= h(nu_l(i), Ind_R(i) ) - penalty_fun(h(nu_r(i), Ind_R(i) ),h(nu_r_squared(i), Ind_R(i) ),penal_param.col(i));
+//     vec nu_r_p_i= h(nu_r(i), Ind_L(i) ) - penalty_fun(h(nu_l(i), Ind_L(i) ),h(nu_l_squared(i), Ind_L(i) ),penal_param.col(i));
+//
+//
+//
+//     vec nu_l_s_i=nu_l(i)-penalty_fun_s(stop_param(1,i),penal_param.col(i));
+//     vec nu_r_s_i=nu_r(i)-penalty_fun_s(stop_param(1,i),penal_param.col(i));
+//
+//
+//     vec weight_LCR=weight(sigma,g(tau(i), Ind_L(i), Ind_LCR(i) ),h(nu_r_p_i,Ind_LCR(i) ),g(b_r(i), Ind_L(i), Ind_LCR(i) ));
+//     vec weight_RCR=weight(sigma,g(tau(i), Ind_R(i), Ind_RCR(i) ),h(nu_l_p_i, Ind_RCR(i) ),g(b_l(i), Ind_R(i), Ind_RCR(i) ));
+//
+//
+//     vec weight_LCR_G_FS=weight(sigma,g(tau(i), Ind_L(i), Ind_S_LCR(i) ),h(nu_r_p_i, Ind_S_LCR(i) ),g(b_r(i), Ind_L(i), Ind_S_LCR(i) ));
+//
+//     vec weight_RCR_G_FS=weight(sigma,g(tau(i), Ind_R(i), Ind_S_RCR(i) ),h(nu_l_p_i, Ind_S_RCR(i) ),g(b_l(i), Ind_R(i), Ind_S_RCR(i) ));
+//
+//
+//
+//     vec weight_LCR_S=weight_s(sigma,g(tau(i), Ind_L(i), Ind_S_LCR(i) ),g(tau_s(i), Ind_L(i), Ind_S_LCR(i) ),g(SSD(i), Ind_L(i), Ind_S_LCR(i) ),
+//                               g(b_r(i), Ind_L(i), Ind_S_LCR(i) ),h(nu_r_p_i, Ind_S_LCR(i) ),
+//                               g(nu_r_s_i, Ind_L(i), Ind_S_LCR(i) ),DEL(i),DEL_s(i),lt);
+//
+//
+//     vec weight_LIR_S=weight_s(sigma,g(tau(i), Ind_L(i), Ind_S_LIR(i) ),g(tau_s(i), Ind_L(i), Ind_S_LIR(i) ),g(SSD(i), Ind_L(i), Ind_S_LIR(i) ),
+//                               g(b_l(i), Ind_L(i), Ind_S_LIR(i) ),g(nu_l(i),Ind_L(i), Ind_S_LIR(i) ),
+//                               g(nu_l_s_i, Ind_L(i), Ind_S_LIR(i) ),DEL(i),DEL_s(i),lt);
+//
+//     vec weight_RCR_S=weight_s(sigma,g(tau(i), Ind_R(i), Ind_S_RCR(i) ),g(tau_s(i), Ind_R(i), Ind_S_RCR(i) ),g(SSD(i), Ind_R(i), Ind_S_RCR(i) ),
+//                               g(b_l(i), Ind_R(i), Ind_S_RCR(i) ),h(nu_l_p_i, Ind_S_RCR(i) ),
+//                               g(nu_l_s_i,Ind_R(i), Ind_S_RCR(i) ),DEL(i),DEL_s(i),lt);
+//
+//     vec weight_RIR_S=weight_s(sigma, g(tau(i), Ind_R(i), Ind_S_RIR(i) ),g(tau_s(i), Ind_R(i), Ind_S_RIR(i) ),g(SSD(i), Ind_R(i), Ind_S_RIR(i) ),
+//                               g(b_r(i), Ind_R(i), Ind_S_RIR(i) ),g(nu_r(i), Ind_R(i), Ind_S_RIR(i) ),
+//                               g(nu_r_s_i,Ind_R(i), Ind_S_RIR(i) ),DEL(i),DEL_s(i),lt);
+//
+//
+//
+//     field<vec> likelihood_integral=integral_likelihood(sigma,SSD(i),DEL(i),DEL_s(i),
+//                                                        stop_param.col(i),penal_param.col(i),prob_param.col(i),
+//                                                        b_l(i),nu_l(i),nu_l_s_i,
+//                                                        b_r(i),nu_r_p_i,nu_r_s_i,
+//                                                        nu_r(i),nu_l_p_i,
+//                                                        Ind_L(i),Ind_R(i),Ind_I_L(i),Ind_I_R(i),
+//                                                        lower_bound(i),upper_bound,lt);
+//
+//
+//
+//
+//     double Inhibit_likelihood=sum(likelihood_integral(0))+sum(likelihood_integral(1));
+//
+//
+//     // Rcpp::Rcout<<"Inhibit_likelihood"<<Inhibit_likelihood<<endl;
+//
+//
+//     mat Penal_LS=integrate_penalty_Left_Stim(likelihood_integral,sigma,SSD(i),DEL(i),DEL_s(i),
+//                                              penal_param.col(i),stop_param.col(i),prob_param.col(i),
+//                                              b_l(i),b_r(i),nu_l(i),nu_r(i),
+//                                              nu_l_s_i,nu_r_s_i,
+//                                              nu_r_p_i,nu_l_squared(i),
+//                                              Ind_L(i),Ind_I_L(i),
+//                                              lower_bound(i),upper_bound,lt);
+//
+//
+//     mat Penal_RS =integrate_penal_Right_Stim(likelihood_integral,sigma,SSD(i),DEL(i),DEL_s(i),
+//                                              penal_param.col(i),stop_param.col(i),prob_param.col(i),
+//                                              b_l(i),b_r(i),nu_l(i),nu_r(i),
+//                                              nu_l_s_i,nu_r_s_i,
+//                                              nu_l_p_i,nu_r_squared(i),
+//                                              Ind_R(i),Ind_I_R(i),
+//                                              lower_bound(i),upper_bound,lt);
+//
+//
+//
+//
+//     field<vec> lk_FS=update_lk_FS4(tau(i),tau_s(i), sigma,SSD(i),
+//                                    b_l(i),b_r(i),nu_l(i),nu_r(i),
+//                                    nu_r_p_i,nu_l_p_i,nu_l_s_i,nu_r_s_i,
+//                                    Ind_L(i),Ind_R(i),Ind_LCR(i), Ind_LIR(i),Ind_RCR(i),Ind_RIR(i),
+//                                    Ind_S_LCR(i),Ind_S_LIR(i),Ind_S_RCR(i),Ind_S_RIR(i),
+//                                    stop_param.col(i),prob_param.col(i),DEL(i),DEL_s(i),lt);
+//
+//
+//
+//     vec lk_LCR_FS=lk_FS(0);
+//     vec lk_LIR_FS=lk_FS(1);
+//
+//     vec lk_RCR_FS=lk_FS(2);
+//     vec lk_RIR_FS=lk_FS(3);
+//
+//
+//     vec diff_X_LCR=lk_FS(4);
+//     vec diff_Y_LCR=lk_FS(5);
+//
+//     vec diff_X_LIR=lk_FS(6);
+//     vec diff_Y_LIR=lk_FS(7);
+//
+//     vec diff_X_RCR=lk_FS(8);
+//     vec diff_Y_RCR=lk_FS(9);
+//
+//     vec diff_X_RIR=lk_FS(10);
+//     vec diff_Y_RIR=lk_FS(11);
+//
+//
+//
+//
+//     //penalty parameter update steps
+//
+//     vec p(size(penal_param.col(i)),fill::randn);
+//
+//
+//     double U_old=-log_lhood(Inhibit_likelihood,
+//                             sigma, tau(i), tau_s(i), SSD(i),Ind_GF(i),
+//                             b_l(i), b_r(i), nu_l(i), nu_r(i), nu_l_p_i, nu_r_p_i, nu_l_s_i, nu_r_s_i,
+//                             Ind_L(i), Ind_R(i), Ind_LCR(i), Ind_LIR(i), Ind_RIR(i), Ind_RCR(i),
+//                             Ind_S_LCR(i), Ind_S_LIR(i), Ind_S_RIR(i), Ind_S_RCR(i),
+//                             lk_LCR_FS, lk_LIR_FS,lk_RCR_FS,lk_RIR_FS,
+//
+//                             prob_param.col(i),T_Go(i),k(i));
+//
+//
+//     double prior_main=log_normal_prior(penal_param.col(i),mu_lambda_prime,sigma_lambda_prime,
+//                                        mu_alpha_prime,sigma_alpha_prime);
+//
+//     U_old-=prior_main;
+//
+//
+//     // Rcpp::Rcout<<"U_old"<<U_old<<endl;
+//
+//     double H_old = U_old+(dot(p,p)/2);
+//
+//     vec v_old =- grad_penal_param(tau(i),tau_s(i),sigma,SSD(i),DEL(i),DEL_s(i),
+//                                   b_l(i),b_r(i),nu_l(i),nu_r(i),nu_r_p_i,nu_l_p_i,
+//                                   nu_l_squared(i),nu_r_squared(i),nu_l_s_i,nu_r_s_i,
+//                                   Ind_L(i),Ind_R(i),Ind_LCR(i),Ind_LIR(i),Ind_RIR(i),Ind_RCR(i),
+//                                   Ind_S_LCR(i),Ind_S_LIR(i),Ind_S_RIR(i),Ind_S_RCR(i),
+//                                   Ind_I_L(i),Ind_I_R(i),
+//                                   Penal_LS,Penal_RS,
+//                                   weight_LCR,weight_RCR,
+//                                   weight_LCR_G_FS,weight_RCR_G_FS,
+//                                   weight_LCR_S,weight_LIR_S,weight_RCR_S,weight_RIR_S,
+//                                   penal_param.col(i),stop_param.col(i),mu_lambda_prime,sigma_lambda_prime,
+//                                   mu_alpha_prime,sigma_alpha_prime,
+//                                   diff_X_LCR,diff_Y_LCR,diff_X_LIR,diff_Y_LIR,
+//                                   diff_X_RCR,diff_Y_RCR,diff_X_RIR,diff_Y_RIR,lt);
+//
+//
+//     vec penal_param_new=penal_param.col(i);
+//     vec v_new=v_old;
+//
+//     double delta=randu(distr_param(range(0),range(1)));
+//
+//
+//     // int pois_draw=(unsigned) R::rpois(L);
+//     // int nstep =  GSL_MAX_INT(1, pois_draw);
+//     // nstep=GSL_MIN_INT(nstep, leapmax);
+//     //
+//
+//     int nstep=std::clamp((int) R::rpois(L),1,leapmax);
+//
+//     leap_frog_penal_param(tau(i),tau_s(i),sigma,delta_prime.col(i),SSD(i),DEL(i),DEL_s(i),
+//                           stop_param.col(i),prob_param.col(i),
+//                           b_l(i),b_r(i),
+//                           nu_l(i),nu_r(i),nu_l_squared(i),nu_r_squared(i),
+//                           Ind_L(i),Ind_R(i),Ind_LCR(i),Ind_LIR(i),Ind_RIR(i),Ind_RCR(i),
+//                           Ind_S_LCR(i),Ind_S_LIR(i),Ind_S_RIR(i),Ind_S_RCR(i),
+//
+//                           Ind_I_L(i),Ind_I_R(i),
+//
+//                           penal_param_new,mu_lambda_prime,sigma_lambda_prime,
+//                           mu_alpha_prime,sigma_alpha_prime,
+//                           v_new,nstep,delta,p,
+//                           lower_bound(i),upper_bound,lt);
+//
+//
+//     vec nu_l_p_i_new= h(nu_l(i), Ind_R(i) ) - penalty_fun(h(nu_r(i), Ind_R(i) ),h(nu_r_squared(i), Ind_R(i) ),penal_param_new);
+//     vec nu_r_p_i_new= h(nu_r(i), Ind_L(i) ) - penalty_fun(h(nu_l(i), Ind_L(i) ),h(nu_l_squared(i), Ind_L(i) ),penal_param_new);
+//
+//
+//
+//     vec nu_l_s_i_new=nu_l(i)-penalty_fun_s(stop_param(1,i),penal_param_new);
+//     vec nu_r_s_i_new=nu_r(i)-penalty_fun_s(stop_param(1,i),penal_param_new);
+//
+//
+//
+//
+//     field<vec> likelihood_integral_new=integral_likelihood(sigma,SSD(i),DEL(i),DEL_s(i),stop_param.col(i),
+//                                                            penal_param_new,prob_param.col(i),
+//                                                            b_l(i),nu_l(i),nu_l_s_i_new,
+//                                                            b_r(i),nu_r_p_i_new,nu_r_s_i_new,
+//                                                            nu_r(i),nu_l_p_i_new,
+//                                                            Ind_L(i),Ind_R(i),Ind_I_L(i),Ind_I_R(i),
+//                                                            lower_bound(i),upper_bound,lt);
+//
+//
+//
+//     double Inhib_likelihood_new=sum(likelihood_integral_new(0))+sum(likelihood_integral_new(1));
+//
+//
+//     field<vec> lk_FS_new= update_lk_FS3(tau(i),tau_s(i),sigma,SSD(i),
+//                                         b_l(i),b_r(i),nu_l(i),nu_r(i),nu_r_p_i_new,nu_l_p_i_new,
+//                                         nu_l_s_i_new,nu_r_s_i_new,
+//                                         Ind_L(i),Ind_R(i),Ind_LCR(i),Ind_LIR(i),Ind_RCR(i),Ind_RIR(i),
+//                                         Ind_S_LCR(i),Ind_S_LIR(i),Ind_S_RCR(i),Ind_S_RIR(i),
+//                                         stop_param.col(i),prob_param.col(i),DEL(i),DEL_s(i),lt);
+//
+//     vec lk_LCR_FS_new=lk_FS_new(0);
+//     vec lk_LIR_FS_new=lk_FS_new(1);
+//
+//     vec lk_RCR_FS_new=lk_FS_new(2);
+//     vec lk_RIR_FS_new=lk_FS_new(3);
+//
+//
+//
+//     double U_new=-  log_lhood(Inhib_likelihood_new,
+//                               sigma, tau(i), tau_s(i), SSD(i),Ind_GF(i),
+//                               b_l(i), b_r(i), nu_l(i), nu_r(i), nu_l_p_i_new,nu_r_p_i_new,
+//                               nu_l_s_i_new,nu_r_s_i_new,
+//                               Ind_L(i), Ind_R(i), Ind_LCR(i), Ind_LIR(i), Ind_RIR(i), Ind_RCR(i),
+//                               Ind_S_LCR(i), Ind_S_LIR(i), Ind_S_RIR(i), Ind_S_RCR(i),
+//                               lk_LCR_FS_new, lk_LIR_FS_new,lk_RCR_FS_new,lk_RIR_FS_new,
+//                               prob_param.col(i),T_Go(i),k(i));
+//
+//
+//     double prior_main_new=log_normal_prior(penal_param_new,mu_lambda_prime,sigma_lambda_prime,
+//                                            mu_alpha_prime,sigma_alpha_prime);
+//
+//     U_new-=prior_main_new;
+//
+//     // Rcpp::Rcout<<"U_new"<<U_new<<endl;
+//
+//     double H_new=U_new+(dot(p,p)/2);
+//
+//
+//     // Rcpp::Rcout<<"penal_param"<<penal_param.t()<<endl;
+//
+//
+//     // bool bl= log(randu())< -(H_new-H_old);
+//
+//
+//     // if(bl ){
+//     if(log(randu())< -(H_new-H_old)){
+// #pragma omp critical
+// {
+//   penal_param.col(i)=penal_param_new;
+//   ++acceptance_p[i];
+// }
+//     }
+//
+//
+//
+//
+//
+//
+//   }
+//
+//   omp_set_num_threads(6);
+// }
+//
+//
 
 
 
@@ -8692,44 +8797,592 @@ void update_penal_param(const field <vec> &tau,const field <vec> &tau_s,const do
 
 /////////////////////////////////////////////////////////////////////////////////////// Delta_prime /////////////////////////////////////////////////////////////////////////////////////////////
 // Clamp helper
-inline double clamp(double x, double lo, double hi) {
-    return std::max(lo, std::min(x, hi));
-}
+// inline double clamp(double x, double lo, double hi) {
+//   return std::max(lo, std::min(x, hi));
+// }
+
+// //Leapfrog algorithm
+//
+//
+//
+// void leap_frog_delta_param(const vec &tau,const vec &tau_stop,const double sigma,const vec &SSD,const double SSD_min,const double U,
+//                            const vec &stop_param,const vec &penal_param,const vec &prob_param,vec &delta_param,
+//                            const vec &b_l,const vec &b_r,
+//                            const vec &nu_l,const vec &nu_r,
+//                            const vec &nu_l_p,const vec &nu_r_p,const vec &nu_l_s, const vec &nu_r_s,
+//                            const uvec &Ind_L,const uvec &Ind_R,
+//                            const uvec &Ind_LCR,const uvec &Ind_LIR,const uvec &Ind_RIR,const uvec &Ind_RCR,
+//                            const uvec &Ind_S_LCR,const uvec &Ind_S_LIR,const uvec &Ind_S_RIR,const uvec &Ind_S_RCR,
+//                            const uvec &Ind_I_L,const uvec &Ind_I_R,
+//                            vec &v_old,const double L, const double delta,mat &p,
+//                            const vec &lower_bound_init,const double upper_bound,const bool lt=1){
+//
+//
+//   // Rcpp::Rcout<<"ABF"<< endl;
+//
+//   for (unsigned j = 0; j < L; ++j){
+//
+//
+//     delta_param+=delta*(p-(delta/2)*v_old);
+//
+//
+//
+//     // When computing DEL_s and DEL:
+//     double delta0_clamped = clamp(delta_param(0), -20.0, 20.0);
+//     double delta1_clamped = clamp(delta_param(1), -20.0, 20.0);
+//
+//     double DEL_s = U * EXPITE(delta0_clamped);
+//     double DEL   = (SSD_min + DEL_s) * EXPITE(delta1_clamped);
+//
+//
+//     vec tau_prime(tau.n_elem, fill::zeros);
+//     vec tau_s(tau_stop.n_elem, fill::zeros);
+//
+//     // Apply subtraction only where tau > 0
+//     uvec idx_tau_pos = find(tau > 0);
+//     tau_prime.elem(idx_tau_pos) = tau.elem(idx_tau_pos) - DEL;
+//
+//     // Apply subtraction only where tau_stop > 0
+//     uvec idx_tau_stop_pos = find(tau_stop > 0);
+//     tau_s.elem(idx_tau_stop_pos) = tau_stop.elem(idx_tau_stop_pos) - DEL_s;
+//
+//
+//     vec lower_bound=lower_bound_init+DEL_s;
+//
+//     double deriv_delta=(SSD_min+DEL_s)*EXPITE_sq(delta_param(1));
+//
+//     double deriv_delta_s=EXPITE(delta_param(1))*U*EXPITE_sq(delta_param(0));
+//
+//     double deriv_delta_s_stop=U*EXPITE_sq(delta_param(0));
+//
+//
+//     vec weight_LCR=weight(sigma,g(tau_prime, Ind_L, Ind_LCR ),h(nu_r_p,Ind_LCR ),g(b_r, Ind_L, Ind_LCR ));
+//     vec weight_RCR=weight(sigma,g(tau_prime, Ind_R, Ind_RCR ),h(nu_l_p, Ind_RCR ),g(b_l, Ind_R, Ind_RCR));
+//     vec weight_LIR=weight(sigma,g(tau_prime, Ind_L, Ind_LIR ),g(nu_l,Ind_L,Ind_LIR ),g(b_l, Ind_L, Ind_LIR ));
+//     vec weight_RIR=weight(sigma,g(tau_prime, Ind_R, Ind_RIR ),g(nu_r,Ind_R, Ind_RIR ),g(b_r, Ind_R, Ind_RIR ));
+//
+//
+//
+//
+//     vec weight_LCR_G_FS=weight(sigma,g(tau_prime, Ind_L, Ind_S_LCR ),h(nu_r_p, Ind_S_LCR ),g(b_r, Ind_L, Ind_S_LCR ));
+//
+//     vec weight_LIR_G_FS=weight(sigma,g(tau_prime, Ind_L, Ind_S_LIR ),g(nu_l, Ind_L, Ind_S_LIR ),g(b_l, Ind_L, Ind_S_LIR ));
+//
+//     vec weight_RCR_G_FS=weight(sigma,g(tau_prime, Ind_R, Ind_S_RCR ),h(nu_l_p, Ind_S_RCR ),g(b_l, Ind_R, Ind_S_RCR ));
+//
+//     vec weight_RIR_G_FS=weight(sigma,g(tau_prime, Ind_R, Ind_S_RIR ),g(nu_r, Ind_R, Ind_S_RIR ),g(b_r, Ind_R, Ind_S_RIR ));
+//
+//
+//
+//     vec weight_LCR_S=weight_s(sigma,g(tau_prime, Ind_L, Ind_S_LCR ),g(tau_s, Ind_L, Ind_S_LCR ),g(SSD, Ind_L, Ind_S_LCR ),
+//                               g(b_r, Ind_L, Ind_S_LCR ),h(nu_r_p, Ind_S_LCR ),
+//                               g(nu_r_s, Ind_L, Ind_S_LCR ),DEL,DEL_s,lt);
+//
+//     vec weight_LIR_S=weight_s(sigma,g(tau_prime, Ind_L, Ind_S_LIR ),g(tau_s, Ind_L, Ind_S_LIR ),g(SSD, Ind_L, Ind_S_LIR ),
+//                               g(b_l, Ind_L, Ind_S_LIR ),g(nu_l,Ind_L, Ind_S_LIR ),
+//                               g(nu_l_s, Ind_L, Ind_S_LIR ),DEL,DEL_s,lt);
+//
+//     vec weight_RCR_S=weight_s(sigma,g(tau_prime, Ind_R, Ind_S_RCR ),g(tau_s, Ind_R, Ind_S_RCR ),g(SSD, Ind_R, Ind_S_RCR ),
+//                               g(b_l, Ind_R, Ind_S_RCR ),h(nu_l_p, Ind_S_RCR ),
+//                               g(nu_l_s,Ind_R, Ind_S_RCR ),DEL,DEL_s,lt);
+//
+//     vec weight_RIR_S=weight_s(sigma, g(tau_prime, Ind_R, Ind_S_RIR ),g(tau_s, Ind_R, Ind_S_RIR ),g(SSD, Ind_R, Ind_S_RIR ),
+//                               g(b_r, Ind_R, Ind_S_RIR ),g(nu_r, Ind_R, Ind_S_RIR ),
+//                               g(nu_r_s,Ind_R, Ind_S_RIR ),DEL,DEL_s,lt);
+//
+//
+//     vec weight_FS_LCR=weight_stop(g(tau_s, Ind_L, Ind_S_LCR ), sigma,stop_param);
+//
+//     vec weight_FS_LIR=weight_stop(g(tau_s, Ind_L, Ind_S_LIR ), sigma,stop_param);
+//
+//     vec weight_FS_RCR=weight_stop(g(tau_s, Ind_R, Ind_S_RCR ), sigma,stop_param);
+//
+//     vec weight_FS_RIR=weight_stop(g(tau_s, Ind_R, Ind_S_RIR ), sigma,stop_param);
+//
+//
+//
+//     field<vec> likelihood_integral=integral_likelihood(sigma,SSD,DEL,DEL_s,
+//                                                        stop_param,penal_param,prob_param,
+//                                                        b_l,nu_l,nu_l_s,
+//                                                        b_r,nu_r_p,nu_r_s,
+//                                                        nu_r,nu_l_p,
+//                                                        Ind_L,Ind_R,Ind_I_L,Ind_I_R,
+//                                                        lower_bound,upper_bound,lt);
+//
+//
+//     field<vec> delta_prime_Stim=    integrate_delta_prime(likelihood_integral,sigma,
+//                                                           stop_param,penal_param,prob_param,
+//                                                           SSD,DEL,DEL_s,b_l,b_r,nu_l,nu_r,
+//                                                           nu_l_s,nu_r_s,nu_r_p,nu_l_p,deriv_delta,
+//                                                           Ind_L,Ind_R,Ind_I_L,Ind_I_R,
+//                                                           lower_bound,upper_bound,lt);
+//
+//
+//
+//     field<vec> delta_s_Stim=    integrate_delta_prime_s(likelihood_integral,sigma,
+//                                                         stop_param,penal_param,prob_param,
+//                                                         SSD,DEL,DEL_s,b_l,b_r,nu_l,nu_r,
+//                                                         nu_l_s,nu_r_s,nu_r_p,nu_l_p,
+//                                                         deriv_delta_s,deriv_delta_s_stop,
+//                                                         Ind_L,Ind_R,Ind_I_L,Ind_I_R,
+//                                                         lower_bound,upper_bound,lt);
+//
+//
+//
+//
+//
+//     field<vec> lk_FS=update_lk_FS4(tau_prime,tau_s, sigma,SSD,
+//                                    b_l,b_r,nu_l,nu_r,
+//                                    nu_r_p,nu_l_p,nu_l_s,nu_r_s,
+//                                    Ind_L,Ind_R,Ind_LCR, Ind_LIR,Ind_RCR,Ind_RIR,
+//                                    Ind_S_LCR,Ind_S_LIR,Ind_S_RCR,Ind_S_RIR,
+//                                    stop_param,prob_param,DEL,DEL_s,lt);
+//
+//
+//
+//     vec diff_X_LCR=lk_FS(4);
+//     vec diff_Y_LCR=lk_FS(5);
+//
+//     vec diff_X_LIR=lk_FS(6);
+//     vec diff_Y_LIR=lk_FS(7);
+//
+//     vec diff_X_RCR=lk_FS(8);
+//     vec diff_Y_RCR=lk_FS(9);
+//
+//     vec diff_X_RIR=lk_FS(10);
+//     vec diff_Y_RIR=lk_FS(11);
+//
+//
+//
+//     //new gradient
+//     vec v_new=-grad_delta(tau_prime,tau_s,sigma,SSD,DEL,DEL_s,delta_param,stop_param,
+//                           nu_l, nu_r,b_l, b_r,
+//                           nu_l_p,nu_r_p,nu_l_s,nu_r_s,delta_prime_Stim,delta_s_Stim,
+//                           weight_LIR, weight_RCR,weight_LCR,weight_RIR,
+//                           weight_LCR_G_FS, weight_LIR_G_FS,weight_RCR_G_FS,weight_RIR_G_FS,
+//                           weight_LIR_S,weight_RCR_S,weight_LCR_S,weight_RIR_S,
+//                           weight_FS_LCR,weight_FS_LIR,weight_FS_RCR,weight_FS_RIR,
+//                           diff_X_LCR,diff_Y_LCR,diff_X_LIR,diff_Y_LIR,
+//                           diff_X_RCR,diff_Y_RCR,diff_X_RIR,diff_Y_RIR,
+//                           deriv_delta,deriv_delta_s,deriv_delta_s_stop,
+//
+//                           Ind_L,Ind_R,Ind_LCR,Ind_LIR,Ind_RCR,Ind_RIR,
+//                           Ind_S_LCR,Ind_S_LIR,Ind_S_RCR,Ind_S_RIR,lt);
+//
+//
+//
+//     //momentum
+//     p-=(delta/2)*(v_old+v_new);
+//     v_old=v_new;
+//   }
+//
+//
+// }
+//
+
+
+//Update delta_prime parameter
+//
+// void update_delta_param(const field <vec> &tau,const field <vec> &tau_stop,
+//                         const double sigma,const field <vec> &SSD,const double SSD_min,const vec &U,const field <vec> &Ind_GF,
+//                         mat &delta_param,const mat &gama,const mat &beta,const mat &penal_param,const mat &stop_param,
+//                         const field <vec> &b_l,const field <vec> &b_r,
+//                         const field <vec> &nu_l,const field <vec> &nu_r,
+//                         const field <vec> &nu_l_p,const field <vec> &nu_r_p,
+//                         const field <vec> &nu_l_s,const field <vec> &nu_r_s,
+//                         const field <uvec> &Ind_L,const field <uvec> &Ind_R,
+//                         const field <uvec> &Ind_LCR, const field <uvec> &Ind_LIR,
+//                         const field <uvec> &Ind_RCR,const field <uvec> &Ind_RIR,
+//                         const field <uvec> &Ind_S_LCR, const field <uvec> &Ind_S_LIR,
+//                         const field <uvec> &Ind_S_RCR,const field <uvec> &Ind_S_RIR,
+//                         const field <uvec> &Ind_I_L,const field <uvec> &Ind_I_R,
+//
+//                         const mat &prob_param,
+//                         const vec &T_Go,const vec &k,
+//                         const vec &range,const double L,const int leapmax,vec &acceptance_d,
+//                         unsigned nparall,
+//                         const field <vec> &lower_bound_init,const double upper_bound,const bool lt = 1){
+//
+//
+//   // Rcpp::Rcout<<"ABG"<< endl;
+//
+//
+//
+//   unsigned N=nu_l.n_elem;
+//
+//   omp_set_num_threads(1);
+// #pragma omp parallel for num_threads(nparall)
+//   for (unsigned i = 0; i < N; ++i){
+//
+//     //Updating neceassary vectors
+//
+//     double DEL_s=U(i)*EXPITE(delta_param(0,i));
+//
+//     double DEL=(SSD_min+DEL_s)*EXPITE(delta_param(1,i));
+//
+//     vec tau_i = tau(i);
+//     vec tau_stop_i = tau_stop(i);
+//
+//
+//     vec tau_prime(tau_i.n_elem, fill::zeros);
+//     vec tau_s(tau_stop_i.n_elem, fill::zeros);
+//
+//     // Apply subtraction only where tau > 0
+//     uvec idx_tau_pos = find(tau_i > 0);
+//     tau_prime.elem(idx_tau_pos) = tau_i.elem(idx_tau_pos) - DEL;
+//
+//     // Apply subtraction only where tau_stop > 0
+//     uvec idx_tau_stop_pos = find(tau_stop_i > 0);
+//     tau_s.elem(idx_tau_stop_pos) = tau_stop_i.elem(idx_tau_stop_pos) - DEL_s;
+//
+//
+//     vec lower_bound=lower_bound_init(i)+DEL_s;
+//
+//
+//     double deriv_delta=(SSD_min+DEL_s)*EXPITE_sq(delta_param(1));
+//
+//     double deriv_delta_s=EXPITE(delta_param(1))*U(i)*EXPITE_sq(delta_param(0));
+//
+//     double deriv_delta_s_stop=U(i)*EXPITE_sq(delta_param(0));
+//
+//
+//     vec weight_LCR=weight(sigma,g(tau_prime, Ind_L(i), Ind_LCR(i) ),h(nu_r_p(i),Ind_LCR(i) ),
+//                           g(b_r(i), Ind_L(i), Ind_LCR(i) ));
+//
+//     vec weight_LIR=weight(sigma,g(tau_prime, Ind_L(i), Ind_LIR(i) ),g(nu_l(i),Ind_L(i),Ind_LIR(i) ),
+//                           g(b_l(i), Ind_L(i), Ind_LIR(i) ));
+//
+//     vec weight_RIR=weight(sigma,g(tau_prime, Ind_R(i), Ind_RIR(i) ),g(nu_r(i),Ind_R(i), Ind_RIR(i) ),
+//                           g(b_r(i), Ind_R(i), Ind_RIR(i) ));
+//
+//     vec weight_RCR=weight(sigma,g(tau_prime, Ind_R(i), Ind_RCR(i) ),h(nu_l_p(i), Ind_RCR(i) ),
+//                           g(b_l(i), Ind_R(i), Ind_RCR(i) ));
+//
+//
+//     vec weight_LCR_G_FS=weight(sigma,g(tau_prime, Ind_L(i), Ind_S_LCR(i) ),h(nu_r_p(i), Ind_S_LCR(i) ),g(b_r(i), Ind_L(i), Ind_S_LCR(i) ));
+//
+//     vec weight_LIR_G_FS=weight(sigma,g(tau_prime, Ind_L(i), Ind_S_LIR(i) ),g(nu_l(i), Ind_L(i), Ind_S_LIR(i) ),
+//                                g(b_l(i), Ind_L(i), Ind_S_LIR(i) ));
+//
+//     vec weight_RCR_G_FS=weight(sigma,g(tau_prime, Ind_R(i), Ind_S_RCR(i) ),h(nu_l_p(i), Ind_S_RCR(i) ),g(b_l(i), Ind_R(i), Ind_S_RCR(i) ));
+//
+//     vec weight_RIR_G_FS=weight(sigma,g(tau_prime, Ind_R(i), Ind_S_RIR(i) ),g(nu_r(i), Ind_R(i), Ind_S_RIR(i) ),
+//                                g(b_r(i), Ind_R(i), Ind_S_RIR(i) ));
+//
+//
+//
+//
+//     vec weight_LCR_S=weight_s(sigma,g(tau_prime, Ind_L(i), Ind_S_LCR(i) ),g(tau_s, Ind_L(i), Ind_S_LCR(i) ),g(SSD(i), Ind_L(i), Ind_S_LCR(i) ),
+//                               g(b_r(i), Ind_L(i), Ind_S_LCR(i) ),h(nu_r_p(i), Ind_S_LCR(i) ),
+//                               g(nu_r_s(i), Ind_L(i), Ind_S_LCR(i) ),DEL,DEL_s,lt);
+//
+//     vec weight_LIR_S=weight_s(sigma,g(tau_prime, Ind_L(i), Ind_S_LIR(i) ),g(tau_s, Ind_L(i), Ind_S_LIR(i) ),g(SSD(i), Ind_L(i), Ind_S_LIR(i) ),
+//                               g(b_l(i), Ind_L(i), Ind_S_LIR(i) ),g(nu_l(i),Ind_L(i), Ind_S_LIR(i) ),
+//                               g(nu_l_s(i), Ind_L(i), Ind_S_LIR(i) ),DEL,DEL_s,lt);
+//
+//     vec weight_RCR_S=weight_s(sigma,g(tau_prime, Ind_R(i), Ind_S_RCR(i) ),g(tau_s, Ind_R(i), Ind_S_RCR(i) ),g(SSD(i), Ind_R(i), Ind_S_RCR(i) ),
+//                               g(b_l(i), Ind_R(i), Ind_S_RCR(i) ),h(nu_l_p(i), Ind_S_RCR(i) ),
+//                               g(nu_l_s(i),Ind_R(i), Ind_S_RCR(i) ),DEL,DEL_s,lt);
+//
+//
+//     vec weight_RIR_S=weight_s(sigma, g(tau_prime, Ind_R(i), Ind_S_RIR(i) ),g(tau_s, Ind_R(i), Ind_S_RIR(i) ),g(SSD(i), Ind_R(i), Ind_S_RIR(i) ),
+//                               g(b_r(i), Ind_R(i), Ind_S_RIR(i) ),g(nu_r(i), Ind_R(i), Ind_S_RIR(i) ),
+//                               g(nu_r_s(i),Ind_R(i), Ind_S_RIR(i) ),DEL,DEL_s,lt);
+//
+//
+//
+//     vec weight_FS_LCR=weight_stop(g(tau_s, Ind_L(i), Ind_S_LCR(i) ), sigma,stop_param.col(i));
+//     vec weight_FS_LIR=weight_stop(g(tau_s, Ind_L(i), Ind_S_LIR(i) ), sigma,stop_param.col(i));
+//     vec weight_FS_RCR=weight_stop(g(tau_s, Ind_R(i), Ind_S_RCR(i) ), sigma,stop_param.col(i));
+//     vec weight_FS_RIR=weight_stop(g(tau_s, Ind_R(i), Ind_S_RIR(i) ), sigma,stop_param.col(i));
+//
+//
+//
+//
+//
+//     field<vec> likelihood_integral=integral_likelihood(sigma,SSD(i),DEL,DEL_s,
+//                                                        stop_param.col(i),penal_param.col(i),prob_param.col(i),
+//                                                        b_l(i),nu_l(i),nu_l_s(i),
+//                                                        b_r(i),nu_r_p(i),nu_r_s(i),
+//                                                        nu_r(i),nu_l_p(i),
+//                                                        Ind_L(i),Ind_R(i),Ind_I_L(i),Ind_I_R(i),
+//                                                        lower_bound,upper_bound,lt);
+//
+//
+//     double Inhibit_likelihood=sum(likelihood_integral(0))+sum(likelihood_integral(1));
+//
+//
+//
+//     field<vec> delta_prime_Stim =integrate_delta_prime(likelihood_integral,sigma,
+//                                                        stop_param.col(i),penal_param.col(i),prob_param.col(i),
+//                                                        SSD(i),DEL,DEL_s,b_l(i),b_r(i),nu_l(i),nu_r(i),
+//                                                        nu_l_s(i),nu_r_s(i),nu_r_p(i),nu_l_p(i),deriv_delta,
+//                                                        Ind_L(i),Ind_R(i),Ind_I_L(i),Ind_I_R(i),
+//                                                        lower_bound,upper_bound,lt);
+//
+//     field<vec> delta_s_Stim =integrate_delta_prime_s(likelihood_integral,sigma,
+//                                                      stop_param.col(i),penal_param.col(i),prob_param.col(i),
+//                                                      SSD(i),DEL,DEL_s,b_l(i),b_r(i),nu_l(i),nu_r(i),
+//                                                      nu_l_s(i),nu_r_s(i),nu_r_p(i),nu_l_p(i),
+//                                                      deriv_delta_s,deriv_delta_s_stop,
+//                                                      Ind_L(i),Ind_R(i),Ind_I_L(i),Ind_I_R(i),
+//                                                      lower_bound,upper_bound,lt);
+//
+//
+//
+//     field<vec> lk_FS=update_lk_FS4(tau_prime,tau_s, sigma,SSD(i),
+//                                    b_l(i),b_r(i),nu_l(i),nu_r(i),
+//                                    nu_r_p(i),nu_l_p(i),nu_l_s(i),nu_r_s(i),
+//                                    Ind_L(i),Ind_R(i),Ind_LCR(i), Ind_LIR(i),Ind_RCR(i),Ind_RIR(i),
+//                                    Ind_S_LCR(i),Ind_S_LIR(i),Ind_S_RCR(i),Ind_S_RIR(i),
+//                                    stop_param.col(i),prob_param.col(i),DEL,DEL_s,lt);
+//
+//
+//     vec lk_LCR_FS=lk_FS(0);
+//     vec lk_LIR_FS=lk_FS(1);
+//
+//     vec lk_RCR_FS=lk_FS(2);
+//     vec lk_RIR_FS=lk_FS(3);
+//
+//
+//     vec diff_X_LCR=lk_FS(4);
+//     vec diff_Y_LCR=lk_FS(5);
+//
+//     vec diff_X_LIR=lk_FS(6);
+//     vec diff_Y_LIR=lk_FS(7);
+//
+//     vec diff_X_RCR=lk_FS(8);
+//     vec diff_Y_RCR=lk_FS(9);
+//
+//     vec diff_X_RIR=lk_FS(10);
+//     vec diff_Y_RIR=lk_FS(11);
+//
+//
+//
+//
+//     //delta_prime update steps
+//
+//
+//     vec p(size(delta_param.col(i)),fill::randn);
+//
+//
+//     double U_old=-log_lhood(Inhibit_likelihood,
+//                             sigma, tau_prime, tau_s, SSD(i),Ind_GF(i),
+//                             b_l(i), b_r(i), nu_l(i), nu_r(i), nu_l_p(i), nu_r_p(i), nu_l_s(i), nu_r_s(i),
+//                             Ind_L(i), Ind_R(i), Ind_LCR(i), Ind_LIR(i), Ind_RIR(i), Ind_RCR(i),
+//                             Ind_S_LCR(i), Ind_S_LIR(i), Ind_S_RIR(i), Ind_S_RCR(i),
+//                             lk_LCR_FS, lk_LIR_FS,lk_RCR_FS,lk_RIR_FS,
+//                             prob_param.col(i),T_Go(i),k(i));
+//
+//
+//     double prior_main=delta_param(1,i)-(2*log(1+exp(delta_param(1,i))))+
+//       delta_param(0,i)-(2*log(1+exp(delta_param(0,i))));
+//
+//
+//     U_old-=prior_main;
+//
+//     // Rcpp::Rcout<<"U_old"<<U_old<<endl;
+//
+//     double H_old = U_old+ (dot(p,p)/2);
+//
+//
+//     vec v_old =-    grad_delta(tau_prime,tau_s,sigma,SSD(i),DEL,DEL_s,
+//                                delta_param.col(i),stop_param.col(i),
+//                                nu_l(i), nu_r(i),b_l(i), b_r(i),
+//                                nu_l_p(i),nu_r_p(i),nu_l_s(i),nu_r_s(i),delta_prime_Stim,delta_s_Stim,
+//                                weight_LIR, weight_RCR,weight_LCR,weight_RIR,
+//                                weight_LCR_G_FS, weight_LIR_G_FS,weight_RCR_G_FS,weight_RIR_G_FS,
+//                                weight_LIR_S,weight_RCR_S,weight_LCR_S,weight_RIR_S,
+//
+//                                weight_FS_LCR,weight_FS_LIR,weight_FS_RCR,weight_FS_RIR,
+//                                diff_X_LCR,diff_Y_LCR,diff_X_LIR,diff_Y_LIR,
+//                                diff_X_RCR,diff_Y_RCR,diff_X_RIR,diff_Y_RIR,
+//
+//                                deriv_delta,deriv_delta_s,deriv_delta_s_stop,
+//
+//                                Ind_L(i),Ind_R(i),Ind_LCR(i),Ind_LIR(i),Ind_RCR(i),Ind_RIR(i),
+//                                Ind_S_LCR(i),Ind_S_LIR(i),Ind_S_RCR(i),Ind_S_RIR(i),lt);
+//
+//
+//
+//     // Rcpp::Rcout<<"v_old"<<v_old<<endl;
+//
+//
+//     vec delta_param_new=delta_param.col(i);
+//
+//
+//
+//     vec v_new=v_old;
+//
+//     double delta=randu(distr_param(range(0),range(1)));
+//     // int pois_draw=(unsigned) R::rpois(L);
+//     // int nstep =  GSL_MAX_INT(1, pois_draw);
+//     // nstep=GSL_MIN_INT(nstep,leapmax);
+//
+//     int nstep=std::clamp((int) R::rpois(L),1,leapmax);
+//
+//     leap_frog_delta_param(tau(i),tau_stop(i),sigma,SSD(i),SSD_min,U(i),
+//                           stop_param.col(i),penal_param.col(i),prob_param.col(i),delta_param_new,
+//                           b_l(i),b_r(i),
+//                           nu_l(i),nu_r(i),
+//                           nu_l_p(i),nu_r_p(i),nu_l_s(i),nu_r_s(i),
+//                           Ind_L(i),Ind_R(i),
+//                           Ind_LCR(i),Ind_LIR(i),Ind_RIR(i),Ind_RCR(i),
+//                           Ind_S_LCR(i),Ind_S_LIR(i),Ind_S_RIR(i),Ind_S_RCR(i),
+//                           Ind_I_L(i),Ind_I_R(i),
+//                           v_new,nstep,delta,p,lower_bound_init(i),upper_bound,lt);
+//
+//
+//
+//
+//     double DEL_s_new=U(i)*EXPITE(delta_param_new(0));
+//
+//     double DEL_new=(SSD_min+DEL_s_new)*EXPITE(delta_param_new(1));
+//
+//
+//     vec tau_prime_new(tau_i.n_elem, fill::zeros);
+//     vec tau_s_new(tau_stop_i.n_elem, fill::zeros);
+//
+//     tau_prime_new.elem(idx_tau_pos) = tau_i.elem(idx_tau_pos) - DEL_new;
+//
+//     tau_s_new.elem(idx_tau_stop_pos) = tau_stop_i.elem(idx_tau_stop_pos) - DEL_s_new;
+//
+//
+//     vec lower_bound_new=lower_bound_init(i)+DEL_s_new;
+//
+//
+//
+//     field<vec> likelihood_integral_new=integral_likelihood(sigma,SSD(i),DEL_new,DEL_s_new,
+//                                                            stop_param.col(i),penal_param.col(i),prob_param.col(i),
+//                                                            b_l(i),nu_l(i),nu_l_s(i),
+//                                                            b_r(i),nu_r_p(i),nu_r_s(i),
+//                                                            nu_r(i),nu_l_p(i),
+//                                                            Ind_L(i),Ind_R(i),Ind_I_L(i),Ind_I_R(i),
+//                                                            lower_bound_new,upper_bound,lt);
+//
+//
+//
+//
+//
+//     double Inhib_likelihood_new=sum(likelihood_integral_new(0))+sum(likelihood_integral_new(1));
+//
+//
+//
+//     field<vec> lk_FS_new= update_lk_FS3(tau_prime_new,tau_s_new,sigma,SSD(i),
+//                                         b_l(i),b_r(i),nu_l(i),nu_r(i),nu_r_p(i),nu_l_p(i),
+//                                         nu_l_s(i),nu_r_s(i),
+//                                         Ind_L(i),Ind_R(i),Ind_LCR(i),Ind_LIR(i),Ind_RCR(i),Ind_RIR(i),
+//                                         Ind_S_LCR(i),Ind_S_LIR(i),Ind_S_RCR(i),Ind_S_RIR(i),
+//                                         stop_param.col(i),prob_param.col(i),DEL_new,DEL_s_new,lt);
+//
+//     vec lk_LCR_FS_new=lk_FS_new(0);
+//     vec lk_LIR_FS_new=lk_FS_new(1);
+//
+//     vec lk_RCR_FS_new=lk_FS_new(2);
+//     vec lk_RIR_FS_new=lk_FS_new(3);
+//
+//
+//
+//
+//     double U_new=-log_lhood(Inhib_likelihood_new,
+//                             sigma, tau_prime_new, tau_s_new, SSD(i),Ind_GF(i),
+//                             b_l(i), b_r(i), nu_l(i), nu_r(i), nu_l_p(i), nu_r_p(i), nu_l_s(i), nu_r_s(i),
+//                             Ind_L(i), Ind_R(i), Ind_LCR(i), Ind_LIR(i), Ind_RIR(i), Ind_RCR(i),
+//                             Ind_S_LCR(i), Ind_S_LIR(i), Ind_S_RIR(i), Ind_S_RCR(i),
+//                             lk_LCR_FS_new, lk_LIR_FS_new,lk_RCR_FS_new,lk_RIR_FS_new,
+//                             prob_param.col(i),T_Go(i),k(i));
+//
+//
+//
+//     double prior_main_new=delta_param_new(1)-(2*log(1+exp(delta_param_new(1))))+
+//       delta_param_new(0)-(2*log(1+exp(delta_param_new(0))));
+//
+//
+//
+//     U_new-=prior_main_new;
+//
+//
+//     double H_new=U_new+ (dot(p,p)/2);
+//
+//
+//     if (log(randu()) < -(H_new - H_old)) {
+// #pragma omp critical
+// {
+//
+//   delta_param.col(i) = delta_param_new;
+//   ++acceptance_d[i];
+// }
+//     }
+//
+//
+//     omp_set_num_threads(6);
+//   }
+//
+// }
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////// nu_stop /////////////////////////////////////////////////////////////////////////////////////////////
 
 //Leapfrog algorithm
 
+void leap_frog_ind_param(const vec &tau,const vec &tau_stop, const double sigma,
+                         const vec &SSD,const double SSD_min,const double U,
+                         const vec &b_l, const vec &b_r,
+                         const vec &nu_l, const vec &nu_r,
+                         const vec &nu_l_squared, const vec &nu_r_squared,
+
+                         const uvec &Ind_L, const uvec &Ind_R,
+                         const uvec &Ind_LCR, const uvec &Ind_LIR, const uvec &Ind_RCR,const uvec &Ind_RIR,
+                         const uvec &Ind_S_LCR, const uvec &Ind_S_LIR, const uvec &Ind_S_RCR,const uvec &Ind_S_RIR,
+                         const uvec &Ind_I_L, const uvec &Ind_I_R,
+                         vec &stop_param,vec &penal_param,vec &prob_param,vec &delta_param,
+
+                         const double mu_b_stop, const double sigma_b_stop, const double mu_nu_stop,const double sigma_nu_stop,
+
+                         const double mu_lambda_prime,const double sigma_lambda_prime,
+                         const double mu_alpha_prime,const double sigma_alpha_prime,
+
+                         const vec &prob_hyp,
+
+                         const double T_Go,const double k,const double T_Total,
+
+                         vec &v_old_stop,vec &v_old_prob,vec &v_old_delta,vec &v_old_penal,const double L, const double delta,
+                         mat &p_stop,mat &p_prob,mat &p_delta,mat &p_penal,
 
 
-void leap_frog_delta_param(const vec &tau,const vec &tau_stop,const double sigma,const vec &SSD,const double SSD_min,const double U,
-                           const vec &stop_param,const vec &penal_param,const vec &prob_param,vec &delta_param,
-                           const vec &b_l,const vec &b_r,
-                           const vec &nu_l,const vec &nu_r,
-                           const vec &nu_l_p,const vec &nu_r_p,const vec &nu_l_s, const vec &nu_r_s,
-                           const uvec &Ind_L,const uvec &Ind_R,
-                           const uvec &Ind_LCR,const uvec &Ind_LIR,const uvec &Ind_RIR,const uvec &Ind_RCR,
-                           const uvec &Ind_S_LCR,const uvec &Ind_S_LIR,const uvec &Ind_S_RIR,const uvec &Ind_S_RCR,
-                           const uvec &Ind_I_L,const uvec &Ind_I_R,
-                           vec &v_old,const double L, const double delta,mat &p,
-                           const vec &lower_bound_init,const double upper_bound,const bool lt=1){
+                         const vec &lower_bound_init, const double upper_bound, const bool lt = 1) {
 
 
-  // Rcpp::Rcout<<"ABF"<< endl;
-
-  for (unsigned j = 0; j < L; ++j){
+  // Rcpp::Rcout<<"ABJ"<< endl;
 
 
- delta_param+=delta*(p-(delta/2)*v_old);
+  for (unsigned j = 0; j < L; ++j) {
+
+    stop_param += delta * (p_stop - (delta / 2) * v_old_stop);
+    prob_param += delta * (p_prob - (delta / 2) * v_old_prob);
+
+    delta_param += delta*(p_delta-(delta/2)*v_old_delta);
+
+    penal_param += delta*(p_penal-(delta/2)*v_old_penal);
 
 
 
-// When computing DEL_s and DEL:
-double delta0_clamped = clamp(delta_param(0), -20.0, 20.0);
-double delta1_clamped = clamp(delta_param(1), -20.0, 20.0);
+    stop_param.clamp(-7.0,5.0);
 
-double DEL_s = U * EXPITE(delta0_clamped);
-double DEL   = (SSD_min + DEL_s) * EXPITE(delta1_clamped);
+    delta_param.clamp(-20.0,20.0);
 
-    
+    double sum_Prob = mlpack::AccuLog(prob_param);
+
+
+    // When computing DEL_s and DEL:
+
+    double DEL_s = U * EXPITE(delta_param(0));
+    double DEL   = (SSD_min + DEL_s) * EXPITE(delta_param(1));
+
+
     vec tau_prime(tau.n_elem, fill::zeros);
     vec tau_s(tau_stop.n_elem, fill::zeros);
 
@@ -8751,6 +9404,14 @@ double DEL   = (SSD_min + DEL_s) * EXPITE(delta1_clamped);
     double deriv_delta_s_stop=U*EXPITE_sq(delta_param(0));
 
 
+    vec nu_l_p=h(nu_l, Ind_R ) - penalty_fun(h(nu_r, Ind_R),h(nu_r_squared, Ind_R ),penal_param);
+    vec nu_r_p=h(nu_r, Ind_L ) - penalty_fun(h(nu_l, Ind_L),h(nu_l_squared, Ind_L ),penal_param);
+
+
+    vec nu_l_s = nu_l - penalty_fun_s(stop_param(1), penal_param);
+    vec nu_r_s = nu_r - penalty_fun_s(stop_param(1), penal_param);
+
+
     vec weight_LCR=weight(sigma,g(tau_prime, Ind_L, Ind_LCR ),h(nu_r_p,Ind_LCR ),g(b_r, Ind_L, Ind_LCR ));
     vec weight_RCR=weight(sigma,g(tau_prime, Ind_R, Ind_RCR ),h(nu_l_p, Ind_RCR ),g(b_l, Ind_R, Ind_RCR));
     vec weight_LIR=weight(sigma,g(tau_prime, Ind_L, Ind_LIR ),g(nu_l,Ind_L,Ind_LIR ),g(b_l, Ind_L, Ind_LIR ));
@@ -8758,7 +9419,7 @@ double DEL   = (SSD_min + DEL_s) * EXPITE(delta1_clamped);
 
 
 
-    
+
     vec weight_LCR_G_FS=weight(sigma,g(tau_prime, Ind_L, Ind_S_LCR ),h(nu_r_p, Ind_S_LCR ),g(b_r, Ind_L, Ind_S_LCR ));
 
     vec weight_LIR_G_FS=weight(sigma,g(tau_prime, Ind_L, Ind_S_LIR ),g(nu_l, Ind_L, Ind_S_LIR ),g(b_l, Ind_L, Ind_S_LIR ));
@@ -8766,6 +9427,7 @@ double DEL   = (SSD_min + DEL_s) * EXPITE(delta1_clamped);
     vec weight_RCR_G_FS=weight(sigma,g(tau_prime, Ind_R, Ind_S_RCR ),h(nu_l_p, Ind_S_RCR ),g(b_l, Ind_R, Ind_S_RCR ));
 
     vec weight_RIR_G_FS=weight(sigma,g(tau_prime, Ind_R, Ind_S_RIR ),g(nu_r, Ind_R, Ind_S_RIR ),g(b_r, Ind_R, Ind_S_RIR ));
+
 
 
 
@@ -8794,15 +9456,34 @@ double DEL   = (SSD_min + DEL_s) * EXPITE(delta1_clamped);
 
     vec weight_FS_RIR=weight_stop(g(tau_s, Ind_R, Ind_S_RIR ), sigma,stop_param);
 
-    
 
-    field<vec> likelihood_integral=integral_likelihood(sigma,SSD,DEL,DEL_s,
-                                                       stop_param,penal_param,prob_param,
-                                                       b_l,nu_l,nu_l_s,
-                                                       b_r,nu_r_p,nu_r_s,
-                                                       nu_r,nu_l_p,
-                                                       Ind_L,Ind_R,Ind_I_L,Ind_I_R,
-                                                       lower_bound,upper_bound,lt);
+
+
+    field<vec> likelihood_integral =integral_likelihood2(sigma,SSD,DEL,DEL_s,
+                                                         stop_param,penal_param,prob_param,
+                                                         b_l,nu_l,nu_l_s,
+                                                         b_r,nu_r_p,nu_r_s,
+                                                         nu_r,nu_l_p,
+                                                         Ind_L,Ind_R,Ind_I_L,Ind_I_R,
+                                                         lower_bound,upper_bound,lt);
+
+
+    field<vec> b_stop_Stim=integrate_b_stop(likelihood_integral,sigma,SSD,DEL,DEL_s,
+                                            stop_param,penal_param,prob_param,
+                                            b_l,b_r,nu_l,nu_r,nu_l_s,nu_r_s,nu_r_p,nu_l_p,
+                                            Ind_L,Ind_R,Ind_I_L,Ind_I_R,
+                                            lower_bound,upper_bound,lt);
+
+
+
+    field<vec> nu_stop_Stim =integrate_nu_stop(likelihood_integral, sigma,SSD,DEL,DEL_s,
+                                               stop_param,penal_param,prob_param,
+                                               b_l,b_r,nu_l,nu_r,nu_l_s,nu_r_s,
+                                               nu_r_p,nu_l_p,nu_l_squared,nu_r_squared,
+                                               Ind_L,Ind_R,Ind_I_L,Ind_I_R,
+                                               lower_bound,upper_bound,lt);
+
+
 
 
     field<vec> delta_prime_Stim=    integrate_delta_prime(likelihood_integral,sigma,
@@ -8824,6 +9505,22 @@ double DEL   = (SSD_min + DEL_s) * EXPITE(delta1_clamped);
 
 
 
+    mat Penal_LS=integrate_penalty_Left_Stim(likelihood_integral,sigma,SSD,DEL,DEL_s,
+                                             penal_param,stop_param,prob_param,
+                                             b_l,b_r,nu_l,nu_r,
+                                             nu_l_s,nu_r_s,
+                                             nu_r_p,nu_l_squared,
+                                             Ind_L,Ind_I_L,
+                                             lower_bound,upper_bound,lt);
+
+
+    mat Penal_RS =integrate_penal_Right_Stim(likelihood_integral,sigma,SSD,DEL,DEL_s,
+                                             penal_param,stop_param,prob_param,
+                                             b_l,b_r,nu_l,nu_r,
+                                             nu_l_s,nu_r_s,
+                                             nu_l_p,nu_r_squared,
+                                             Ind_R,Ind_I_R,
+                                             lower_bound,upper_bound,lt);
 
 
     field<vec> lk_FS=update_lk_FS4(tau_prime,tau_s, sigma,SSD,
@@ -8832,7 +9529,6 @@ double DEL   = (SSD_min + DEL_s) * EXPITE(delta1_clamped);
                                    Ind_L,Ind_R,Ind_LCR, Ind_LIR,Ind_RCR,Ind_RIR,
                                    Ind_S_LCR,Ind_S_LIR,Ind_S_RCR,Ind_S_RIR,
                                    stop_param,prob_param,DEL,DEL_s,lt);
-
 
 
     vec diff_X_LCR=lk_FS(4);
@@ -8849,67 +9545,118 @@ double DEL   = (SSD_min + DEL_s) * EXPITE(delta1_clamped);
 
 
 
-    //new gradient
-    vec v_new=-grad_delta(tau_prime,tau_s,sigma,SSD,DEL,DEL_s,delta_param,stop_param,
-                          nu_l, nu_r,b_l, b_r,
-                          nu_l_p,nu_r_p,nu_l_s,nu_r_s,delta_prime_Stim,delta_s_Stim,
-                          weight_LIR, weight_RCR,weight_LCR,weight_RIR,
-                          weight_LCR_G_FS, weight_LIR_G_FS,weight_RCR_G_FS,weight_RIR_G_FS,
-                          weight_LIR_S,weight_RCR_S,weight_LCR_S,weight_RIR_S,
-                          weight_FS_LCR,weight_FS_LIR,weight_FS_RCR,weight_FS_RIR,
-                          diff_X_LCR,diff_Y_LCR,diff_X_LIR,diff_Y_LIR,
-                          diff_X_RCR,diff_Y_RCR,diff_X_RIR,diff_Y_RIR,
-                          deriv_delta,deriv_delta_s,deriv_delta_s_stop,
-
-                          Ind_L,Ind_R,Ind_LCR,Ind_LIR,Ind_RCR,Ind_RIR,
-                          Ind_S_LCR,Ind_S_LIR,Ind_S_RCR,Ind_S_RIR,lt);
+    vec v_new_stop = -grad_stop_param(tau_prime,tau_s,sigma,SSD,DEL,DEL_s,
+                                      nu_l,nu_r,b_l,b_r,
+                                      nu_l_p,nu_r_p,nu_l_s,nu_r_s,
+                                      weight_LCR_S, weight_LIR_S,weight_RCR_S,weight_RIR_S,
+                                      weight_FS_LCR,weight_FS_LIR,weight_FS_RCR,weight_FS_RIR,
+                                      Ind_L,Ind_R,
+                                      Ind_S_LCR,Ind_S_LIR,Ind_S_RCR,Ind_S_RIR,
+                                      nu_stop_Stim,b_stop_Stim,
+                                      stop_param,penal_param,
+                                      mu_nu_stop,sigma_nu_stop,mu_b_stop,sigma_b_stop,
+                                      diff_Y_LCR,diff_Y_LIR,diff_Y_RCR,diff_Y_RIR,lt);
 
 
 
-    //momentum
-    p-=(delta/2)*(v_old+v_new);
-    v_old=v_new;
+    vec v_new_prob= -grad_prob_param(tau_s,sigma,likelihood_integral,
+                                     stop_param,prob_param,sum_Prob,prob_hyp,
+                                     T_Go,k,T_Total,
+                                     diff_X_LCR,diff_Y_LCR,diff_X_LIR,diff_Y_LIR,
+                                     diff_X_RCR,diff_Y_RCR,diff_X_RIR,diff_Y_RIR);
+
+
+
+    vec v_new_delta = -grad_delta(tau_prime,tau_s,sigma,SSD,DEL,DEL_s,delta_param,stop_param,
+                                  nu_l, nu_r,b_l, b_r,
+                                  nu_l_p,nu_r_p,nu_l_s,nu_r_s,delta_prime_Stim,delta_s_Stim,
+                                  weight_LIR, weight_RCR,weight_LCR,weight_RIR,
+                                  weight_LCR_G_FS, weight_LIR_G_FS,weight_RCR_G_FS,weight_RIR_G_FS,
+                                  weight_LIR_S,weight_RCR_S,weight_LCR_S,weight_RIR_S,
+                                  weight_FS_LCR,weight_FS_LIR,weight_FS_RCR,weight_FS_RIR,
+                                  diff_X_LCR,diff_Y_LCR,diff_X_LIR,diff_Y_LIR,
+                                  diff_X_RCR,diff_Y_RCR,diff_X_RIR,diff_Y_RIR,
+                                  deriv_delta,deriv_delta_s,deriv_delta_s_stop,
+
+                                  Ind_L,Ind_R,Ind_LCR,Ind_LIR,Ind_RCR,Ind_RIR,
+                                  Ind_S_LCR,Ind_S_LIR,Ind_S_RCR,Ind_S_RIR,lt);
+
+
+
+    vec v_new_penal = - grad_penal_param(tau_prime,tau_s,sigma,SSD,DEL,DEL_s,
+                                         b_l,b_r,nu_l,nu_r,nu_r_p,nu_l_p,
+                                         nu_l_squared,nu_r_squared,nu_l_s,nu_r_s,
+                                         Ind_L,Ind_R,Ind_LCR,Ind_LIR,Ind_RIR,Ind_RCR,
+                                         Ind_S_LCR,Ind_S_LIR,Ind_S_RIR,Ind_S_RCR,
+                                         Ind_I_L,Ind_I_R,
+                                         Penal_LS,Penal_RS,
+                                         weight_LCR,weight_RCR,
+                                         weight_LCR_G_FS,weight_RCR_G_FS,
+                                         weight_LCR_S,weight_LIR_S,weight_RCR_S,weight_RIR_S,
+                                         penal_param,stop_param,mu_lambda_prime,sigma_lambda_prime,
+                                         mu_alpha_prime,sigma_alpha_prime,
+                                         diff_X_LCR,diff_Y_LCR,diff_X_LIR,diff_Y_LIR,
+                                         diff_X_RCR,diff_Y_RCR,diff_X_RIR,diff_Y_RIR,lt);
+
+
+
+
+
+    p_stop -= (delta / 2) * (v_old_stop + v_new_stop);
+    v_old_stop = v_new_stop;
+
+    p_prob -=  (delta/2) *(v_old_prob+v_new_prob);
+    v_old_prob=  v_new_prob;
+
+
+    p_delta -= (delta/2)*(v_old_delta+v_new_delta);
+    v_old_delta = v_new_delta;
+
+
+    p_penal -= (delta/2)*(v_old_penal+v_new_penal);
+    v_old_penal = v_new_penal;
+
+
+
   }
-
-
 }
 
 
-
-//Update delta_prime parameter
-
-void update_delta_param(const field <vec> &tau,const field <vec> &tau_stop,
-                        const double sigma,const field <vec> &SSD,const double SSD_min,const vec &U,const field <vec> &Ind_GF,
-                        mat &delta_param,const mat &gama,const mat &beta,const mat &penal_param,const mat &stop_param,
-                        const field <vec> &b_l,const field <vec> &b_r,
-                        const field <vec> &nu_l,const field <vec> &nu_r,
-                        const field <vec> &nu_l_p,const field <vec> &nu_r_p,
-                        const field <vec> &nu_l_s,const field <vec> &nu_r_s,
-                        const field <uvec> &Ind_L,const field <uvec> &Ind_R,
-                        const field <uvec> &Ind_LCR, const field <uvec> &Ind_LIR,
-                        const field <uvec> &Ind_RCR,const field <uvec> &Ind_RIR,
-                        const field <uvec> &Ind_S_LCR, const field <uvec> &Ind_S_LIR,
-                        const field <uvec> &Ind_S_RCR,const field <uvec> &Ind_S_RIR,
-                        const field <uvec> &Ind_I_L,const field <uvec> &Ind_I_R,
-
-                        const mat &prob_param,
-                        const vec &T_Go,const vec &k,
-                        const vec &range,const double L,const int leapmax,vec &acceptance_d,
-                        unsigned nparall,
-                        const field <vec> &lower_bound_init,const double upper_bound,const bool lt = 1){
+//Update nu_stop parameter
 
 
-  // Rcpp::Rcout<<"ABG"<< endl;
+void update_ind_param(const field<vec> &tau, const field<vec> &tau_stop, const double sigma,const field<vec> &SSD,
+                      const double SSD_min,const vec &U,const field <vec> &Ind_GF,
+                      const mat &gama, const mat &beta,mat &penal_param, mat &stop_param,mat &prob_param,mat &delta_param,
+                      const field<vec> &b_l, const field<vec> &b_r,const field<vec> &nu_l, const field<vec> &nu_r,
+                      const field<vec> &nu_l_squared, const field<vec> &nu_r_squared,
+
+                      const field<uvec> &Ind_L, const field<uvec> &Ind_R,
+                      const field<uvec> &Ind_LCR, const field<uvec> &Ind_LIR, const field<uvec> &Ind_RCR,const field<uvec> &Ind_RIR,
+                      const field<uvec> &Ind_S_LCR, const field<uvec> &Ind_S_LIR, const field<uvec> &Ind_S_RCR, const field<uvec> &Ind_S_RIR,
+                      const field<uvec> &Ind_I_L, const field<uvec> &Ind_I_R,
+
+                      const double mu_b_stop, const double sigma_b_stop,const double mu_nu_stop, const double sigma_nu_stop,
+
+                      const double mu_lambda_prime,const double sigma_lambda_prime,const double mu_alpha_prime,const double sigma_alpha_prime,
 
 
+                      const vec &prob_hyp,
+                      const vec &T_Go,const vec &k,const vec &T_Total,
+
+                      const vec &range, const double L,
+                      const int leapmax, vec &acceptance_ind, unsigned nparall,
+                      const field<vec> &lower_bound_init, const double upper_bound, const bool lt = true) {
+
+  // Rcpp::Rcout<<"ABK"<< endl;
 
   unsigned N=nu_l.n_elem;
 
+
   omp_set_num_threads(1);
 #pragma omp parallel for num_threads(nparall)
-  for (unsigned i = 0; i < N; ++i){
+  for (unsigned i = 0; i < N; ++i) {
 
-    //Updating neceassary vectors
 
     double DEL_s=U(i)*EXPITE(delta_param(0,i));
 
@@ -8941,7 +9688,18 @@ void update_delta_param(const field <vec> &tau,const field <vec> &tau_stop,
     double deriv_delta_s_stop=U(i)*EXPITE_sq(delta_param(0));
 
 
-    vec weight_LCR=weight(sigma,g(tau_prime, Ind_L(i), Ind_LCR(i) ),h(nu_r_p(i),Ind_LCR(i) ),
+    double sum_prob = mlpack::AccuLog(prob_param.col(i));
+
+
+    vec nu_l_p_i= h(nu_l(i), Ind_R(i) ) - penalty_fun(h(nu_r(i), Ind_R(i) ),h(nu_r_squared(i), Ind_R(i) ),penal_param.col(i));
+    vec nu_r_p_i= h(nu_r(i), Ind_L(i) ) - penalty_fun(h(nu_l(i), Ind_L(i) ),h(nu_l_squared(i), Ind_L(i) ),penal_param.col(i));
+
+
+    vec nu_l_s_i=nu_l(i)-penalty_fun_s(stop_param(1,i),penal_param.col(i));
+    vec nu_r_s_i=nu_r(i)-penalty_fun_s(stop_param(1,i),penal_param.col(i));
+
+
+    vec weight_LCR=weight(sigma,g(tau_prime, Ind_L(i), Ind_LCR(i) ),h(nu_r_p_i,Ind_LCR(i) ),
                           g(b_r(i), Ind_L(i), Ind_LCR(i) ));
 
     vec weight_LIR=weight(sigma,g(tau_prime, Ind_L(i), Ind_LIR(i) ),g(nu_l(i),Ind_L(i),Ind_LIR(i) ),
@@ -8950,16 +9708,16 @@ void update_delta_param(const field <vec> &tau,const field <vec> &tau_stop,
     vec weight_RIR=weight(sigma,g(tau_prime, Ind_R(i), Ind_RIR(i) ),g(nu_r(i),Ind_R(i), Ind_RIR(i) ),
                           g(b_r(i), Ind_R(i), Ind_RIR(i) ));
 
-    vec weight_RCR=weight(sigma,g(tau_prime, Ind_R(i), Ind_RCR(i) ),h(nu_l_p(i), Ind_RCR(i) ),
+    vec weight_RCR=weight(sigma,g(tau_prime, Ind_R(i), Ind_RCR(i) ),h(nu_l_p_i, Ind_RCR(i) ),
                           g(b_l(i), Ind_R(i), Ind_RCR(i) ));
 
 
-    vec weight_LCR_G_FS=weight(sigma,g(tau_prime, Ind_L(i), Ind_S_LCR(i) ),h(nu_r_p(i), Ind_S_LCR(i) ),g(b_r(i), Ind_L(i), Ind_S_LCR(i) ));
+    vec weight_LCR_G_FS=weight(sigma,g(tau_prime, Ind_L(i), Ind_S_LCR(i) ),h(nu_r_p_i, Ind_S_LCR(i) ),g(b_r(i), Ind_L(i), Ind_S_LCR(i) ));
 
     vec weight_LIR_G_FS=weight(sigma,g(tau_prime, Ind_L(i), Ind_S_LIR(i) ),g(nu_l(i), Ind_L(i), Ind_S_LIR(i) ),
                                g(b_l(i), Ind_L(i), Ind_S_LIR(i) ));
 
-    vec weight_RCR_G_FS=weight(sigma,g(tau_prime, Ind_R(i), Ind_S_RCR(i) ),h(nu_l_p(i), Ind_S_RCR(i) ),g(b_l(i), Ind_R(i), Ind_S_RCR(i) ));
+    vec weight_RCR_G_FS=weight(sigma,g(tau_prime, Ind_R(i), Ind_S_RCR(i) ),h(nu_l_p_i, Ind_S_RCR(i) ),g(b_l(i), Ind_R(i), Ind_S_RCR(i) ));
 
     vec weight_RIR_G_FS=weight(sigma,g(tau_prime, Ind_R(i), Ind_S_RIR(i) ),g(nu_r(i), Ind_R(i), Ind_S_RIR(i) ),
                                g(b_r(i), Ind_R(i), Ind_S_RIR(i) ));
@@ -8968,69 +9726,76 @@ void update_delta_param(const field <vec> &tau,const field <vec> &tau_stop,
 
 
     vec weight_LCR_S=weight_s(sigma,g(tau_prime, Ind_L(i), Ind_S_LCR(i) ),g(tau_s, Ind_L(i), Ind_S_LCR(i) ),g(SSD(i), Ind_L(i), Ind_S_LCR(i) ),
-                              g(b_r(i), Ind_L(i), Ind_S_LCR(i) ),h(nu_r_p(i), Ind_S_LCR(i) ),
-                              g(nu_r_s(i), Ind_L(i), Ind_S_LCR(i) ),DEL,DEL_s,lt);
+                              g(b_r(i), Ind_L(i), Ind_S_LCR(i) ),h(nu_r_p_i, Ind_S_LCR(i) ),
+                              g(nu_r_s_i, Ind_L(i), Ind_S_LCR(i) ),DEL,DEL_s,lt);
+
 
     vec weight_LIR_S=weight_s(sigma,g(tau_prime, Ind_L(i), Ind_S_LIR(i) ),g(tau_s, Ind_L(i), Ind_S_LIR(i) ),g(SSD(i), Ind_L(i), Ind_S_LIR(i) ),
                               g(b_l(i), Ind_L(i), Ind_S_LIR(i) ),g(nu_l(i),Ind_L(i), Ind_S_LIR(i) ),
-                              g(nu_l_s(i), Ind_L(i), Ind_S_LIR(i) ),DEL,DEL_s,lt);
+                              g(nu_l_s_i, Ind_L(i), Ind_S_LIR(i) ),DEL,DEL_s,lt);
 
     vec weight_RCR_S=weight_s(sigma,g(tau_prime, Ind_R(i), Ind_S_RCR(i) ),g(tau_s, Ind_R(i), Ind_S_RCR(i) ),g(SSD(i), Ind_R(i), Ind_S_RCR(i) ),
-                              g(b_l(i), Ind_R(i), Ind_S_RCR(i) ),h(nu_l_p(i), Ind_S_RCR(i) ),
-                              g(nu_l_s(i),Ind_R(i), Ind_S_RCR(i) ),DEL,DEL_s,lt);
-
+                              g(b_l(i), Ind_R(i), Ind_S_RCR(i) ),h(nu_l_p_i, Ind_S_RCR(i) ),
+                              g(nu_l_s_i,Ind_R(i), Ind_S_RCR(i) ),DEL,DEL_s,lt);
 
     vec weight_RIR_S=weight_s(sigma, g(tau_prime, Ind_R(i), Ind_S_RIR(i) ),g(tau_s, Ind_R(i), Ind_S_RIR(i) ),g(SSD(i), Ind_R(i), Ind_S_RIR(i) ),
                               g(b_r(i), Ind_R(i), Ind_S_RIR(i) ),g(nu_r(i), Ind_R(i), Ind_S_RIR(i) ),
-                              g(nu_r_s(i),Ind_R(i), Ind_S_RIR(i) ),DEL,DEL_s,lt);
+                              g(nu_r_s_i,Ind_R(i), Ind_S_RIR(i) ),DEL,DEL_s,lt);
 
-      
+
 
     vec weight_FS_LCR=weight_stop(g(tau_s, Ind_L(i), Ind_S_LCR(i) ), sigma,stop_param.col(i));
+
     vec weight_FS_LIR=weight_stop(g(tau_s, Ind_L(i), Ind_S_LIR(i) ), sigma,stop_param.col(i));
+
     vec weight_FS_RCR=weight_stop(g(tau_s, Ind_R(i), Ind_S_RCR(i) ), sigma,stop_param.col(i));
+
     vec weight_FS_RIR=weight_stop(g(tau_s, Ind_R(i), Ind_S_RIR(i) ), sigma,stop_param.col(i));
 
 
 
-    
 
-    field<vec> likelihood_integral=integral_likelihood(sigma,SSD(i),DEL,DEL_s,
-                                                       stop_param.col(i),penal_param.col(i),prob_param.col(i),
-                                                       b_l(i),nu_l(i),nu_l_s(i),
-                                                       b_r(i),nu_r_p(i),nu_r_s(i),
-                                                       nu_r(i),nu_l_p(i),
-                                                       Ind_L(i),Ind_R(i),Ind_I_L(i),Ind_I_R(i),
-                                                       lower_bound,upper_bound,lt);
-
-
-    double Inhibit_likelihood=sum(likelihood_integral(0))+sum(likelihood_integral(1));
+    field<vec> likelihood_integral =  integral_likelihood2(sigma,SSD(i),DEL,DEL_s,
+                                                           stop_param.col(i),penal_param.col(i),prob_param.col(i),
+                                                           b_l(i),nu_l(i),nu_l_s_i,
+                                                           b_r(i),nu_r_p_i,nu_r_s_i,
+                                                           nu_r(i),nu_l_p_i,
+                                                           Ind_L(i),Ind_R(i),Ind_I_L(i),Ind_I_R(i),
+                                                           lower_bound,upper_bound,lt);
 
 
+    double Inhib_likelihood = sum(likelihood_integral(0)) + sum(likelihood_integral(1));
 
-    field<vec> delta_prime_Stim =integrate_delta_prime(likelihood_integral,sigma,
-                                                       stop_param.col(i),penal_param.col(i),prob_param.col(i),
-                                                       SSD(i),DEL,DEL_s,b_l(i),b_r(i),nu_l(i),nu_r(i),
-                                                       nu_l_s(i),nu_r_s(i),nu_r_p(i),nu_l_p(i),deriv_delta,
-                                                       Ind_L(i),Ind_R(i),Ind_I_L(i),Ind_I_R(i),
-                                                       lower_bound,upper_bound,lt);
 
-    field<vec> delta_s_Stim =integrate_delta_prime_s(likelihood_integral,sigma,
-                                                     stop_param.col(i),penal_param.col(i),prob_param.col(i),
-                                                     SSD(i),DEL,DEL_s,b_l(i),b_r(i),nu_l(i),nu_r(i),
-                                                     nu_l_s(i),nu_r_s(i),nu_r_p(i),nu_l_p(i),
-                                                     deriv_delta_s,deriv_delta_s_stop,
-                                                     Ind_L(i),Ind_R(i),Ind_I_L(i),Ind_I_R(i),
-                                                     lower_bound,upper_bound,lt);
+
+    field<vec> b_stop_Stim= integrate_b_stop(likelihood_integral,sigma,SSD(i),DEL,DEL_s,
+                                             stop_param.col(i),penal_param.col(i),prob_param.col(i),
+                                             b_l(i),b_r(i),nu_l(i),nu_r(i),nu_l_s_i,nu_r_s_i,
+                                             nu_r_p_i,nu_l_p_i,Ind_L(i),Ind_R(i),Ind_I_L(i),Ind_I_R(i),
+                                             lower_bound,upper_bound,lt);
+
+
+
+
+
+    field<vec> nu_stop_Stim = integrate_nu_stop(likelihood_integral, sigma,SSD(i),DEL,DEL_s,
+                                                stop_param.col(i),penal_param.col(i),prob_param.col(i),
+                                                b_l(i),b_r(i),
+                                                nu_l(i),nu_r(i),nu_l_s_i,nu_r_s_i,
+                                                nu_r_p_i,nu_l_p_i,
+                                                nu_l_squared(i),nu_r_squared(i),
+                                                Ind_L(i),Ind_R(i),Ind_I_L(i),Ind_I_R(i),
+                                                lower_bound,upper_bound,lt);
 
 
 
     field<vec> lk_FS=update_lk_FS4(tau_prime,tau_s, sigma,SSD(i),
                                    b_l(i),b_r(i),nu_l(i),nu_r(i),
-                                   nu_r_p(i),nu_l_p(i),nu_l_s(i),nu_r_s(i),
+                                   nu_r_p_i,nu_l_p_i,nu_l_s_i,nu_r_s_i,
                                    Ind_L(i),Ind_R(i),Ind_LCR(i), Ind_LIR(i),Ind_RCR(i),Ind_RIR(i),
                                    Ind_S_LCR(i),Ind_S_LIR(i),Ind_S_RCR(i),Ind_S_RIR(i),
                                    stop_param.col(i),prob_param.col(i),DEL,DEL_s,lt);
+
 
 
     vec lk_LCR_FS=lk_FS(0);
@@ -9055,77 +9820,189 @@ void update_delta_param(const field <vec> &tau,const field <vec> &tau_stop,
 
 
 
-    //delta_prime update steps
+    field<vec> delta_prime_Stim =integrate_delta_prime(likelihood_integral,sigma,
+                                                       stop_param.col(i),penal_param.col(i),prob_param.col(i),
+                                                       SSD(i),DEL,DEL_s,b_l(i),b_r(i),nu_l(i),nu_r(i),
+                                                       nu_l_s_i,nu_r_s_i,nu_r_p_i,nu_l_p_i,deriv_delta,
+                                                       Ind_L(i),Ind_R(i),Ind_I_L(i),Ind_I_R(i),
+                                                       lower_bound,upper_bound,lt);
 
-
-    vec p(size(delta_param.col(i)),fill::randn);
-
-
-    double U_old=-log_lhood(Inhibit_likelihood,
-                            sigma, tau_prime, tau_s, SSD(i),Ind_GF(i),
-                            b_l(i), b_r(i), nu_l(i), nu_r(i), nu_l_p(i), nu_r_p(i), nu_l_s(i), nu_r_s(i),
-                            Ind_L(i), Ind_R(i), Ind_LCR(i), Ind_LIR(i), Ind_RIR(i), Ind_RCR(i),
-                            Ind_S_LCR(i), Ind_S_LIR(i), Ind_S_RIR(i), Ind_S_RCR(i),
-                            lk_LCR_FS, lk_LIR_FS,lk_RCR_FS,lk_RIR_FS,
-                            prob_param.col(i),T_Go(i),k(i));
-
-
-    double prior_main=delta_param(1,i)-(2*log(1+exp(delta_param(1,i))))+
-                      delta_param(0,i)-(2*log(1+exp(delta_param(0,i))));
-
-
-    U_old-=prior_main;
-
-    // Rcpp::Rcout<<"U_old"<<U_old<<endl;
-
-    double H_old = U_old+ (dot(p,p)/2);
-
-
-    vec v_old =-    grad_delta(tau_prime,tau_s,sigma,SSD(i),DEL,DEL_s,
-                               delta_param.col(i),stop_param.col(i),
-                               nu_l(i), nu_r(i),b_l(i), b_r(i),
-                               nu_l_p(i),nu_r_p(i),nu_l_s(i),nu_r_s(i),delta_prime_Stim,delta_s_Stim,
-                               weight_LIR, weight_RCR,weight_LCR,weight_RIR,
-                               weight_LCR_G_FS, weight_LIR_G_FS,weight_RCR_G_FS,weight_RIR_G_FS,
-                               weight_LIR_S,weight_RCR_S,weight_LCR_S,weight_RIR_S,
-
-                               weight_FS_LCR,weight_FS_LIR,weight_FS_RCR,weight_FS_RIR,
-                               diff_X_LCR,diff_Y_LCR,diff_X_LIR,diff_Y_LIR,
-                               diff_X_RCR,diff_Y_RCR,diff_X_RIR,diff_Y_RIR,
-
-                               deriv_delta,deriv_delta_s,deriv_delta_s_stop,
-
-                               Ind_L(i),Ind_R(i),Ind_LCR(i),Ind_LIR(i),Ind_RCR(i),Ind_RIR(i),
-                               Ind_S_LCR(i),Ind_S_LIR(i),Ind_S_RCR(i),Ind_S_RIR(i),lt);
+    field<vec> delta_s_Stim =integrate_delta_prime_s(likelihood_integral,sigma,
+                                                     stop_param.col(i),penal_param.col(i),prob_param.col(i),
+                                                     SSD(i),DEL,DEL_s,b_l(i),b_r(i),nu_l(i),nu_r(i),
+                                                     nu_l_s_i,nu_r_s_i,nu_r_p_i,nu_l_p_i,
+                                                     deriv_delta_s,deriv_delta_s_stop,
+                                                     Ind_L(i),Ind_R(i),Ind_I_L(i),Ind_I_R(i),
+                                                     lower_bound,upper_bound,lt);
 
 
 
-    // Rcpp::Rcout<<"v_old"<<v_old<<endl;
+    mat Penal_LS=integrate_penalty_Left_Stim(likelihood_integral,sigma,SSD(i),DEL,DEL_s,
+                                             penal_param.col(i),stop_param.col(i),prob_param.col(i),
+                                             b_l(i),b_r(i),nu_l(i),nu_r(i),
+                                             nu_l_s_i,nu_r_s_i,
+                                             nu_r_p_i,nu_l_squared(i),
+                                             Ind_L(i),Ind_I_L(i),
+                                             lower_bound,upper_bound,lt);
+
+
+    mat Penal_RS =integrate_penal_Right_Stim(likelihood_integral,sigma,SSD(i),DEL,DEL_s,
+                                             penal_param.col(i),stop_param.col(i),prob_param.col(i),
+                                             b_l(i),b_r(i),nu_l(i),nu_r(i),
+                                             nu_l_s_i,nu_r_s_i,
+                                             nu_l_p_i,nu_r_squared(i),
+                                             Ind_R(i),Ind_I_R(i),
+                                             lower_bound,upper_bound,lt);
+
+
+
+
+
+    //penalty parameter update steps
+
+    vec p_stop(size(stop_param.col(i)),fill::randn);
+
+    vec p_prob(size(prob_param.col(i)),fill::randn);
+
+
+    vec p_delta(size(delta_param.col(i)),fill::randn);
+
+
+    vec p_penal(size(penal_param.col(i)),fill::randn);
+
+
+
+
+    double U_old=-(log_lhood(Inhib_likelihood,
+                             sigma, tau_prime, tau_s, SSD(i),Ind_GF(i),
+                             b_l(i), b_r(i), nu_l(i), nu_r(i), nu_l_p_i, nu_r_p_i, nu_l_s_i, nu_r_s_i,
+                             Ind_L(i), Ind_R(i), Ind_LCR(i), Ind_LIR(i), Ind_RIR(i), Ind_RCR(i),
+                             Ind_S_LCR(i), Ind_S_LIR(i), Ind_S_RIR(i), Ind_S_RCR(i),
+                             lk_LCR_FS, lk_LIR_FS,lk_RCR_FS,lk_RIR_FS,
+                             prob_param.col(i),T_Go(i),k(i))-(T_Total(i)*sum_prob));
+
+
+
+    double prior_main_prob=log_gama_prior(prob_param.col(i),prob_hyp(0),prob_hyp(1),prob_hyp(2));
+
+
+    double prior_main_stop=log_normal_prior(stop_param.col(i),mu_b_stop,sigma_b_stop,mu_nu_stop,sigma_nu_stop);
+
+
+    double prior_main_delta=delta_param(1,i)-(2*log(1+exp(delta_param(1,i))))+
+                            delta_param(0,i)-(2*log(1+exp(delta_param(0,i))));
+
+
+    double prior_main_penal=log_normal_prior(penal_param.col(i),mu_lambda_prime,sigma_lambda_prime,
+                                             mu_alpha_prime,sigma_alpha_prime);
+
+    U_old-=(prior_main_prob+prior_main_stop+prior_main_delta+prior_main_penal);
+
+
+    double H_old = U_old+(dot(p_prob,p_prob)/2)+(dot(p_stop,p_stop)/2)+(dot(p_delta,p_delta)/2)+(dot(p_penal,p_penal)/2);
+
+
+
+
+    vec v_old_stop = -grad_stop_param(tau_prime,tau_s,sigma,SSD(i),DEL,DEL_s,
+                                      nu_l(i),nu_r(i),b_l(i),b_r(i),
+                                      nu_l_p_i,nu_r_p_i,nu_l_s_i,nu_r_s_i,
+                                      weight_LCR_S, weight_LIR_S,weight_RCR_S,weight_RIR_S,
+                                      weight_FS_LCR,weight_FS_LIR,weight_FS_RCR,weight_FS_RIR,
+                                      Ind_L(i),Ind_R(i),
+
+                                      Ind_S_LCR(i),Ind_S_LIR(i),Ind_S_RCR(i),Ind_S_RIR(i),
+                                      nu_stop_Stim,b_stop_Stim,
+                                      stop_param.col(i),penal_param.col(i),
+                                      mu_nu_stop,sigma_nu_stop,mu_b_stop,sigma_b_stop,
+                                      diff_Y_LCR,diff_Y_LIR,diff_Y_RCR,diff_Y_RIR,lt);
+
+
+    vec v_old_prob = -grad_prob_param(tau_s,sigma,likelihood_integral,
+                                      stop_param.col(i),prob_param.col(i),sum_prob,
+                                      prob_hyp,
+                                      T_Go(i),k(i),T_Total(i),
+                                      diff_X_LCR,diff_Y_LCR,diff_X_LIR,diff_Y_LIR,
+                                      diff_X_RCR,diff_Y_RCR,diff_X_RIR,diff_Y_RIR);
+
+
+
+    vec v_old_delta  = -grad_delta(tau_prime,tau_s,sigma,SSD(i),DEL,DEL_s,
+                                   delta_param.col(i),stop_param.col(i),
+                                   nu_l(i), nu_r(i),b_l(i), b_r(i),
+                                   nu_l_p_i,nu_r_p_i,nu_l_s_i,nu_r_s_i,delta_prime_Stim,delta_s_Stim,
+                                   weight_LIR, weight_RCR,weight_LCR,weight_RIR,
+                                   weight_LCR_G_FS, weight_LIR_G_FS,weight_RCR_G_FS,weight_RIR_G_FS,
+                                   weight_LIR_S,weight_RCR_S,weight_LCR_S,weight_RIR_S,
+
+                                   weight_FS_LCR,weight_FS_LIR,weight_FS_RCR,weight_FS_RIR,
+                                   diff_X_LCR,diff_Y_LCR,diff_X_LIR,diff_Y_LIR,
+                                   diff_X_RCR,diff_Y_RCR,diff_X_RIR,diff_Y_RIR,
+
+                                   deriv_delta,deriv_delta_s,deriv_delta_s_stop,
+
+                                   Ind_L(i),Ind_R(i),Ind_LCR(i),Ind_LIR(i),Ind_RCR(i),Ind_RIR(i),
+                                   Ind_S_LCR(i),Ind_S_LIR(i),Ind_S_RCR(i),Ind_S_RIR(i),lt);
+
+
+
+    vec v_old_penal = - grad_penal_param(tau_prime,tau_s,sigma,SSD(i),DEL,DEL_s,
+                                         b_l(i),b_r(i),nu_l(i),nu_r(i),nu_r_p_i,nu_l_p_i,
+                                         nu_l_squared(i),nu_r_squared(i),nu_l_s_i,nu_r_s_i,
+                                         Ind_L(i),Ind_R(i),Ind_LCR(i),Ind_LIR(i),Ind_RIR(i),Ind_RCR(i),
+                                         Ind_S_LCR(i),Ind_S_LIR(i),Ind_S_RIR(i),Ind_S_RCR(i),
+                                         Ind_I_L(i),Ind_I_R(i),
+                                         Penal_LS,Penal_RS,
+                                         weight_LCR,weight_RCR,
+                                         weight_LCR_G_FS,weight_RCR_G_FS,
+                                         weight_LCR_S,weight_LIR_S,weight_RCR_S,weight_RIR_S,
+                                         penal_param.col(i),stop_param.col(i),mu_lambda_prime,sigma_lambda_prime,
+                                         mu_alpha_prime,sigma_alpha_prime,
+                                         diff_X_LCR,diff_Y_LCR,diff_X_LIR,diff_Y_LIR,
+                                         diff_X_RCR,diff_Y_RCR,diff_X_RIR,diff_Y_RIR,lt);
+
+
+
+
+    vec stop_param_new = stop_param.col(i);
+
+    vec v_new_stop = v_old_stop;
+
+
+    vec prob_param_new=prob_param.col(i);
+
+    vec v_new_prob = v_old_prob;
 
 
     vec delta_param_new=delta_param.col(i);
 
+    vec v_new_delta = v_old_delta;
 
 
-    vec v_new=v_old;
+    vec penal_param_new = penal_param.col(i);
 
-    double delta=randu(distr_param(range(0),range(1)));
-    // int pois_draw=(unsigned) R::rpois(L);
-    // int nstep =  GSL_MAX_INT(1, pois_draw);
-    // nstep=GSL_MIN_INT(nstep,leapmax);
-    
+    vec v_new_penal = v_old_penal;
+
+
+
+
+    double delta = randu(distr_param(range(0), range(1)));
+
     int nstep=std::clamp((int) R::rpois(L),1,leapmax);
 
-    leap_frog_delta_param(tau(i),tau_stop(i),sigma,SSD(i),SSD_min,U(i),
-                          stop_param.col(i),penal_param.col(i),prob_param.col(i),delta_param_new,
-                          b_l(i),b_r(i),
-                          nu_l(i),nu_r(i),
-                          nu_l_p(i),nu_r_p(i),nu_l_s(i),nu_r_s(i),
-                          Ind_L(i),Ind_R(i),
-                          Ind_LCR(i),Ind_LIR(i),Ind_RIR(i),Ind_RCR(i),
-                          Ind_S_LCR(i),Ind_S_LIR(i),Ind_S_RIR(i),Ind_S_RCR(i),
-                          Ind_I_L(i),Ind_I_R(i),
-                          v_new,nstep,delta,p,lower_bound_init(i),upper_bound,lt);
+
+    leap_frog_ind_param(tau(i), tau_stop(i), sigma,SSD(i),SSD_min,U(i),
+                        b_l(i), b_r(i),nu_l(i), nu_r(i), nu_l_squared(i), nu_r_squared(i),
+                        Ind_L(i), Ind_R(i),Ind_LCR(i), Ind_LIR(i), Ind_RCR(i), Ind_RIR(i),
+                        Ind_S_LCR(i), Ind_S_LIR(i), Ind_S_RCR(i), Ind_S_RIR(i),
+                        Ind_I_L(i), Ind_I_R(i),
+                        stop_param_new, penal_param_new,prob_param_new,delta_param_new,
+                        mu_b_stop, sigma_b_stop, mu_nu_stop, sigma_nu_stop,
+                        mu_lambda_prime,sigma_lambda_prime,mu_alpha_prime,sigma_alpha_prime,
+                        prob_hyp,T_Go(i),k(i),T_Total(i),
+                        v_new_stop,v_new_prob,v_new_delta,v_new_penal,
+                        nstep,delta,p_stop,p_prob,p_delta,p_penal,
+                        lower_bound_init(i), upper_bound, lt);
 
 
 
@@ -9146,487 +10023,34 @@ void update_delta_param(const field <vec> &tau,const field <vec> &tau_stop,
     vec lower_bound_new=lower_bound_init(i)+DEL_s_new;
 
 
+    vec nu_l_p_i_new= h(nu_l(i), Ind_R(i) ) - penalty_fun(h(nu_r(i), Ind_R(i) ),h(nu_r_squared(i), Ind_R(i) ),penal_param_new);
+    vec nu_r_p_i_new= h(nu_r(i), Ind_L(i) ) - penalty_fun(h(nu_l(i), Ind_L(i) ),h(nu_l_squared(i), Ind_L(i) ),penal_param_new);
 
-    field<vec> likelihood_integral_new=integral_likelihood(sigma,SSD(i),DEL_new,DEL_s_new,
-                                                           stop_param.col(i),penal_param.col(i),prob_param.col(i),
-                                                           b_l(i),nu_l(i),nu_l_s(i),
-                                                           b_r(i),nu_r_p(i),nu_r_s(i),
-                                                           nu_r(i),nu_l_p(i),
-                                                           Ind_L(i),Ind_R(i),Ind_I_L(i),Ind_I_R(i),
-                                                           lower_bound_new,upper_bound,lt);
 
 
 
+    vec nu_l_s_i_new = nu_l(i) - penalty_fun_s(stop_param_new(1), penal_param_new);
+    vec nu_r_s_i_new = nu_r(i) - penalty_fun_s(stop_param_new(1), penal_param_new);
 
 
-    double Inhib_likelihood_new=sum(likelihood_integral_new(0))+sum(likelihood_integral_new(1));
-
-
-
-    field<vec> lk_FS_new= update_lk_FS3(tau_prime_new,tau_s_new,sigma,SSD(i),
-                                        b_l(i),b_r(i),nu_l(i),nu_r(i),nu_r_p(i),nu_l_p(i),
-                                        nu_l_s(i),nu_r_s(i),
-                                        Ind_L(i),Ind_R(i),Ind_LCR(i),Ind_LIR(i),Ind_RCR(i),Ind_RIR(i),
-                                        Ind_S_LCR(i),Ind_S_LIR(i),Ind_S_RCR(i),Ind_S_RIR(i),
-                                        stop_param.col(i),prob_param.col(i),DEL_new,DEL_s_new,lt);
-
-    vec lk_LCR_FS_new=lk_FS_new(0);
-    vec lk_LIR_FS_new=lk_FS_new(1);
-
-    vec lk_RCR_FS_new=lk_FS_new(2);
-    vec lk_RIR_FS_new=lk_FS_new(3);
-
-
-
-
-    double U_new=-log_lhood(Inhib_likelihood_new,
-                            sigma, tau_prime_new, tau_s_new, SSD(i),Ind_GF(i),
-                            b_l(i), b_r(i), nu_l(i), nu_r(i), nu_l_p(i), nu_r_p(i), nu_l_s(i), nu_r_s(i),
-                            Ind_L(i), Ind_R(i), Ind_LCR(i), Ind_LIR(i), Ind_RIR(i), Ind_RCR(i),
-                            Ind_S_LCR(i), Ind_S_LIR(i), Ind_S_RIR(i), Ind_S_RCR(i),
-                            lk_LCR_FS_new, lk_LIR_FS_new,lk_RCR_FS_new,lk_RIR_FS_new,
-                            prob_param.col(i),T_Go(i),k(i));
-
-
-
-   double prior_main_new=delta_param_new(1)-(2*log(1+exp(delta_param_new(1))))+
-                         delta_param_new(0)-(2*log(1+exp(delta_param_new(0))));
-
-
-
-    U_new-=prior_main_new;
-
-
-    double H_new=U_new+ (dot(p,p)/2);
-
-
-    if (log(randu()) < -(H_new - H_old)) {
-#pragma omp critical
-{
-
-  delta_param.col(i) = delta_param_new;
-  ++acceptance_d[i];
-}
-    }
-
-
-    omp_set_num_threads(6);
-  }
-
-}
-
-
-
-
-
-/////////////////////////////////////////////////////////////////////////////////////// nu_stop /////////////////////////////////////////////////////////////////////////////////////////////
-
-//Leapfrog algorithm
-
-void leap_frog_stop_prob_param(const vec &tau, const vec &tau_s, const double sigma,const vec &delta_prime,
-                               const vec &SSD,const double DEL,const double DEL_s,
-                               const vec &b_l, const vec &b_r,
-                               const vec &nu_l, const vec &nu_r, const vec &nu_l_p, const vec &nu_r_p,
-                               const vec &nu_l_squared, const vec &nu_r_squared,
-
-                               const uvec &Ind_L, const uvec &Ind_R,
-                               const uvec &Ind_LCR, const uvec &Ind_LIR, const uvec &Ind_RCR,const uvec &Ind_RIR,
-                               const uvec &Ind_S_LCR, const uvec &Ind_S_LIR, const uvec &Ind_S_RCR,const uvec &Ind_S_RIR,
-                               const uvec &Ind_I_L, const uvec &Ind_I_R,
-                               vec &stop_param,const vec &penal_param,vec &prob_param,
-                               const double mu_b_stop, const double sigma_b_stop, const double mu_nu_stop,const double sigma_nu_stop,
-
-                               const vec &prob_hyp,
-                               const double T_Go,const double k,const double T_Total,
-
-                               vec &v_old_stop,vec &v_old_prob,const double L, const double delta,
-                               mat &p_stop,mat &p_prob,
-
-
-                               const vec &lower_bound, const double upper_bound, const bool lt = 1) {
-
-
-  // Rcpp::Rcout<<"ABJ"<< endl;
-
-
-  for (unsigned j = 0; j < L; ++j) {
-
-    stop_param += delta * (p_stop - (delta / 2) * v_old_stop);
-
-    prob_param += delta * (p_prob - (delta / 2) * v_old_prob);
-
-
-    double sum_Prob = mlpack::AccuLog(prob_param);
-
-
-    vec nu_l_s = nu_l - penalty_fun_s(stop_param(1), penal_param);
-    vec nu_r_s = nu_r - penalty_fun_s(stop_param(1), penal_param);
-
-
-    vec weight_LCR_S=weight_s(sigma,g(tau, Ind_L, Ind_S_LCR ),g(tau_s, Ind_L, Ind_S_LCR ),g(SSD, Ind_L, Ind_S_LCR ),
-                              g(b_r, Ind_L, Ind_S_LCR ),h(nu_r_p, Ind_S_LCR ),
-                              g(nu_r_s, Ind_L, Ind_S_LCR ),DEL,DEL_s,lt);
-
-    vec weight_LIR_S=weight_s(sigma,g(tau, Ind_L, Ind_S_LIR ),g(tau_s, Ind_L, Ind_S_LIR ),g(SSD, Ind_L, Ind_S_LIR ),
-                              g(b_l, Ind_L, Ind_S_LIR ),g(nu_l,Ind_L, Ind_S_LIR ),
-                              g(nu_l_s, Ind_L, Ind_S_LIR ),DEL,DEL_s,lt);
-
-    vec weight_RCR_S=weight_s(sigma,g(tau, Ind_R, Ind_S_RCR ),g(tau_s, Ind_R, Ind_S_RCR ),g(SSD, Ind_R, Ind_S_RCR ),
-                              g(b_l, Ind_R, Ind_S_RCR ),h(nu_l_p, Ind_S_RCR ),
-                              g(nu_l_s,Ind_R, Ind_S_RCR ),DEL,DEL_s,lt);
-
-    vec weight_RIR_S=weight_s(sigma, g(tau, Ind_R, Ind_S_RIR ),g(tau_s, Ind_R, Ind_S_RIR ),g(SSD, Ind_R, Ind_S_RIR ),
-                              g(b_r, Ind_R, Ind_S_RIR ),g(nu_r, Ind_R, Ind_S_RIR ),
-                              g(nu_r_s,Ind_R, Ind_S_RIR ),DEL,DEL_s,lt);
-
-
-    vec weight_FS_LCR=weight_stop(g(tau_s, Ind_L, Ind_S_LCR ), sigma,stop_param);
-
-    vec weight_FS_LIR=weight_stop(g(tau_s, Ind_L, Ind_S_LIR ), sigma,stop_param);
-
-    vec weight_FS_RCR=weight_stop(g(tau_s, Ind_R, Ind_S_RCR ), sigma,stop_param);
-
-    vec weight_FS_RIR=weight_stop(g(tau_s, Ind_R, Ind_S_RIR ), sigma,stop_param);
-
-
-
-    field<vec> likelihood_integral =integral_likelihood2(sigma,SSD,DEL,DEL_s,
-                                                        stop_param,penal_param,prob_param,
-                                                        b_l,nu_l,nu_l_s,
-                                                        b_r,nu_r_p,nu_r_s,
-                                                        nu_r,nu_l_p,
-                                                        Ind_L,Ind_R,Ind_I_L,Ind_I_R,
-                                                        lower_bound,upper_bound,lt);
-
-
-
-
-    field<vec> b_stop_Stim=integrate_b_stop(likelihood_integral,sigma,SSD,DEL,DEL_s,
-                                            stop_param,penal_param,prob_param,
-                                            b_l,b_r,nu_l,nu_r,nu_l_s,nu_r_s,nu_r_p,nu_l_p,
-                                            Ind_L,Ind_R,Ind_I_L,Ind_I_R,
-                                            lower_bound,upper_bound,lt);
-
-
-
-    field<vec> nu_stop_Stim =integrate_nu_stop(likelihood_integral, sigma,SSD,DEL,DEL_s,
-                                               stop_param,penal_param,prob_param,
-                                               b_l,b_r,nu_l,nu_r,nu_l_s,nu_r_s,
-                                               nu_r_p,nu_l_p,nu_l_squared,nu_r_squared,
-                                               Ind_L,Ind_R,Ind_I_L,Ind_I_R,
-                                               lower_bound,upper_bound,lt);
-
-
-
-    field<vec> lk_FS=update_lk_FS4(tau,tau_s, sigma,SSD,
-                                   b_l,b_r,nu_l,nu_r,
-                                   nu_r_p,nu_l_p,nu_l_s,nu_r_s,
-                                   Ind_L,Ind_R,Ind_LCR, Ind_LIR,Ind_RCR,Ind_RIR,
-                                   Ind_S_LCR,Ind_S_LIR,Ind_S_RCR,Ind_S_RIR,
-                                   stop_param,prob_param,DEL,DEL_s,lt);
-
-
-    vec diff_X_LCR=lk_FS(4);
-    vec diff_Y_LCR=lk_FS(5);
-
-    vec diff_X_LIR=lk_FS(6);
-    vec diff_Y_LIR=lk_FS(7);
-
-    vec diff_X_RCR=lk_FS(8);
-    vec diff_Y_RCR=lk_FS(9);
-
-    vec diff_X_RIR=lk_FS(10);
-    vec diff_Y_RIR=lk_FS(11);
-
-
-    vec v_new_stop = -grad_stop_param(tau,tau_s,sigma,SSD,DEL,DEL_s,
-                                      nu_l,nu_r,b_l,b_r,
-                                      nu_l_p,nu_r_p,nu_l_s,nu_r_s,
-                                      weight_LCR_S, weight_LIR_S,weight_RCR_S,weight_RIR_S,
-                                      weight_FS_LCR,weight_FS_LIR,weight_FS_RCR,weight_FS_RIR,
-                                      Ind_L,Ind_R,
-                                      Ind_S_LCR,Ind_S_LIR,Ind_S_RCR,Ind_S_RIR,
-                                      nu_stop_Stim,b_stop_Stim,
-                                      stop_param,penal_param,
-                                      mu_nu_stop,sigma_nu_stop,mu_b_stop,sigma_b_stop,
-                                      diff_Y_LCR,diff_Y_LIR,diff_Y_RCR,diff_Y_RIR,lt);
-
-
-
-    vec v_new_prob= -grad_prob_param(tau_s,sigma,likelihood_integral,
-                                     stop_param,prob_param,sum_Prob,prob_hyp,
-                                     T_Go,k,T_Total,
-                                     log(diff_X_LCR),log(diff_Y_LCR),log(diff_X_LIR),log(diff_Y_LIR),
-                                     log(diff_X_RCR),log(diff_Y_RCR),log(diff_X_RIR),log(diff_Y_RIR));
-
-
-    p_stop -= (delta / 2) * (v_old_stop + v_new_stop);
-    v_old_stop = v_new_stop;
-
-    p_prob-=  (delta/2) *(v_old_prob+v_new_prob);
-    v_old_prob=  v_new_prob;
-
-  }
-}
-
-
-
-//Update nu_stop parameter
-
-
-void update_stop_prob_param(const field<vec> &tau, const field<vec> &tau_s, const double sigma,const field<vec> &SSD,
-                            const vec &DEL,const vec &DEL_s,
-                            const field <vec> &Ind_GF,const mat &delta_prime,
-                            const mat &gama, const mat &beta,const mat &penal_param, mat &stop_param,mat &prob_param,
-                            const field<vec> &b_l, const field<vec> &b_r,
-                            const field<vec> &nu_l, const field<vec> &nu_r,
-                            const field<vec> &nu_l_p, const field<vec> &nu_r_p,
-                            const field<vec> &nu_l_squared, const field<vec> &nu_r_squared,
-
-                            const field<uvec> &Ind_L, const field<uvec> &Ind_R,
-                            const field<uvec> &Ind_LCR, const field<uvec> &Ind_LIR, const field<uvec> &Ind_RCR,const field<uvec> &Ind_RIR,
-
-                            const field<uvec> &Ind_S_LCR, const field<uvec> &Ind_S_LIR, const field<uvec> &Ind_S_RCR, const field<uvec> &Ind_S_RIR,
-                            const field<uvec> &Ind_I_L, const field<uvec> &Ind_I_R,
-                            const double mu_b_stop, const double sigma_b_stop,const double mu_nu_stop, const double sigma_nu_stop,
-
-                            const vec &prob_hyp,
-                            const vec &T_Go,const vec &k,const vec &T_Total,
-
-                            const vec &range, const double L,
-                            const int leapmax, vec &acceptance_stop_prob, unsigned nparall,
-                            const field<vec> &lower_bound, const double upper_bound, const bool lt = true) {
-
-  // Rcpp::Rcout<<"ABK"<< endl;
-
-  unsigned N=nu_l.n_elem;
-
-
-  omp_set_num_threads(1);
-#pragma omp parallel for num_threads(nparall)
-  for (unsigned i = 0; i < N; ++i) {
-
-
-    double sum_prob = mlpack::AccuLog(prob_param.col(i));
-
-
-    vec nu_l_s_i=nu_l(i)-penalty_fun_s(stop_param(1,i),penal_param.col(i));
-    vec nu_r_s_i=nu_r(i)-penalty_fun_s(stop_param(1,i),penal_param.col(i));
-
-
-
-    vec weight_LCR_S=weight_s(sigma,g(tau(i), Ind_L(i), Ind_S_LCR(i) ),g(tau_s(i), Ind_L(i), Ind_S_LCR(i) ),g(SSD(i), Ind_L(i), Ind_S_LCR(i) ),
-                              g(b_r(i), Ind_L(i), Ind_S_LCR(i) ),h(nu_r_p(i), Ind_S_LCR(i) ),
-                              g(nu_r_s_i, Ind_L(i), Ind_S_LCR(i) ),DEL(i),DEL_s(i),lt);
-
-
-    vec weight_LIR_S=weight_s(sigma,g(tau(i), Ind_L(i), Ind_S_LIR(i) ),g(tau_s(i), Ind_L(i), Ind_S_LIR(i) ),g(SSD(i), Ind_L(i), Ind_S_LIR(i) ),
-                              g(b_l(i), Ind_L(i), Ind_S_LIR(i) ),g(nu_l(i),Ind_L(i), Ind_S_LIR(i) ),
-                              g(nu_l_s_i, Ind_L(i), Ind_S_LIR(i) ),DEL(i),DEL_s(i),lt);
-
-    vec weight_RCR_S=weight_s(sigma,g(tau(i), Ind_R(i), Ind_S_RCR(i) ),g(tau_s(i), Ind_R(i), Ind_S_RCR(i) ),g(SSD(i), Ind_R(i), Ind_S_RCR(i) ),
-                              g(b_l(i), Ind_R(i), Ind_S_RCR(i) ),h(nu_l_p(i), Ind_S_RCR(i) ),
-                              g(nu_l_s_i,Ind_R(i), Ind_S_RCR(i) ),DEL(i),DEL_s(i),lt);
-
-    vec weight_RIR_S=weight_s(sigma, g(tau(i), Ind_R(i), Ind_S_RIR(i) ),g(tau_s(i), Ind_R(i), Ind_S_RIR(i) ),g(SSD(i), Ind_R(i), Ind_S_RIR(i) ),
-                              g(b_r(i), Ind_R(i), Ind_S_RIR(i) ),g(nu_r(i), Ind_R(i), Ind_S_RIR(i) ),
-                              g(nu_r_s_i,Ind_R(i), Ind_S_RIR(i) ),DEL(i),DEL_s(i),lt);
-
-
-
-    vec weight_FS_LCR=weight_stop(g(tau_s(i), Ind_L(i), Ind_S_LCR(i) ), sigma,stop_param.col(i));
-
-    vec weight_FS_LIR=weight_stop(g(tau_s(i), Ind_L(i), Ind_S_LIR(i) ), sigma,stop_param.col(i));
-
-    vec weight_FS_RCR=weight_stop(g(tau_s(i), Ind_R(i), Ind_S_RCR(i) ), sigma,stop_param.col(i));
-
-    vec weight_FS_RIR=weight_stop(g(tau_s(i), Ind_R(i), Ind_S_RIR(i) ), sigma,stop_param.col(i));
-
-
-
-
-    field<vec> likelihood_integral =  integral_likelihood2(sigma,SSD(i),DEL(i),DEL_s(i),
-                                                          stop_param.col(i),penal_param.col(i),prob_param.col(i),
-                                                          b_l(i),nu_l(i),nu_l_s_i,
-                                                          b_r(i),nu_r_p(i),nu_r_s_i,
-                                                          nu_r(i),nu_l_p(i),
-                                                          Ind_L(i),Ind_R(i),Ind_I_L(i),Ind_I_R(i),
-                                                          lower_bound(i),upper_bound,lt);
-
-
-    double Inhib_likelihood = sum(likelihood_integral(0)) + sum(likelihood_integral(1));
-
-
-
-    field<vec> b_stop_Stim= integrate_b_stop(likelihood_integral,sigma,SSD(i),DEL(i),DEL_s(i),
-                                             stop_param.col(i),penal_param.col(i),prob_param.col(i),
-                                             b_l(i),b_r(i),nu_l(i),nu_r(i),nu_l_s_i,nu_r_s_i,
-                                             nu_r_p(i),nu_l_p(i),Ind_L(i),Ind_R(i),Ind_I_L(i),Ind_I_R(i),
-                                             lower_bound(i),upper_bound,lt);
-
-
-
-
-    field<vec> nu_stop_Stim = integrate_nu_stop(likelihood_integral, sigma,SSD(i),DEL(i),DEL_s(i),
-                                                stop_param.col(i),penal_param.col(i),prob_param.col(i),
-                                                b_l(i),b_r(i),
-                                                nu_l(i),nu_r(i),nu_l_s_i,nu_r_s_i,
-                                                nu_r_p(i),nu_l_p(i),
-                                                nu_l_squared(i),nu_r_squared(i),
-                                                Ind_L(i),Ind_R(i),Ind_I_L(i),Ind_I_R(i),
-                                                lower_bound(i),upper_bound,lt);
-
-
-
-    field<vec> lk_FS=update_lk_FS4(tau(i),tau_s(i), sigma,SSD(i),
-                                   b_l(i),b_r(i),nu_l(i),nu_r(i),
-                                   nu_r_p(i),nu_l_p(i),nu_l_s_i,nu_r_s_i,
-                                   Ind_L(i),Ind_R(i),Ind_LCR(i), Ind_LIR(i),Ind_RCR(i),Ind_RIR(i),
-                                   Ind_S_LCR(i),Ind_S_LIR(i),Ind_S_RCR(i),Ind_S_RIR(i),
-                                   stop_param.col(i),prob_param.col(i),DEL(i),DEL_s(i),lt);
-
-
-
-    vec lk_LCR_FS=lk_FS(0);
-    vec lk_LIR_FS=lk_FS(1);
-
-    vec lk_RCR_FS=lk_FS(2);
-    vec lk_RIR_FS=lk_FS(3);
-
-
-    vec diff_X_LCR=lk_FS(4);
-    vec diff_Y_LCR=lk_FS(5);
-
-    vec diff_X_LIR=lk_FS(6);
-    vec diff_Y_LIR=lk_FS(7);
-
-    vec diff_X_RCR=lk_FS(8);
-    vec diff_Y_RCR=lk_FS(9);
-
-    vec diff_X_RIR=lk_FS(10);
-    vec diff_Y_RIR=lk_FS(11);
-
-
-
-    //penalty parameter update steps
-
-    vec p_stop(size(stop_param.col(i)),fill::randn);
-
-    vec p_prob(size(prob_param.col(i)),fill::randn);
-
-
-
-    // Rcpp::Rcout<<"p"<<p<<endl;
-
-
-    // double U_old = -log_lhood_s(Inhib_likelihood,lk_LCR_FS, lk_LIR_FS,lk_RCR_FS, lk_RIR_FS);
-
-
-
-    double U_old=-(log_lhood(Inhib_likelihood,
-                             sigma, tau(i), tau_s(i), SSD(i),Ind_GF(i),
-                             b_l(i), b_r(i), nu_l(i), nu_r(i), nu_l_p(i), nu_r_p(i), nu_l_s_i, nu_r_s_i,
-                             Ind_L(i), Ind_R(i), Ind_LCR(i), Ind_LIR(i), Ind_RIR(i), Ind_RCR(i),
-                             Ind_S_LCR(i), Ind_S_LIR(i), Ind_S_RIR(i), Ind_S_RCR(i),
-                             lk_LCR_FS, lk_LIR_FS,lk_RCR_FS,lk_RIR_FS,
-                             prob_param.col(i),T_Go(i),k(i))-(T_Total(i)*sum_prob));
-
-
-
-    double prior_main_prob=log_gama_prior(prob_param.col(i),prob_hyp(0),prob_hyp(1),prob_hyp(2));
-
-
-    double prior_main_stop=log_normal_prior(stop_param.col(i),mu_b_stop,sigma_b_stop,mu_nu_stop,sigma_nu_stop);
-
-    U_old-=(prior_main_prob+prior_main_stop);
-
-
-    double H_old = U_old+(dot(p_prob,p_prob)/2)+(dot(p_stop,p_stop)/2);
-
-
-    vec v_old_stop = -grad_stop_param(tau(i),tau_s(i),sigma,SSD(i),DEL(i),DEL_s(i),
-                                      nu_l(i),nu_r(i),b_l(i),b_r(i),
-                                      nu_l_p(i),nu_r_p(i),nu_l_s_i,nu_r_s_i,
-                                      weight_LCR_S, weight_LIR_S,weight_RCR_S,weight_RIR_S,
-                                      weight_FS_LCR,weight_FS_LIR,weight_FS_RCR,weight_FS_RIR,
-                                      Ind_L(i),Ind_R(i),
-
-                                      Ind_S_LCR(i),Ind_S_LIR(i),Ind_S_RCR(i),Ind_S_RIR(i),
-                                      nu_stop_Stim,b_stop_Stim,
-                                      stop_param.col(i),penal_param.col(i),
-                                      mu_nu_stop,sigma_nu_stop,mu_b_stop,sigma_b_stop,
-                                      diff_Y_LCR,diff_Y_LIR,diff_Y_RCR,diff_Y_RIR,lt);
-
-
-
-
-    vec v_old_prob=-grad_prob_param(tau_s(i),sigma,likelihood_integral,
-                                    stop_param.col(i),prob_param.col(i),sum_prob,
-                                    prob_hyp,
-                                    T_Go(i),k(i),T_Total(i),
-                                    log(diff_X_LCR),log(diff_Y_LCR),log(diff_X_LIR),log(diff_Y_LIR),
-                                    log(diff_X_RCR),log(diff_Y_RCR),log(diff_X_RIR),log(diff_Y_RIR));
-
-
-    vec stop_param_new=stop_param.col(i);
-
-    vec v_new_stop = v_old_stop;
-
-
-    vec prob_param_new=prob_param.col(i);
-
-    vec v_new_prob = v_old_prob;
-
-
-    double delta = randu(distr_param(range(0), range(1)));
-    // int pois_draw = (unsigned) R::rpois(L);
-    // int nstep = GSL_MAX_INT(1, pois_draw);
-    // nstep = GSL_MIN_INT(nstep, leapmax);
-
-    int nstep=std::clamp((int) R::rpois(L),1,leapmax);
-
-
-    leap_frog_stop_prob_param(tau(i), tau_s(i), sigma,delta_prime.col(i),SSD(i),DEL(i),DEL_s(i),
-                              b_l(i), b_r(i),
-                              nu_l(i), nu_r(i), nu_l_p(i), nu_r_p(i),
-                              nu_l_squared(i), nu_r_squared(i),
-
-                              Ind_L(i), Ind_R(i),
-                              Ind_LCR(i), Ind_LIR(i), Ind_RCR(i), Ind_RIR(i),
-
-                              Ind_S_LCR(i), Ind_S_LIR(i), Ind_S_RCR(i), Ind_S_RIR(i),
-                              Ind_I_L(i), Ind_I_R(i),
-                              stop_param_new, penal_param.col(i),prob_param_new,
-                              mu_b_stop, sigma_b_stop, mu_nu_stop, sigma_nu_stop,
-                              prob_hyp,T_Go(i),k(i),T_Total(i),
-
-                              v_new_stop,v_new_prob,nstep,delta,p_stop,p_prob,
-
-                              lower_bound(i), upper_bound, lt);
-
-
-    vec nu_l_s_i_new = nu_l(i) - penalty_fun_s(stop_param_new(1), penal_param.col(i));
-    vec nu_r_s_i_new = nu_r(i) - penalty_fun_s(stop_param_new(1), penal_param.col(i));
-
-
-    field<vec> likelihood_integral_new = integral_likelihood2(sigma,SSD(i),DEL(i),DEL_s(i),stop_param_new,
-                                                             penal_param.col(i),prob_param_new,
-                                                             b_l(i),nu_l(i),nu_l_s_i_new,
-                                                             b_r(i),nu_r_p(i),nu_r_s_i_new,
-                                                             nu_r(i),nu_l_p(i),
-                                                             Ind_L(i),Ind_R(i),Ind_I_L(i),Ind_I_R(i),
-                                                             lower_bound(i),upper_bound,lt);
+    field<vec> likelihood_integral_new = integral_likelihood2(sigma,SSD(i),DEL_new,DEL_s_new,stop_param_new,
+                                                              penal_param_new,prob_param_new,
+                                                              b_l(i),nu_l(i),nu_l_s_i_new,
+                                                              b_r(i),nu_r_p_i_new,nu_r_s_i_new,
+                                                              nu_r(i),nu_l_p_i_new,
+                                                              Ind_L(i),Ind_R(i),Ind_I_L(i),Ind_I_R(i),
+                                                              lower_bound_new,upper_bound,lt);
 
 
     double Inhib_likelihood_new = sum(likelihood_integral_new(0)) + sum(likelihood_integral_new(1));
 
 
-    field<vec> lk_FS_new= update_lk_FS3(tau(i),tau_s(i),sigma,SSD(i),
-                                        b_l(i),b_r(i),nu_l(i),nu_r(i),nu_r_p(i),nu_l_p(i),
+    field<vec> lk_FS_new= update_lk_FS3(tau_prime_new,tau_s_new,sigma,SSD(i),
+                                        b_l(i),b_r(i),nu_l(i),nu_r(i),nu_r_p_i_new,nu_l_p_i_new,
                                         nu_l_s_i_new,nu_r_s_i_new,
                                         Ind_L(i),Ind_R(i),Ind_LCR(i),Ind_LIR(i),Ind_RCR(i),Ind_RIR(i),
                                         Ind_S_LCR(i),Ind_S_LIR(i),Ind_S_RCR(i),Ind_S_RIR(i),
-                                        stop_param_new,prob_param_new,DEL(i),DEL_s(i),lt);
+                                        stop_param_new,prob_param_new,DEL_new,DEL_s_new,lt);
 
 
 
@@ -9639,13 +10063,13 @@ void update_stop_prob_param(const field<vec> &tau, const field<vec> &tau_s, cons
 
     double sum_prob_new = mlpack::AccuLog(prob_param_new);
 
-    double U_new=- (log_lhood(Inhib_likelihood_new,
-                              sigma, tau(i), tau_s(i), SSD(i),Ind_GF(i),
-                              b_l(i), b_r(i), nu_l(i), nu_r(i), nu_l_p(i), nu_r_p(i), nu_l_s_i_new, nu_r_s_i_new,
-                              Ind_L(i), Ind_R(i), Ind_LCR(i), Ind_LIR(i), Ind_RIR(i), Ind_RCR(i),
-                              Ind_S_LCR(i), Ind_S_LIR(i), Ind_S_RIR(i), Ind_S_RCR(i),
-                              lk_LCR_FS_new, lk_LIR_FS_new,lk_RCR_FS_new,lk_RIR_FS_new,
-                              prob_param_new,T_Go(i),k(i))-(T_Total(i)*sum_prob_new));
+    double U_new = - (log_lhood(Inhib_likelihood_new,
+                                sigma, tau_prime_new, tau_s_new, SSD(i),Ind_GF(i),
+                                b_l(i), b_r(i), nu_l(i), nu_r(i), nu_l_p_i_new, nu_r_p_i_new, nu_l_s_i_new, nu_r_s_i_new,
+                                Ind_L(i), Ind_R(i), Ind_LCR(i), Ind_LIR(i), Ind_RIR(i), Ind_RCR(i),
+                                Ind_S_LCR(i), Ind_S_LIR(i), Ind_S_RIR(i), Ind_S_RCR(i),
+                                lk_LCR_FS_new, lk_LIR_FS_new,lk_RCR_FS_new,lk_RIR_FS_new,
+                                prob_param_new,T_Go(i),k(i))-(T_Total(i)*sum_prob_new));
 
 
     double prior_main_prob_new=log_gama_prior(prob_param_new,prob_hyp(0),prob_hyp(1),prob_hyp(2));
@@ -9654,15 +10078,21 @@ void update_stop_prob_param(const field<vec> &tau, const field<vec> &tau_s, cons
     double prior_main_stop_new=log_normal_prior(stop_param_new,mu_b_stop,sigma_b_stop,mu_nu_stop,sigma_nu_stop);
 
 
-    U_new-=(prior_main_prob_new+prior_main_stop_new);
+    double prior_main_delta_new=delta_param_new(1)-(2*log(1+exp(delta_param_new(1))))+
+                                delta_param_new(0)-(2*log(1+exp(delta_param_new(0))));
 
 
-    double H_new=U_new+(dot(p_stop,p_stop)/2)+(dot(p_prob,p_prob)/2);
+    double prior_main_penal_new=log_normal_prior(penal_param_new,mu_lambda_prime,sigma_lambda_prime,
+                                                 mu_alpha_prime,sigma_alpha_prime);
 
 
-    /*double H_new=U_new+((as_scalar(dot(p,(M_inv*p))))/2);*/
 
-    // Rcpp::Rcout<<"new-penalty="<<-U_new<<" old-penalty="<<-U_old<< endl;
+    U_new -= (prior_main_prob_new+prior_main_stop_new+prior_main_delta_new+prior_main_penal_new);
+
+
+    double H_new= U_new+(dot(p_stop,p_stop)/2)+(dot(p_prob,p_prob)/2)+(dot(p_delta,p_delta)/2)+(dot(p_penal,p_penal)/2);
+
+
 
 
     if (log(randu()) < -(H_new - H_old)) {
@@ -9670,7 +10100,9 @@ void update_stop_prob_param(const field<vec> &tau, const field<vec> &tau_s, cons
 {
   stop_param.col(i) = stop_param_new;
   prob_param.col(i) = prob_param_new;
-  ++acceptance_stop_prob[i];
+  delta_param.col(i) = delta_param_new;
+  penal_param.col(i) = penal_param_new;
+  ++acceptance_ind[i];
 }
     }
   }
@@ -9678,6 +10110,571 @@ void update_stop_prob_param(const field<vec> &tau, const field<vec> &tau_s, cons
   omp_set_num_threads(6);
 }
 
+
+
+
+// void update_stop_param(const field<vec> &tau, const field<vec> &tau_s, const double sigma,const field<vec> &SSD,
+//                             const vec &DEL,const vec &DEL_s,
+//                             const field <vec> &Ind_GF,const mat &delta_prime,
+//                             const mat &gama, const mat &beta,const mat &penal_param, mat &stop_param,const mat &prob_param,
+//                             const field<vec> &b_l, const field<vec> &b_r,
+//                             const field<vec> &nu_l, const field<vec> &nu_r,
+//                             const field<vec> &nu_l_p, const field<vec> &nu_r_p,
+//                             const field<vec> &nu_l_squared, const field<vec> &nu_r_squared,
+//
+//                             const field<uvec> &Ind_L, const field<uvec> &Ind_R,
+//                             const field<uvec> &Ind_LCR, const field<uvec> &Ind_LIR, const field<uvec> &Ind_RCR,const field<uvec> &Ind_RIR,
+//
+//                             const field<uvec> &Ind_S_LCR, const field<uvec> &Ind_S_LIR, const field<uvec> &Ind_S_RCR, const field<uvec> &Ind_S_RIR,
+//                             const field<uvec> &Ind_I_L, const field<uvec> &Ind_I_R,
+//                             const double mu_b_stop, const double sigma_b_stop,const double mu_nu_stop, const double sigma_nu_stop,
+//
+//                             const vec &prob_hyp,
+//                             const vec &T_Go,const vec &k,const vec &T_Total,
+//
+//                             const vec &range, const double L,
+//                             const int leapmax, vec &acceptance_stop, unsigned nparall,
+//                             const field<vec> &lower_bound, const double upper_bound, const bool lt = true) {
+//
+//   // Rcpp::Rcout<<"ABK"<< endl;
+//
+//   unsigned N=nu_l.n_elem;
+//
+//
+//   omp_set_num_threads(1);
+// #pragma omp parallel for num_threads(nparall)
+//   for (unsigned i = 0; i < N; ++i) {
+//
+//
+//     double sum_prob = mlpack::AccuLog(prob_param.col(i));
+//
+//
+//     vec nu_l_s_i=nu_l(i)-penalty_fun_s(stop_param(1,i),penal_param.col(i));
+//     vec nu_r_s_i=nu_r(i)-penalty_fun_s(stop_param(1,i),penal_param.col(i));
+//
+//
+//
+//     vec weight_LCR_S=weight_s(sigma,g(tau(i), Ind_L(i), Ind_S_LCR(i) ),g(tau_s(i), Ind_L(i), Ind_S_LCR(i) ),g(SSD(i), Ind_L(i), Ind_S_LCR(i) ),
+//                               g(b_r(i), Ind_L(i), Ind_S_LCR(i) ),h(nu_r_p(i), Ind_S_LCR(i) ),
+//                               g(nu_r_s_i, Ind_L(i), Ind_S_LCR(i) ),DEL(i),DEL_s(i),lt);
+//
+//
+//     vec weight_LIR_S=weight_s(sigma,g(tau(i), Ind_L(i), Ind_S_LIR(i) ),g(tau_s(i), Ind_L(i), Ind_S_LIR(i) ),g(SSD(i), Ind_L(i), Ind_S_LIR(i) ),
+//                               g(b_l(i), Ind_L(i), Ind_S_LIR(i) ),g(nu_l(i),Ind_L(i), Ind_S_LIR(i) ),
+//                               g(nu_l_s_i, Ind_L(i), Ind_S_LIR(i) ),DEL(i),DEL_s(i),lt);
+//
+//     vec weight_RCR_S=weight_s(sigma,g(tau(i), Ind_R(i), Ind_S_RCR(i) ),g(tau_s(i), Ind_R(i), Ind_S_RCR(i) ),g(SSD(i), Ind_R(i), Ind_S_RCR(i) ),
+//                               g(b_l(i), Ind_R(i), Ind_S_RCR(i) ),h(nu_l_p(i), Ind_S_RCR(i) ),
+//                               g(nu_l_s_i,Ind_R(i), Ind_S_RCR(i) ),DEL(i),DEL_s(i),lt);
+//
+//     vec weight_RIR_S=weight_s(sigma, g(tau(i), Ind_R(i), Ind_S_RIR(i) ),g(tau_s(i), Ind_R(i), Ind_S_RIR(i) ),g(SSD(i), Ind_R(i), Ind_S_RIR(i) ),
+//                               g(b_r(i), Ind_R(i), Ind_S_RIR(i) ),g(nu_r(i), Ind_R(i), Ind_S_RIR(i) ),
+//                               g(nu_r_s_i,Ind_R(i), Ind_S_RIR(i) ),DEL(i),DEL_s(i),lt);
+//
+//
+//
+//     vec weight_FS_LCR=weight_stop(g(tau_s(i), Ind_L(i), Ind_S_LCR(i) ), sigma,stop_param.col(i));
+//
+//     vec weight_FS_LIR=weight_stop(g(tau_s(i), Ind_L(i), Ind_S_LIR(i) ), sigma,stop_param.col(i));
+//
+//     vec weight_FS_RCR=weight_stop(g(tau_s(i), Ind_R(i), Ind_S_RCR(i) ), sigma,stop_param.col(i));
+//
+//     vec weight_FS_RIR=weight_stop(g(tau_s(i), Ind_R(i), Ind_S_RIR(i) ), sigma,stop_param.col(i));
+//
+//
+//
+//
+//     field<vec> likelihood_integral =  integral_likelihood(sigma,SSD(i),DEL(i),DEL_s(i),
+//                                                            stop_param.col(i),penal_param.col(i),prob_param.col(i),
+//                                                            b_l(i),nu_l(i),nu_l_s_i,
+//                                                            b_r(i),nu_r_p(i),nu_r_s_i,
+//                                                            nu_r(i),nu_l_p(i),
+//                                                            Ind_L(i),Ind_R(i),Ind_I_L(i),Ind_I_R(i),
+//                                                            lower_bound(i),upper_bound,lt);
+//
+//
+//     double Inhib_likelihood = sum(likelihood_integral(0)) + sum(likelihood_integral(1));
+//
+//
+//
+//     field<vec> b_stop_Stim= integrate_b_stop(likelihood_integral,sigma,SSD(i),DEL(i),DEL_s(i),
+//                                              stop_param.col(i),penal_param.col(i),prob_param.col(i),
+//                                              b_l(i),b_r(i),nu_l(i),nu_r(i),nu_l_s_i,nu_r_s_i,
+//                                              nu_r_p(i),nu_l_p(i),Ind_L(i),Ind_R(i),Ind_I_L(i),Ind_I_R(i),
+//                                              lower_bound(i),upper_bound,lt);
+//
+//
+//
+//
+//     field<vec> nu_stop_Stim = integrate_nu_stop(likelihood_integral, sigma,SSD(i),DEL(i),DEL_s(i),
+//                                                 stop_param.col(i),penal_param.col(i),prob_param.col(i),
+//                                                 b_l(i),b_r(i),
+//                                                 nu_l(i),nu_r(i),nu_l_s_i,nu_r_s_i,
+//                                                 nu_r_p(i),nu_l_p(i),
+//                                                 nu_l_squared(i),nu_r_squared(i),
+//                                                 Ind_L(i),Ind_R(i),Ind_I_L(i),Ind_I_R(i),
+//                                                 lower_bound(i),upper_bound,lt);
+//
+//
+//
+//     field<vec> lk_FS=update_lk_FS4(tau(i),tau_s(i), sigma,SSD(i),
+//                                    b_l(i),b_r(i),nu_l(i),nu_r(i),
+//                                    nu_r_p(i),nu_l_p(i),nu_l_s_i,nu_r_s_i,
+//                                    Ind_L(i),Ind_R(i),Ind_LCR(i), Ind_LIR(i),Ind_RCR(i),Ind_RIR(i),
+//                                    Ind_S_LCR(i),Ind_S_LIR(i),Ind_S_RCR(i),Ind_S_RIR(i),
+//                                    stop_param.col(i),prob_param.col(i),DEL(i),DEL_s(i),lt);
+//
+//
+//
+//     vec lk_LCR_FS=lk_FS(0);
+//     vec lk_LIR_FS=lk_FS(1);
+//
+//     vec lk_RCR_FS=lk_FS(2);
+//     vec lk_RIR_FS=lk_FS(3);
+//
+//
+//     vec diff_X_LCR=lk_FS(4);
+//     vec diff_Y_LCR=lk_FS(5);
+//
+//     vec diff_X_LIR=lk_FS(6);
+//     vec diff_Y_LIR=lk_FS(7);
+//
+//     vec diff_X_RCR=lk_FS(8);
+//     vec diff_Y_RCR=lk_FS(9);
+//
+//     vec diff_X_RIR=lk_FS(10);
+//     vec diff_Y_RIR=lk_FS(11);
+//
+//     vec diff_X_LCR2=lk_FS(12);
+//     vec diff_Y_LCR2=lk_FS(13);
+//
+//     vec diff_X_LIR2=lk_FS(14);
+//     vec diff_Y_LIR2=lk_FS(15);
+//
+//     vec diff_X_RCR2=lk_FS(16);
+//     vec diff_Y_RCR2=lk_FS(17);
+//
+//     vec diff_X_RIR2=lk_FS(18);
+//     vec diff_Y_RIR2=lk_FS(19);
+//
+//
+//
+//     //penalty parameter update steps
+//
+//     vec p_stop(size(stop_param.col(i)),fill::randn);
+//
+//
+//
+//     // Rcpp::Rcout<<"p"<<p<<endl;
+//
+//
+//     // double U_old = -log_lhood_s(Inhib_likelihood,lk_LCR_FS, lk_LIR_FS,lk_RCR_FS, lk_RIR_FS);
+//
+//
+//
+//     double U_old=-(log_lhood(Inhib_likelihood,
+//                              sigma, tau(i), tau_s(i), SSD(i),Ind_GF(i),
+//                              b_l(i), b_r(i), nu_l(i), nu_r(i), nu_l_p(i), nu_r_p(i), nu_l_s_i, nu_r_s_i,
+//                              Ind_L(i), Ind_R(i), Ind_LCR(i), Ind_LIR(i), Ind_RIR(i), Ind_RCR(i),
+//                              Ind_S_LCR(i), Ind_S_LIR(i), Ind_S_RIR(i), Ind_S_RCR(i),
+//                              lk_LCR_FS, lk_LIR_FS,lk_RCR_FS,lk_RIR_FS,
+//                              prob_param.col(i),T_Go(i),k(i)));
+//
+//
+//
+//
+//     double prior_main_stop=log_normal_prior(stop_param.col(i),mu_b_stop,sigma_b_stop,mu_nu_stop,sigma_nu_stop);
+//
+//     U_old-=prior_main_stop;
+//
+//
+//     double H_old = U_old+(dot(p_stop,p_stop)/2);
+//
+//
+//     vec v_old_stop = -grad_stop_param(tau(i),tau_s(i),sigma,SSD(i),DEL(i),DEL_s(i),
+//                                       nu_l(i),nu_r(i),b_l(i),b_r(i),
+//                                       nu_l_p(i),nu_r_p(i),nu_l_s_i,nu_r_s_i,
+//                                       weight_LCR_S, weight_LIR_S,weight_RCR_S,weight_RIR_S,
+//                                       weight_FS_LCR,weight_FS_LIR,weight_FS_RCR,weight_FS_RIR,
+//                                       Ind_L(i),Ind_R(i),
+//
+//                                       Ind_S_LCR(i),Ind_S_LIR(i),Ind_S_RCR(i),Ind_S_RIR(i),
+//                                       nu_stop_Stim,b_stop_Stim,
+//                                       stop_param.col(i),penal_param.col(i),
+//                                       mu_nu_stop,sigma_nu_stop,mu_b_stop,sigma_b_stop,
+//                                       diff_Y_LCR,diff_Y_LIR,diff_Y_RCR,diff_Y_RIR,lt);
+//
+//
+//
+//
+//     vec stop_param_new=stop_param.col(i);
+//
+//     vec v_new_stop = v_old_stop;
+//
+//
+//
+//
+//     double delta = randu(distr_param(range(0), range(1)));
+//
+//     int nstep=std::clamp((int) R::rpois(L),1,leapmax);
+//
+//
+//     leap_frog_stop_param(tau(i), tau_s(i), sigma,delta_prime.col(i),SSD(i),DEL(i),DEL_s(i),
+//                               b_l(i), b_r(i),
+//                               nu_l(i), nu_r(i), nu_l_p(i), nu_r_p(i),
+//                               nu_l_squared(i), nu_r_squared(i),
+//
+//                               Ind_L(i), Ind_R(i),
+//                               Ind_LCR(i), Ind_LIR(i), Ind_RCR(i), Ind_RIR(i),
+//
+//                               Ind_S_LCR(i), Ind_S_LIR(i), Ind_S_RCR(i), Ind_S_RIR(i),
+//                               Ind_I_L(i), Ind_I_R(i),
+//                               stop_param_new, penal_param.col(i),prob_param.col(i),
+//                               mu_b_stop, sigma_b_stop, mu_nu_stop, sigma_nu_stop,
+//                               prob_hyp,T_Go(i),k(i),T_Total(i),
+//
+//                               v_new_stop,nstep,delta,p_stop,
+//
+//                               lower_bound(i), upper_bound, lt);
+//
+//
+//     vec nu_l_s_i_new = nu_l(i) - penalty_fun_s(stop_param_new(1), penal_param.col(i));
+//     vec nu_r_s_i_new = nu_r(i) - penalty_fun_s(stop_param_new(1), penal_param.col(i));
+//
+//
+//     field<vec> likelihood_integral_new = integral_likelihood(sigma,SSD(i),DEL(i),DEL_s(i),stop_param_new,
+//                                                               penal_param.col(i),prob_param.col(i),
+//                                                               b_l(i),nu_l(i),nu_l_s_i_new,
+//                                                               b_r(i),nu_r_p(i),nu_r_s_i_new,
+//                                                               nu_r(i),nu_l_p(i),
+//                                                               Ind_L(i),Ind_R(i),Ind_I_L(i),Ind_I_R(i),
+//                                                               lower_bound(i),upper_bound,lt);
+//
+//
+//     double Inhib_likelihood_new = sum(likelihood_integral_new(0)) + sum(likelihood_integral_new(1));
+//
+//
+//     field<vec> lk_FS_new= update_lk_FS3(tau(i),tau_s(i),sigma,SSD(i),
+//                                         b_l(i),b_r(i),nu_l(i),nu_r(i),nu_r_p(i),nu_l_p(i),
+//                                         nu_l_s_i_new,nu_r_s_i_new,
+//                                         Ind_L(i),Ind_R(i),Ind_LCR(i),Ind_LIR(i),Ind_RCR(i),Ind_RIR(i),
+//                                         Ind_S_LCR(i),Ind_S_LIR(i),Ind_S_RCR(i),Ind_S_RIR(i),
+//                                         stop_param_new,prob_param.col(i),DEL(i),DEL_s(i),lt);
+//
+//
+//
+//     vec lk_LCR_FS_new=lk_FS_new(0);
+//     vec lk_LIR_FS_new=lk_FS_new(1);
+//
+//     vec lk_RCR_FS_new=lk_FS_new(2);
+//     vec lk_RIR_FS_new=lk_FS_new(3);
+//
+//
+//
+//     double U_new=- (log_lhood(Inhib_likelihood_new,
+//                               sigma, tau(i), tau_s(i), SSD(i),Ind_GF(i),
+//                               b_l(i), b_r(i), nu_l(i), nu_r(i), nu_l_p(i), nu_r_p(i), nu_l_s_i_new, nu_r_s_i_new,
+//                               Ind_L(i), Ind_R(i), Ind_LCR(i), Ind_LIR(i), Ind_RIR(i), Ind_RCR(i),
+//                               Ind_S_LCR(i), Ind_S_LIR(i), Ind_S_RIR(i), Ind_S_RCR(i),
+//                               lk_LCR_FS_new, lk_LIR_FS_new,lk_RCR_FS_new,lk_RIR_FS_new,
+//                               prob_param.col(i),T_Go(i),k(i)));
+//
+//
+//     double prior_main_stop_new=log_normal_prior(stop_param_new,mu_b_stop,sigma_b_stop,mu_nu_stop,sigma_nu_stop);
+//
+//
+//
+//     U_new-=(prior_main_stop_new);
+//
+//     double H_new = U_new+(dot(p_stop,p_stop)/2);
+//
+//
+//     /*double H_new=U_new+((as_scalar(dot(p,(M_inv*p))))/2);*/
+//
+//     // Rcpp::Rcout<<"new-penalty="<<-U_new<<" old-penalty="<<-U_old<< endl;
+//
+//
+//     if (log(randu()) < -(H_new - H_old)) {
+// #pragma omp critical
+// {
+//   stop_param.col(i) = stop_param_new;
+//   ++acceptance_stop[i];
+// }
+//     }
+//   }
+//
+//   omp_set_num_threads(6);
+// }
+//
+//
+//
+//
+//
+//   void update_prob_param(const field<vec> &tau, const field<vec> &tau_s, const double sigma,const field<vec> &SSD,
+//                               const vec &DEL,const vec &DEL_s,
+//                               const field <vec> &Ind_GF,const mat &delta_prime,
+//                               const mat &gama, const mat &beta,const mat &penal_param, mat &stop_param,mat &prob_param,
+//                               const field<vec> &b_l, const field<vec> &b_r,
+//                               const field<vec> &nu_l, const field<vec> &nu_r,
+//                               const field<vec> &nu_l_p, const field<vec> &nu_r_p,
+//                               const field<vec> &nu_l_squared, const field<vec> &nu_r_squared,
+//
+//                               const field<uvec> &Ind_L, const field<uvec> &Ind_R,
+//                               const field<uvec> &Ind_LCR, const field<uvec> &Ind_LIR, const field<uvec> &Ind_RCR,const field<uvec> &Ind_RIR,
+//
+//                               const field<uvec> &Ind_S_LCR, const field<uvec> &Ind_S_LIR, const field<uvec> &Ind_S_RCR, const field<uvec> &Ind_S_RIR,
+//                               const field<uvec> &Ind_I_L, const field<uvec> &Ind_I_R,
+//                               const double mu_b_stop, const double sigma_b_stop,const double mu_nu_stop, const double sigma_nu_stop,
+//
+//                               const vec &prob_hyp,
+//                               const vec &T_Go,const vec &k,const vec &T_Total,
+//
+//                               const vec &range, const double L,
+//                               const int leapmax, vec &acceptance_prob, unsigned nparall,
+//                               const field<vec> &lower_bound, const double upper_bound, const bool lt = true) {
+//
+//     // Rcpp::Rcout<<"ABK"<< endl;
+//
+//     unsigned N=nu_l.n_elem;
+//
+//
+//     omp_set_num_threads(1);
+// #pragma omp parallel for num_threads(nparall)
+//     for (unsigned i = 0; i < N; ++i) {
+//
+//
+//       double sum_prob = mlpack::AccuLog(prob_param.col(i));
+//
+//
+//       vec nu_l_s_i=nu_l(i)-penalty_fun_s(stop_param(1,i),penal_param.col(i));
+//       vec nu_r_s_i=nu_r(i)-penalty_fun_s(stop_param(1,i),penal_param.col(i));
+//
+//
+//
+//       vec weight_LCR_S=weight_s(sigma,g(tau(i), Ind_L(i), Ind_S_LCR(i) ),g(tau_s(i), Ind_L(i), Ind_S_LCR(i) ),g(SSD(i), Ind_L(i), Ind_S_LCR(i) ),
+//                                 g(b_r(i), Ind_L(i), Ind_S_LCR(i) ),h(nu_r_p(i), Ind_S_LCR(i) ),
+//                                 g(nu_r_s_i, Ind_L(i), Ind_S_LCR(i) ),DEL(i),DEL_s(i),lt);
+//
+//
+//       vec weight_LIR_S=weight_s(sigma,g(tau(i), Ind_L(i), Ind_S_LIR(i) ),g(tau_s(i), Ind_L(i), Ind_S_LIR(i) ),g(SSD(i), Ind_L(i), Ind_S_LIR(i) ),
+//                                 g(b_l(i), Ind_L(i), Ind_S_LIR(i) ),g(nu_l(i),Ind_L(i), Ind_S_LIR(i) ),
+//                                 g(nu_l_s_i, Ind_L(i), Ind_S_LIR(i) ),DEL(i),DEL_s(i),lt);
+//
+//       vec weight_RCR_S=weight_s(sigma,g(tau(i), Ind_R(i), Ind_S_RCR(i) ),g(tau_s(i), Ind_R(i), Ind_S_RCR(i) ),g(SSD(i), Ind_R(i), Ind_S_RCR(i) ),
+//                                 g(b_l(i), Ind_R(i), Ind_S_RCR(i) ),h(nu_l_p(i), Ind_S_RCR(i) ),
+//                                 g(nu_l_s_i,Ind_R(i), Ind_S_RCR(i) ),DEL(i),DEL_s(i),lt);
+//
+//       vec weight_RIR_S=weight_s(sigma, g(tau(i), Ind_R(i), Ind_S_RIR(i) ),g(tau_s(i), Ind_R(i), Ind_S_RIR(i) ),g(SSD(i), Ind_R(i), Ind_S_RIR(i) ),
+//                                 g(b_r(i), Ind_R(i), Ind_S_RIR(i) ),g(nu_r(i), Ind_R(i), Ind_S_RIR(i) ),
+//                                 g(nu_r_s_i,Ind_R(i), Ind_S_RIR(i) ),DEL(i),DEL_s(i),lt);
+//
+//
+//
+//       vec weight_FS_LCR=weight_stop(g(tau_s(i), Ind_L(i), Ind_S_LCR(i) ), sigma,stop_param.col(i));
+//
+//       vec weight_FS_LIR=weight_stop(g(tau_s(i), Ind_L(i), Ind_S_LIR(i) ), sigma,stop_param.col(i));
+//
+//       vec weight_FS_RCR=weight_stop(g(tau_s(i), Ind_R(i), Ind_S_RCR(i) ), sigma,stop_param.col(i));
+//
+//       vec weight_FS_RIR=weight_stop(g(tau_s(i), Ind_R(i), Ind_S_RIR(i) ), sigma,stop_param.col(i));
+//
+//
+//
+//
+//       field<vec> likelihood_integral =  integral_likelihood2(sigma,SSD(i),DEL(i),DEL_s(i),
+//                                                              stop_param.col(i),penal_param.col(i),prob_param.col(i),
+//                                                              b_l(i),nu_l(i),nu_l_s_i,
+//                                                              b_r(i),nu_r_p(i),nu_r_s_i,
+//                                                              nu_r(i),nu_l_p(i),
+//                                                              Ind_L(i),Ind_R(i),Ind_I_L(i),Ind_I_R(i),
+//                                                              lower_bound(i),upper_bound,lt);
+//
+//
+//       double Inhib_likelihood = sum(likelihood_integral(0)) + sum(likelihood_integral(1));
+//
+//
+//
+//
+//       field<vec> lk_FS=update_lk_FS4(tau(i),tau_s(i), sigma,SSD(i),
+//                                      b_l(i),b_r(i),nu_l(i),nu_r(i),
+//                                      nu_r_p(i),nu_l_p(i),nu_l_s_i,nu_r_s_i,
+//                                      Ind_L(i),Ind_R(i),Ind_LCR(i), Ind_LIR(i),Ind_RCR(i),Ind_RIR(i),
+//                                      Ind_S_LCR(i),Ind_S_LIR(i),Ind_S_RCR(i),Ind_S_RIR(i),
+//                                      stop_param.col(i),prob_param.col(i),DEL(i),DEL_s(i),lt);
+//
+//
+//
+//       vec lk_LCR_FS=lk_FS(0);
+//       vec lk_LIR_FS=lk_FS(1);
+//
+//       vec lk_RCR_FS=lk_FS(2);
+//       vec lk_RIR_FS=lk_FS(3);
+//
+//
+//       vec diff_X_LCR=lk_FS(4);
+//       vec diff_Y_LCR=lk_FS(5);
+//
+//       vec diff_X_LIR=lk_FS(6);
+//       vec diff_Y_LIR=lk_FS(7);
+//
+//       vec diff_X_RCR=lk_FS(8);
+//       vec diff_Y_RCR=lk_FS(9);
+//
+//       vec diff_X_RIR=lk_FS(10);
+//       vec diff_Y_RIR=lk_FS(11);
+//
+//
+//
+//
+//       //penalty parameter update steps
+//
+//
+//       vec p_prob(size(prob_param.col(i)),fill::randn);
+//
+//
+//
+//       double U_old=-(log_lhood(Inhib_likelihood,
+//                                sigma, tau(i), tau_s(i), SSD(i),Ind_GF(i),
+//                                b_l(i), b_r(i), nu_l(i), nu_r(i), nu_l_p(i), nu_r_p(i), nu_l_s_i, nu_r_s_i,
+//                                Ind_L(i), Ind_R(i), Ind_LCR(i), Ind_LIR(i), Ind_RIR(i), Ind_RCR(i),
+//                                Ind_S_LCR(i), Ind_S_LIR(i), Ind_S_RIR(i), Ind_S_RCR(i),
+//                                lk_LCR_FS, lk_LIR_FS,lk_RCR_FS,lk_RIR_FS,
+//                                prob_param.col(i),T_Go(i),k(i))-(T_Total(i)*sum_prob));
+//
+//
+//
+//       double prior_main_prob=log_gama_prior(prob_param.col(i),prob_hyp(0),prob_hyp(1),prob_hyp(2));
+//
+//
+//
+//       U_old-=prior_main_prob;
+//
+//
+//       double H_old = U_old+(dot(p_prob,p_prob)/2);
+//
+//
+//
+//
+//
+//       // vec v_old_prob=-grad_prob_param(tau_s(i),sigma,likelihood_integral,
+//       //                                 stop_param.col(i),prob_param.col(i),sum_prob,
+//       //                                 prob_hyp,
+//       //                                 T_Go(i),k(i),T_Total(i),
+//       //                                 log(diff_X_LCR),log(diff_Y_LCR),log(diff_X_LIR),log(diff_Y_LIR),
+//       //                                 log(diff_X_RCR),log(diff_Y_RCR),log(diff_X_RIR),log(diff_Y_RIR));
+//       //
+//
+//
+//       // vec v_old_prob = -grad_prob_param(tau_s(i),sigma,likelihood_integral,
+//       //                                 stop_param.col(i),prob_param.col(i),sum_prob,
+//       //                                 prob_hyp,
+//       //                                 T_Go(i),k(i),T_Total(i),
+//       //                                 diff_X_LCR2,diff_Y_LCR2,diff_X_LIR2,diff_Y_LIR2,
+//       //                                 diff_X_RCR2,diff_Y_RCR2,diff_X_RIR2,diff_Y_RIR2);
+//       //
+//       //
+//
+//       vec v_old_prob = -grad_prob_param(tau_s(i),sigma,likelihood_integral,
+//                                         stop_param.col(i),prob_param.col(i),sum_prob,
+//                                         prob_hyp,
+//                                         T_Go(i),k(i),T_Total(i),
+//                                         diff_X_LCR,diff_Y_LCR,diff_X_LIR,diff_Y_LIR,
+//                                         diff_X_RCR,diff_Y_RCR,diff_X_RIR,diff_Y_RIR);
+//
+//
+//
+//       vec prob_param_new=prob_param.col(i);
+//
+//       vec v_new_prob = v_old_prob;
+//
+//
+//       double delta = randu(distr_param(range(0), range(1)));
+//
+//       int nstep=std::clamp((int) R::rpois(L),1,leapmax);
+//
+//
+//       leap_frog_prob_param(tau(i), tau_s(i), sigma,delta_prime.col(i),SSD(i),DEL(i),DEL_s(i),
+//                                 b_l(i), b_r(i),
+//                                 nu_l(i), nu_r(i), nu_l_p(i), nu_r_p(i),
+//                                 nu_l_squared(i), nu_r_squared(i),
+//
+//                                 Ind_L(i), Ind_R(i),
+//                                 Ind_LCR(i), Ind_LIR(i), Ind_RCR(i), Ind_RIR(i),
+//
+//                                 Ind_S_LCR(i), Ind_S_LIR(i), Ind_S_RCR(i), Ind_S_RIR(i),
+//                                 Ind_I_L(i), Ind_I_R(i),
+//                                 stop_param.col(i), penal_param.col(i),prob_param_new,
+//                                 mu_b_stop, sigma_b_stop, mu_nu_stop, sigma_nu_stop,
+//                                 prob_hyp,T_Go(i),k(i),T_Total(i),
+//
+//                                 v_new_prob,nstep,delta,p_prob,
+//
+//                                 lower_bound(i), upper_bound, lt);
+//
+//
+//
+//       field<vec> likelihood_integral_new = integral_likelihood2(sigma,SSD(i),DEL(i),DEL_s(i),stop_param.col(i),
+//                                                                 penal_param.col(i),prob_param_new,
+//                                                                 b_l(i),nu_l(i),nu_l_s_i,
+//                                                                 b_r(i),nu_r_p(i),nu_r_s_i,
+//                                                                 nu_r(i),nu_l_p(i),
+//                                                                 Ind_L(i),Ind_R(i),Ind_I_L(i),Ind_I_R(i),
+//                                                                 lower_bound(i),upper_bound,lt);
+//
+//
+//       double Inhib_likelihood_new = sum(likelihood_integral_new(0)) + sum(likelihood_integral_new(1));
+//
+//
+//       field<vec> lk_FS_new= update_lk_FS3(tau(i),tau_s(i),sigma,SSD(i),
+//                                           b_l(i),b_r(i),nu_l(i),nu_r(i),nu_r_p(i),nu_l_p(i),
+//                                           nu_l_s_i,nu_r_s_i,
+//                                           Ind_L(i),Ind_R(i),Ind_LCR(i),Ind_LIR(i),Ind_RCR(i),Ind_RIR(i),
+//                                           Ind_S_LCR(i),Ind_S_LIR(i),Ind_S_RCR(i),Ind_S_RIR(i),
+//                                           stop_param.col(i),prob_param_new,DEL(i),DEL_s(i),lt);
+//
+//
+//
+//       vec lk_LCR_FS_new=lk_FS_new(0);
+//       vec lk_LIR_FS_new=lk_FS_new(1);
+//
+//       vec lk_RCR_FS_new=lk_FS_new(2);
+//       vec lk_RIR_FS_new=lk_FS_new(3);
+//
+//
+//       double sum_prob_new = mlpack::AccuLog(prob_param_new);
+//
+//       double U_new=- (log_lhood(Inhib_likelihood_new,
+//                                 sigma, tau(i), tau_s(i), SSD(i),Ind_GF(i),
+//                                 b_l(i), b_r(i), nu_l(i), nu_r(i), nu_l_p(i), nu_r_p(i), nu_l_s_i, nu_r_s_i,
+//                                 Ind_L(i), Ind_R(i), Ind_LCR(i), Ind_LIR(i), Ind_RIR(i), Ind_RCR(i),
+//                                 Ind_S_LCR(i), Ind_S_LIR(i), Ind_S_RIR(i), Ind_S_RCR(i),
+//                                 lk_LCR_FS_new, lk_LIR_FS_new,lk_RCR_FS_new,lk_RIR_FS_new,
+//                                 prob_param_new,T_Go(i),k(i))-(T_Total(i)*sum_prob_new));
+//
+//
+//       double prior_main_prob_new=log_gama_prior(prob_param_new,prob_hyp(0),prob_hyp(1),prob_hyp(2));
+//
+//
+//
+//       U_new-=(prior_main_prob_new);
+//
+//
+//       double H_new=U_new+(dot(p_prob,p_prob)/2);
+//
+//
+//
+//
+//       if (log(randu()) < -(H_new - H_old)) {
+// #pragma omp critical
+// {
+//   prob_param.col(i) = prob_param_new;
+//   ++acceptance_prob[i];
+// }
+//       }
+//     }
+//
+//     omp_set_num_threads(6);
+//   }
 
 
 
@@ -9893,31 +10890,37 @@ field<field<uvec>> field_of_field(const List &x) {
 
 
 
+
+
 ////////////////////////////////////////////////////////////////////////// Implementing HMC //////////////////////////////////////////////////////////////////////////////////////////
 
 // Final HMC
 
 // [[Rcpp::export]]
+
+
 List hmc(const List Time_stamp,const List Go_RT,const List Go_RT_S,const double SSD_min,const arma::vec& U,const List Ind_G,const List Stop_S_D,
-           const double sigma,arma::mat delta_param,arma::mat gama,
-           arma::mat beta,arma::mat stop_param,arma::mat prob_param,const List Indicator,
-           const List mean_priors_main,const List var_priors_main,arma::mat penal_param,
-           const arma::vec prior_penal_stop,const arma::vec T_Go,const arma::vec k,const arma::vec T_Total,
-           const double a,const double b,const arma::vec prob_hyp,
-           double eta_b_l,double eta_b_r,double eta_nu_l,double eta_nu_r,
-           List gama_Ind,List beta_Ind,
-           const double nu_d,const arma::vec lam,const List Phi_mat,
-           arma::vec rand_param_g_l,arma::vec rand_param_g_r,arma::vec rand_param_b_l,arma::vec rand_param_b_r,
-           const double kappa,const List ranges,
-           const double L,const int leapmax,
-           const double nhmc,int thin,unsigned nparall,
-           const List l_bound,const double upper_bound,
-           const bool update_gama_beta,const bool update_penalty,const bool update_stop_prob,const bool update_rand_eff,const bool update_delta,
-           const bool lt = true){
+         const double sigma,arma::mat delta_param,arma::mat gama,
+         arma::mat beta,arma::mat stop_param,arma::mat prob_param,const List Indicator,
+         const List mean_priors_main,const List var_priors_main,arma::mat penal_param,
+         const arma::vec prior_penal_stop,const arma::vec T_Go,const arma::vec k,const arma::vec T_Total,
+         const double a,const double b,const arma::vec prob_hyp,
+         double eta_b_l,double eta_b_r,double eta_nu_l,double eta_nu_r,
+         List gama_Ind,List beta_Ind,
+         const double nu_d,const arma::vec lam,const List Phi_mat,
+         arma::vec rand_param_g_l,arma::vec rand_param_g_r,arma::vec rand_param_b_l,arma::vec rand_param_b_r,
+         const double kappa,const List ranges,
+         const double L,const int leapmax,
+         const double nhmc,int thin,unsigned nparall,
+         const List l_bound,const double upper_bound,
+         const bool update_gama_beta,const bool update_ind,const bool update_rand_eff,
+         const bool lt = true){
+
+
 
   Rcpp::Rcout<<"ABP"<< endl;
 
-// --- Checkpoint controls ---
+  // --- Checkpoint controls ---
   const unsigned checkpoint_every = 2000U;                    // save every 2000 iterations
   const std::string checkpoint_prefix = "checkpoint_iter_";   // filename prefix
   Function saveRDS("saveRDS");                                // R's saveRDS for checkpointing
@@ -9986,15 +10989,16 @@ List hmc(const List Time_stamp,const List Go_RT,const List Go_RT_S,const double 
 
   field <vec> range=make_field_from_list2(ranges);
   vec range_g_b=range(0);
-  vec range_p=range(1);
-  vec range_d=range(2);
-  vec range_stop_prob=range(3);
-  vec range_rand_effect=range(4);
 
-  vec range_rand_g_l=range(5);
-  vec range_rand_g_r=range(6);
-  vec range_rand_b_l=range(7);
-  vec range_rand_b_r=range(8);
+  vec range_ind_param=range(1);
+
+  vec range_rand_effect=range(2);
+
+  vec range_rand_g_l=range(3);
+  vec range_rand_g_r=range(4);
+  vec range_rand_b_l=range(5);
+  vec range_rand_b_r=range(6);
+
 
 
   double P=t(0).n_cols;
@@ -10042,11 +11046,7 @@ List hmc(const List Time_stamp,const List Go_RT,const List Go_RT_S,const double 
 
   unsigned acceptance_main_eff=0;
 
-  vec acceptance_p(N, fill::zeros);
-
-  vec acceptance_d(N, fill::zeros);
-
-  vec acceptance_stop_prob(N, fill::zeros);
+  vec acceptance_ind_param(N, fill::zeros);
 
   vec acceptance_rand_effect(N, fill::zeros);
 
@@ -10185,14 +11185,27 @@ List hmc(const List Time_stamp,const List Go_RT,const List Go_RT_S,const double 
 
     // Updating delta_prime Parameter
 
-    if(update_delta==1){
+    if(update_ind==1){
 
-      update_delta_param(tau,tau_stop,sigma,SSD,SSD_min,U,Ind_GF,delta_param,gama,beta,penal_param,stop_param,
-                         b_l,b_r,nu_l,nu_r,nu_l_p,nu_r_p,nu_l_s,nu_r_s,
-                         Ind_L,Ind_R,Ind_LCR,Ind_LIR,Ind_RCR,Ind_RIR,
-                         Ind_S_LCR,Ind_S_LIR,Ind_S_RCR,Ind_S_RIR,Ind_I_L,Ind_I_R,
-                         prob_param,T_Go,k,range_d,L,leapmax,acceptance_d,
-                         nparall,lower_bound_init,upper_bound,lt);
+      update_ind_param(tau,tau_stop,sigma,SSD,SSD_min,U,Ind_GF,
+                             gama,beta,penal_param,stop_param,prob_param,delta_param,
+                             b_l,b_r,nu_l,nu_r,
+                             nu_l_squared,nu_r_squared,
+                             Ind_L,Ind_R,
+                             Ind_LCR,Ind_LIR,Ind_RCR,Ind_RIR,
+
+                             Ind_S_LCR,Ind_S_LIR,Ind_S_RCR,Ind_S_RIR,
+                             Ind_I_L,Ind_I_R,
+
+                             mu_b_stop,sigma_b_stop,mu_nu_stop,sigma_nu_stop,
+                             mu_lambda_prime,sigma_lambda_prime,mu_alpha_prime,sigma_alpha_prime,
+
+
+                             prob_hyp,T_Go,k,T_Total,
+
+                             range_ind_param, L,leapmax,acceptance_ind_param,nparall,
+                             lower_bound_init,upper_bound,lt);
+
 
 
 
@@ -10226,100 +11239,6 @@ List hmc(const List Time_stamp,const List Go_RT,const List Go_RT_S,const double 
       }
 
 
-
-      // Rcpp::Rcout<<"delta_updated"<<endl;
-
-    }
-
-
-
-    // Updating Gama
-
-    if(update_gama_beta==1){
-
-    update_main_effect(t,Rand_gama_l,Rand_gama_r,Rand_beta_l,Rand_beta_r,
-                       tau_prime,tau_s,sigma,SSD,DEL,DEL_s,Ind_GF,
-                       gama,beta,delta_param,penal_param,stop_param,prob_param,
-                       Ind_L,Ind_R,Ind_LCR,Ind_LIR,Ind_RCR,Ind_RIR,
-                       Ind_S_LCR,Ind_S_LIR,Ind_S_RCR,Ind_S_RIR,
-                       Ind_I_L,Ind_I_R,
-                       eta_b_l,eta_b_r,eta_nu_l,eta_nu_r,
-                       mu_gl,sigma_gl_inv,mu_gr,sigma_gr_inv,
-                       mu_bl,sigma_bl_inv,mu_br,sigma_br_inv,
-                       gama_I,beta_I,T_Go,k,
-                       range_g_b,L,leapmax,acceptance_main_eff,
-                       nparall,lower_bound,upper_bound,lt);
-
-
-
-    // Updating gama related matrix or fields
-
-    field<field<vec>> gama_ess=update_gama_param_ess1(t,Rand_gama_l,Rand_gama_r,gama);
-
-
-    field<vec> b_l=gama_ess(0);
-    field<vec> b_r=gama_ess(1);
-
-    field<vec> b_l_main=gama_ess(2);
-    field<vec> b_r_main=gama_ess(3);
-
-
-    //Updating beta related matrix or fields
-
-
-    field<field<vec>>  beta_ess=update_beta_param_ess1(t,Rand_beta_l,Rand_beta_r,beta);
-
-    field<vec> nu_l=beta_ess(0);
-    field<vec> nu_r=beta_ess(1);
-    field<vec> nu_l_squared=beta_ess(2);
-    field<vec> nu_r_squared=beta_ess(3);
-    field<vec> nu_l_main=beta_ess(4);
-    field<vec> nu_r_main=beta_ess(5);
-
-
-
-    field<field<vec>> beta_ess2=update_beta_param_ess3(nu_l,nu_r,nu_l_squared,nu_r_squared,
-                                                       Ind_L,Ind_R,penal_param);
-
-
-
-    field<vec>nu_l_p=beta_ess2(0);
-    field<vec>nu_r_p=beta_ess2(1);
-
-
-    field <field<vec>> stop_param_ess3= update_stop_param_ess2(nu_l,nu_r,stop_param,penal_param);
-
-
-    nu_l_s=stop_param_ess3(0);
-    nu_r_s=stop_param_ess3(1);
-
-
-    // Rcpp::Rcout<<"Main_effect"<<endl;
-    }
-
-
-
-    // Updating Penalty Parameters
-
-    if(update_penalty==1){
-
-      update_penal_param(tau_prime,tau_s,sigma,SSD,DEL,DEL_s,Ind_GF,
-                         delta_param,gama,beta,penal_param,stop_param,
-                         b_l,b_r,
-                         nu_l,nu_r,nu_l_squared,nu_r_squared,
-                         Ind_L,Ind_R,Ind_LCR,Ind_LIR,Ind_RCR,Ind_RIR,
-                         Ind_S_LCR,Ind_S_LIR,Ind_S_RCR,Ind_S_RIR,
-                         Ind_I_L,Ind_I_R,
-                         mu_lambda_prime,sigma_lambda_prime,mu_alpha_prime,sigma_alpha_prime,
-                         prob_param,T_Go,k,
-                         range_p,L,leapmax,acceptance_p,nparall,
-                         lower_bound,upper_bound,lt);
-
-
-
-      // Updating penalty parameter related matrix or fields
-
-
       field<field<vec>> penal_ess=update_beta_param_ess3(nu_l,nu_r,nu_l_squared,nu_r_squared,
                                                          Ind_L,Ind_R,penal_param);
 
@@ -10329,53 +11248,129 @@ List hmc(const List Time_stamp,const List Go_RT,const List Go_RT_S,const double 
 
 
 
-      field<field<vec>> penal_ess2=update_stop_param_ess2(nu_l,nu_r,stop_param,penal_param);
-
-      nu_l_s=penal_ess2(0);
-      nu_r_s=penal_ess2(1);;
-
-
-    // Rcpp::Rcout<<"Panalty_updated"<<endl;
-
-    }
-
-
-
-    //Updating stop_param
-
-    if(update_stop_prob==1){
-
-      update_stop_prob_param(tau_prime,tau_s,sigma,SSD,DEL,DEL_s,Ind_GF,
-                             delta_param,gama,beta,penal_param,stop_param,prob_param,
-                             b_l,b_r,nu_l,nu_r,nu_l_p,nu_r_p,
-                             nu_l_squared,nu_r_squared,
-                             Ind_L,Ind_R,
-                             Ind_LCR,Ind_LIR,Ind_RCR,Ind_RIR,
-
-                             Ind_S_LCR,Ind_S_LIR,Ind_S_RCR,Ind_S_RIR,
-                             Ind_I_L,Ind_I_R,
-                             mu_b_stop,sigma_b_stop,mu_nu_stop,sigma_nu_stop,
-                             prob_hyp,T_Go,k,T_Total,
-
-                             range_stop_prob, L,leapmax,acceptance_stop_prob,nparall,
-                             lower_bound,upper_bound,lt);
-
-
-
-
-      // Updating stop parameter related vectors
-
       field <field<vec>> stop_param_ess5= update_stop_param_ess2(nu_l,nu_r,stop_param,penal_param);
-
 
       nu_l_s=stop_param_ess5(0);
       nu_r_s=stop_param_ess5(1);
     }
 
 
+      // Rcpp::Rcout<<"delta_updated"<<endl;
 
 
-    // Rcpp::Rcout<<"Stop_updated"<<endl;
+
+
+
+    // Updating Gama
+
+    if(update_gama_beta==1){
+
+      update_main_effect(t,Rand_gama_l,Rand_gama_r,Rand_beta_l,Rand_beta_r,
+                         tau_prime,tau_s,sigma,SSD,DEL,DEL_s,Ind_GF,
+                         gama,beta,delta_param,penal_param,stop_param,prob_param,
+                         Ind_L,Ind_R,Ind_LCR,Ind_LIR,Ind_RCR,Ind_RIR,
+                         Ind_S_LCR,Ind_S_LIR,Ind_S_RCR,Ind_S_RIR,
+                         Ind_I_L,Ind_I_R,
+                         eta_b_l,eta_b_r,eta_nu_l,eta_nu_r,
+                         mu_gl,sigma_gl_inv,mu_gr,sigma_gr_inv,
+                         mu_bl,sigma_bl_inv,mu_br,sigma_br_inv,
+                         gama_I,beta_I,T_Go,k,
+                         range_g_b,L,leapmax,acceptance_main_eff,
+                         nparall,lower_bound,upper_bound,lt);
+
+
+
+      // Updating gama related matrix or fields
+
+      field<field<vec>> gama_ess=update_gama_param_ess1(t,Rand_gama_l,Rand_gama_r,gama);
+
+
+      field<vec> b_l=gama_ess(0);
+      field<vec> b_r=gama_ess(1);
+
+      field<vec> b_l_main=gama_ess(2);
+      field<vec> b_r_main=gama_ess(3);
+
+
+      //Updating beta related matrix or fields
+
+
+      field<field<vec>>  beta_ess=update_beta_param_ess1(t,Rand_beta_l,Rand_beta_r,beta);
+
+      field<vec> nu_l=beta_ess(0);
+      field<vec> nu_r=beta_ess(1);
+      field<vec> nu_l_squared=beta_ess(2);
+      field<vec> nu_r_squared=beta_ess(3);
+      field<vec> nu_l_main=beta_ess(4);
+      field<vec> nu_r_main=beta_ess(5);
+
+
+
+      field<field<vec>> beta_ess2=update_beta_param_ess3(nu_l,nu_r,nu_l_squared,nu_r_squared,
+                                                         Ind_L,Ind_R,penal_param);
+
+
+
+      field<vec>nu_l_p=beta_ess2(0);
+      field<vec>nu_r_p=beta_ess2(1);
+
+
+      field <field<vec>> stop_param_ess3= update_stop_param_ess2(nu_l,nu_r,stop_param,penal_param);
+
+
+      nu_l_s=stop_param_ess3(0);
+      nu_r_s=stop_param_ess3(1);
+
+
+      // Rcpp::Rcout<<"Main_effect"<<endl;
+    }
+
+
+
+    // Updating Penalty Parameters
+
+    // if(update_penalty==1){
+    //
+    //   update_penal_param(tau_prime,tau_s,sigma,SSD,DEL,DEL_s,Ind_GF,
+    //                      delta_param,gama,beta,penal_param,stop_param,
+    //                      b_l,b_r,
+    //                      nu_l,nu_r,nu_l_squared,nu_r_squared,
+    //                      Ind_L,Ind_R,Ind_LCR,Ind_LIR,Ind_RCR,Ind_RIR,
+    //                      Ind_S_LCR,Ind_S_LIR,Ind_S_RCR,Ind_S_RIR,
+    //                      Ind_I_L,Ind_I_R,
+    //                      mu_lambda_prime,sigma_lambda_prime,mu_alpha_prime,sigma_alpha_prime,
+    //                      prob_param,T_Go,k,
+    //                      range_p,L,leapmax,acceptance_p,nparall,
+    //                      lower_bound,upper_bound,lt);
+
+
+
+      // Updating penalty parameter related matrix or fields
+
+
+    //   field<field<vec>> penal_ess=update_beta_param_ess3(nu_l,nu_r,nu_l_squared,nu_r_squared,
+    //                                                      Ind_L,Ind_R,penal_param);
+    //
+    //
+    //   nu_l_p=penal_ess(0);
+    //   nu_r_p=penal_ess(1);
+    //
+    //
+    //
+    //   field<field<vec>> penal_ess2=update_stop_param_ess2(nu_l,nu_r,stop_param,penal_param);
+    //
+    //   nu_l_s=penal_ess2(0);
+    //   nu_r_s=penal_ess2(1);;
+    //
+    //
+    //   // Rcpp::Rcout<<"Panalty_updated"<<endl;
+    //
+    // }
+
+
+
+
+
 
 
     //Updating Random effect coefficeints
@@ -10384,97 +11379,97 @@ List hmc(const List Time_stamp,const List Go_RT,const List Go_RT_S,const double 
 
     if(update_rand_eff==1){
 
-    update_rand_effect(Phi,b_l_main,b_r_main,nu_l_main,nu_r_main,
-                       S_gama_l,S_gama_r,S_beta_l,S_beta_r,
-                       rand_param_g_l,rand_param_g_r,
-                       rand_param_b_l,rand_param_b_r,
-                       tau_prime,tau_s,sigma,SSD,DEL,DEL_s,Ind_GF,
-                       delta_param,penal_param,stop_param,prob_param,
-                       Ind_L,Ind_R,Ind_LCR,Ind_LIR,Ind_RCR,Ind_RIR,
-                       Ind_S_LCR,Ind_S_LIR,Ind_S_RCR,Ind_S_RIR,
-                       Ind_I_L,Ind_I_R,
-                       gama_I,beta_I,
-                       T_Go,k,range_rand_effect,L,leapmax,acceptance_rand_effect,
-                       nparall,lower_bound,upper_bound,lt);
+      update_rand_effect(Phi,b_l_main,b_r_main,nu_l_main,nu_r_main,
+                         S_gama_l,S_gama_r,S_beta_l,S_beta_r,
+                         rand_param_g_l,rand_param_g_r,
+                         rand_param_b_l,rand_param_b_r,
+                         tau_prime,tau_s,sigma,SSD,DEL,DEL_s,Ind_GF,
+                         delta_param,penal_param,stop_param,prob_param,
+                         Ind_L,Ind_R,Ind_LCR,Ind_LIR,Ind_RCR,Ind_RIR,
+                         Ind_S_LCR,Ind_S_LIR,Ind_S_RCR,Ind_S_RIR,
+                         Ind_I_L,Ind_I_R,
+                         gama_I,beta_I,
+                         T_Go,k,range_rand_effect,L,leapmax,acceptance_rand_effect,
+                         nparall,lower_bound,upper_bound,lt);
 
 
 
-    // Updating Random effect coefficient related matrix or fields
+      // Updating Random effect coefficient related matrix or fields
 
-    field<field<vec>> gama_ess2=update_gama_param_ess3(b_l_main,b_r_main,Phi,gama_I);
-
-
-    b_l=gama_ess2(0);
-    b_r=gama_ess2(1);
-
-    Rand_gama_l=gama_ess2(2);
-    Rand_gama_r=gama_ess2(3);
+      field<field<vec>> gama_ess2=update_gama_param_ess3(b_l_main,b_r_main,Phi,gama_I);
 
 
-    field<mat> sq_ess= update_sq(gama_I);
+      b_l=gama_ess2(0);
+      b_r=gama_ess2(1);
 
-    mat gama_sq_l=sq_ess(0);
-    mat gama_sq_r=sq_ess(1);
-
-
-    field<field<vec>>  beta_ess4=update_beta_param_ess4(nu_l_main,nu_r_main,Phi,beta_I);
+      Rand_gama_l=gama_ess2(2);
+      Rand_gama_r=gama_ess2(3);
 
 
-    nu_l=beta_ess4(0);
-    nu_r=beta_ess4(1);
-    nu_l_squared=beta_ess4(2);
-    nu_r_squared=beta_ess4(3);
+      field<mat> sq_ess= update_sq(gama_I);
 
-    Rand_beta_l=beta_ess4(4);
-    Rand_beta_r=beta_ess4(5);
+      mat gama_sq_l=sq_ess(0);
+      mat gama_sq_r=sq_ess(1);
 
 
-
-    field<field<vec>> beta_ess5=update_beta_param_ess3(nu_l,nu_r,nu_l_squared,nu_r_squared,
-                                                       Ind_L,Ind_R,penal_param);
-
-    nu_l_p=beta_ess5(0);
-    nu_r_p=beta_ess5(1);
+      field<field<vec>>  beta_ess4=update_beta_param_ess4(nu_l_main,nu_r_main,Phi,beta_I);
 
 
-    field <field<vec>> stop_param_ess6= update_stop_param_ess2(nu_l,nu_r,stop_param,penal_param);
+      nu_l=beta_ess4(0);
+      nu_r=beta_ess4(1);
+      nu_l_squared=beta_ess4(2);
+      nu_r_squared=beta_ess4(3);
 
-
-    nu_l_s=stop_param_ess6(0);
-    nu_r_s=stop_param_ess6(1);
-
-    field<mat> sq_ess2= update_sq(beta_I);
-
-    mat beta_sq_l=sq_ess2(0);
-    mat beta_sq_r=sq_ess2(1);
-
-    // Rcpp::Rcout<<"Random Effect Updated"<<endl;
-
-    //Updating rand
-
-    update_rand(gama_sq_l,rand_param_g_l,kappa,nu_d,lam,
-                range_rand_g_l, L,leapmax,acceptance_rand_g_l,N);
-
-
-    update_rand(gama_sq_r,rand_param_g_r,kappa,nu_d,lam,
-                range_rand_g_r, L,leapmax,acceptance_rand_g_r,N);
-
-
-    update_rand(beta_sq_l,rand_param_b_l,kappa,nu_d,lam,
-                range_rand_b_l, L,leapmax,acceptance_rand_b_l,N);
-
-    update_rand(beta_sq_r,rand_param_b_r,kappa,nu_d,lam,
-                range_rand_b_r, L,leapmax,acceptance_rand_b_r,N);
+      Rand_beta_l=beta_ess4(4);
+      Rand_beta_r=beta_ess4(5);
 
 
 
-    vec S_gama_l = log_spec_dens(nu_d, rand_param_g_l(1), lam, 1);
-    vec S_gama_r = log_spec_dens(nu_d, rand_param_g_r(1), lam, 1);
+      field<field<vec>> beta_ess5=update_beta_param_ess3(nu_l,nu_r,nu_l_squared,nu_r_squared,
+                                                         Ind_L,Ind_R,penal_param);
 
-    vec S_beta_l = log_spec_dens(nu_d, rand_param_b_l(1), lam, 1);
-    vec S_beta_r = log_spec_dens(nu_d, rand_param_b_r(1), lam, 1);
+      nu_l_p=beta_ess5(0);
+      nu_r_p=beta_ess5(1);
 
-    // Rcpp::Rcout<<"GP Updated"<<endl;
+
+      field <field<vec>> stop_param_ess6= update_stop_param_ess2(nu_l,nu_r,stop_param,penal_param);
+
+
+      nu_l_s=stop_param_ess6(0);
+      nu_r_s=stop_param_ess6(1);
+
+      field<mat> sq_ess2= update_sq(beta_I);
+
+      mat beta_sq_l=sq_ess2(0);
+      mat beta_sq_r=sq_ess2(1);
+
+      // Rcpp::Rcout<<"Random Effect Updated"<<endl;
+
+      //Updating rand
+
+      update_rand(gama_sq_l,rand_param_g_l,kappa,nu_d,lam,
+                  range_rand_g_l, L,leapmax,acceptance_rand_g_l,N);
+
+
+      update_rand(gama_sq_r,rand_param_g_r,kappa,nu_d,lam,
+                  range_rand_g_r, L,leapmax,acceptance_rand_g_r,N);
+
+
+      update_rand(beta_sq_l,rand_param_b_l,kappa,nu_d,lam,
+                  range_rand_b_l, L,leapmax,acceptance_rand_b_l,N);
+
+      update_rand(beta_sq_r,rand_param_b_r,kappa,nu_d,lam,
+                  range_rand_b_r, L,leapmax,acceptance_rand_b_r,N);
+
+
+
+      vec S_gama_l = log_spec_dens(nu_d, rand_param_g_l(1), lam, 1);
+      vec S_gama_r = log_spec_dens(nu_d, rand_param_g_r(1), lam, 1);
+
+      vec S_beta_l = log_spec_dens(nu_d, rand_param_b_l(1), lam, 1);
+      vec S_beta_r = log_spec_dens(nu_d, rand_param_b_r(1), lam, 1);
+
+      // Rcpp::Rcout<<"GP Updated"<<endl;
 
 
     }
@@ -10490,12 +11485,9 @@ List hmc(const List Time_stamp,const List Go_RT,const List Go_RT_S,const double 
       theta2_R.col(i / thin) = beta.col(1);
       theta3.slice(i / thin) = penal_param;
 
-
-
       // theta4.col (i / thin)  = delta_prime;
+
       theta5.slice(i / thin) = stop_param;
-
-
 
 
       for (unsigned j = 0; j < N; ++j) {
@@ -10519,21 +11511,19 @@ List hmc(const List Time_stamp,const List Go_RT,const List Go_RT_S,const double 
 
       Rcpp::Rcout << "Iteration: " << i
                   << " Accept_prob_main_effect = " << ((double)acceptance_main_eff) / ((double)i)
-                  << " Med_accept_prob_p = " << median(acceptance_p) / ((double)i)
-                  << " Med_accept_prob_d = " << median(acceptance_d) / ((double)i)
-                  << " Med_accept_stop_prob = " << median(acceptance_stop_prob) / ((double)i)
+                  << " Med_accept_ind_param = " << median(acceptance_ind_param) / ((double)i)
                   << " Med_acceptance_rand_effect = " << median(acceptance_rand_effect) / ((double)i)
                   << " Accept_rand_g_l = " << ((double)acceptance_rand_g_l)  / ((double)i)
                   << " Accept_rand_g_r = " << ((double)acceptance_rand_g_r)  / ((double)i)
                   << " Accept_rand_b_l = " << ((double)acceptance_rand_b_l)  / ((double)i)
                   << " Accept_rand_b_r = " << ((double)acceptance_rand_b_r)  / ((double)i)
 
-      << std::endl;
+                  << std::endl;
 
 
     }
 
-      // --- Checkpoint save every 2000 iterations ---
+    // --- Checkpoint save every 2000 iterations ---
     if ((i + 1) % checkpoint_every == 0) {
       const unsigned tcol = (i / thin);             // last filled thin index (only valid when i%thin==0 or earlier cols)
       const unsigned have_cols = std::min(tcol + 1, (unsigned)num_thinned_samples);
@@ -10577,9 +11567,7 @@ List hmc(const List Time_stamp,const List Go_RT,const List Go_RT_S,const double 
       // acceptance rates so far (divide by iterations done, i+1)
       double denom = (double)(i + 1);
       out_partial["Accept_main_effect"]=acceptance_main_eff/denom;
-      out_partial["Accept_penal"]=acceptance_p/denom;
-      out_partial["Accept_Shift"]=acceptance_d/denom;
-      out_partial["Accept_Stop_Prob"]=acceptance_stop_prob/denom;
+      out_partial["Accept_ind_param"]=acceptance_ind_param/denom;
       out_partial["Accept_rand_effect"]=acceptance_rand_effect/denom;
       out_partial["Accept_rand_g_l"]=acceptance_rand_g_l/denom;
       out_partial["Accept_rand_g_r"]=acceptance_rand_g_r/denom;
@@ -10618,10 +11606,9 @@ List hmc(const List Time_stamp,const List Go_RT,const List Go_RT_S,const double 
   out["rand_param_g_r"]=theta9;
   out["rand_param_b_l"]=theta10;
   out["rand_param_b_r"]=theta11;
+
   out["Accept_main_effect"]=acceptance_main_eff/nhmc;
-  out["Accept_penal"]=acceptance_p/nhmc;
-  out["Accept_Shift"]=acceptance_d/nhmc;
-  out["Accept_Stop_Prob"]=acceptance_stop_prob/nhmc;
+  out["Accept_ind_param"]=acceptance_ind_param/nhmc;
   out["Accept_rand_effect"]=acceptance_rand_effect/nhmc;
 
   out["Accept_rand_g_l"]=acceptance_rand_g_l/nhmc;
