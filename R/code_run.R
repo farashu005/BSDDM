@@ -14,7 +14,9 @@
 #' @param file_name File path to save the final model output as an RDS file.
 #' @param prep_data_file_name File path to save the preprocessed data as an RDS file.
 #' @param range_main_eff Step size range for main effects during leapfrog updates in HMC.
-#' @param range_ind Step size range for penalty,stop, delta, and probability parameters  during leapfrog updates in HMC.
+#' @param range_p Step size range for penalty parameters during leapfrog updates in HMC.
+#' @param range_d Step size range for delta parameters during leapfrog updates in HMC.
+#' @param range_stop_prob Step size range for stop and probability parameters during leapfrog updates in HMC.Prior range for  parameters.
 #' @param range_rand_eff Step size range for random effect parameters during leapfrog updates in HMC.Prior
 #' @param range_rand_g_l Step size range for left boundary Gaussian Process random effects during leapfrog updates.
 #' @param range_rand_g_r Step size range for right boundary Gaussian Process random effects during leapfrog updates.
@@ -49,7 +51,6 @@
 #' @export
 
 
-
 code_run<-function(save_location,dat,cluster_label,Anxiety_status,sub_type,sampling,sample_size,run,file_name,
 
 prep_data_file_name,
@@ -57,7 +58,6 @@ prep_data_file_name,
 range_main_eff,range_p,range_d,
 
 range_stop_prob,
-
 
 
 range_rand_eff,range_rand_g_l,range_rand_g_r,range_rand_b_l,range_rand_b_r,
@@ -70,6 +70,7 @@ nu_d, kappa, a, b,
 CA_threshold, nknots, m, scale,
 SSD_min, upper_bound,
 L, leapmax, thin, nparall, nhmc,intercept){
+
 
 
 
@@ -142,9 +143,9 @@ Phi_mat=M_I1_Non_Anx_dat$Phi
 
 lambda<-M_I1_Non_Anx_dat$lambda
 
-  U<-M_I1_Non_Anx_dat$U
 
-  
+
+
 
 lower_bound<-M_I1_Non_Anx_dat$l_lim
 
@@ -154,9 +155,9 @@ lower_bound<-M_I1_Non_Anx_dat$l_lim
 P=ncol(X1[[1]])
 N=length(Go_RT)
 
-  #U<-M_I1_Non_Anx_dat$U
+  # U<-M_I1_Non_Anx_dat$U
 
-  U<-c(rep(150,N))
+U<-c(rep(150,N))
 #m=length(lambda)
 
 
@@ -224,10 +225,12 @@ prob_hyp<-c(1,1,1)
 # w_{ik} ~ Gamma(shape = a[k], rate = 1);  P_i = w_i / sum(w_i)
 
 
+# ranges<-list(range_main_eff,range_p,range_d,range_stop_prob,range_rand_eff,range_rand_g_l,range_rand_g_r,range_rand_b_l,range_rand_b_r)
+
+
 
 
 ranges<-list(range_main_eff,range_p,range_d,range_stop_prob,range_rand_eff,range_rand_g_l,range_rand_g_r,range_rand_b_l,range_rand_b_r)
-
 
 data<-M_I1_Non_Anx_dat$dat
 
@@ -322,7 +325,7 @@ TF2.int<-rep(prob_param.int[3],N)
 prob_param<-as.matrix(rbind(GF.int,TF1.int,TF2.int),ncol=N,nrow=3)
 
 
-
+set.seed(51512)
 
 library(RcppArmadillo)
 
@@ -330,7 +333,6 @@ print(Sys.time()); message("Starting model...")
 
 # Record the start time
 start_time <- Sys.time()
-
 
 model<-hmc(X1,Go_RT=Go_RT,Go_RT_S=Go_RT_S,SSD_min=SSD_min, U=U,Ind_G=Ind_G,Stop_S_D=Stop_S_D,
 sigma,delta_param,gama=gama.int,beta=beta.int,
