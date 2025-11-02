@@ -54,7 +54,9 @@ code_run<-function(save_location,dat,cluster_label,Anxiety_status,sub_type,sampl
 
 prep_data_file_name,
 
-range_main_eff,range_ind,
+range_main_eff,range_p,range_d,
+
+range_stop_prob,
 
 
 
@@ -224,7 +226,7 @@ prob_hyp<-c(1,1,1)
 
 
 
-ranges<-list(range_main_eff,range_ind,range_rand_eff,range_rand_g_l,range_rand_g_r,range_rand_b_l,range_rand_b_r)
+ranges<-list(range_main_eff,range_p,range_d,range_stop_prob,range_rand_eff,range_rand_g_l,range_rand_g_r,range_rand_b_l,range_rand_b_r)
 
 
 data<-M_I1_Non_Anx_dat$dat
@@ -329,6 +331,7 @@ print(Sys.time()); message("Starting model...")
 # Record the start time
 start_time <- Sys.time()
 
+
 model<-hmc(X1,Go_RT=Go_RT,Go_RT_S=Go_RT_S,SSD_min=SSD_min, U=U,Ind_G=Ind_G,Stop_S_D=Stop_S_D,
 sigma,delta_param,gama=gama.int,beta=beta.int,
 stop_param,prob_param,
@@ -346,6 +349,7 @@ ranges, L,leapmax,nhmc,thin,nparall,
 lower_bound,upper_bound,
 update_gama_beta=1,update_ind=1,
 update_rand_eff=1,lt=1)
+
 
 
 
