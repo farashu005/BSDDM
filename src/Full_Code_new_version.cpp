@@ -10940,23 +10940,7 @@ List hmc(const List Time_stamp,const List Go_RT,const List Go_RT_S,const double 
          const bool lt = true){
 
 
-  // List hmc(const List Time_stamp,const List Go_RT,const List Go_RT_S,const double SSD_min,const arma::vec& U,const List Ind_G,const List Stop_S_D,
-  //          const double sigma,arma::mat delta_param,arma::mat gama,
-  //          arma::mat beta,arma::mat stop_param,arma::mat prob_param,const List Indicator,
-  //          const List mean_priors_main,const List var_priors_main,arma::mat penal_param,
-  //          const arma::vec prior_penal_stop,const arma::vec T_Go,const arma::vec k,const arma::vec T_Total,
-  //          const double a,const double b,const arma::vec prob_hyp,
-  //          double eta_b_l,double eta_b_r,double eta_nu_l,double eta_nu_r,
-  //          List gama_Ind,List beta_Ind,
-  //          const double nu_d,const arma::vec lam,const List Phi_mat,
-  //          arma::vec rand_param_g_l,arma::vec rand_param_g_r,arma::vec rand_param_b_l,arma::vec rand_param_b_r,
-  //          const double kappa,const List ranges,
-  //          const double L,const int leapmax,
-  //          const double nhmc,int thin,unsigned nparall,
-  //          const List l_bound,const double upper_bound,
-  //          const bool update_gama_beta,const bool update_penalty,const bool update_stop,const bool update_prob,const bool update_rand_eff,const bool update_delta,
-  //          const bool lt = true){
-
+  
   Rcpp::Rcout<<"ABP"<< endl;
 
   // --- Checkpoint controls ---
@@ -11032,8 +11016,7 @@ List hmc(const List Time_stamp,const List Go_RT,const List Go_RT_S,const double 
   vec range_d=range(2);
   vec range_stop_prob=range(3);
 
-  vec range_stop=range(3);
-
+ 
   vec range_rand_effect=range(4);
 
   vec range_rand_g_l=range(5);
