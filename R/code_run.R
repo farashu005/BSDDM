@@ -55,10 +55,11 @@ code_run<-function(save_location,dat,cluster_label,Anxiety_status,sub_type,sampl
 
 prep_data_file_name,
 
-range_main_eff,range_p,range_d,
+range_main_eff,range_p,
 
-range_stop_prob,
+range_stop_prob_delta,
 
+# range_stop,range_prob,
 
 range_rand_eff,range_rand_g_l,range_rand_g_r,range_rand_b_l,range_rand_b_r,
 
@@ -229,8 +230,8 @@ prob_hyp<-c(1,1,1)
 
 
 
+ranges<-list(range_main_eff,range_p,range_stop_prob_delta,range_rand_eff,range_rand_g_l,range_rand_g_r,range_rand_b_l,range_rand_b_r)
 
-ranges<-list(range_main_eff,range_p,range_d,range_stop_prob,range_rand_eff,range_rand_g_l,range_rand_g_r,range_rand_b_l,range_rand_b_r)
 
 data<-M_I1_Non_Anx_dat$dat
 
@@ -325,7 +326,7 @@ TF2.int<-rep(prob_param.int[3],N)
 prob_param<-as.matrix(rbind(GF.int,TF1.int,TF2.int),ncol=N,nrow=3)
 
 
-
+set.seed(51512)
 
 library(RcppArmadillo)
 
@@ -349,7 +350,7 @@ rand_param_g_l.int,rand_param_g_r.int,rand_param_b_l.int,rand_param_b_r.int,
 kappa,
 ranges, L,leapmax,nhmc,thin,nparall,
 lower_bound,upper_bound,
-update_gama_beta=1,update_ind=1,
+update_gama_beta=1,update_penalty=1,update_stop_prob_delta=1,
 update_rand_eff=1,lt=1)
 
 
