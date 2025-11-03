@@ -156,10 +156,8 @@ lower_bound<-M_I1_Non_Anx_dat$l_lim
 P=ncol(X1[[1]])
 N=length(Go_RT)
 
-  # U<-M_I1_Non_Anx_dat$U
 
-U<-c(rep(0,N))
-#m=length(lambda)
+U<-c(rep(150,N))
 
 
 mu_bl<-mu_br<-mu_gl<-mu_gr<-c(rep(0,P))
