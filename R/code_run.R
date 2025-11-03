@@ -351,7 +351,7 @@ kappa,
 ranges, L,leapmax,nhmc,thin,nparall,
 lower_bound,upper_bound,
 update_gama_beta=1,update_penalty=1,update_stop_prob=1,
-update_rand_eff=1,update_delta=0,lt=1)
+update_rand_eff=1,update_delta=1,lt=1)
 
 
 
