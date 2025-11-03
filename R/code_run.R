@@ -324,7 +324,7 @@ TF2.int<-rep(prob_param.int[3],N)
 prob_param<-as.matrix(rbind(GF.int,TF1.int,TF2.int),ncol=N,nrow=3)
 
 
-set.seed(51512)
+
 
 library(RcppArmadillo)
 
