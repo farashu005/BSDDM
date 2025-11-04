@@ -8904,7 +8904,7 @@ void update_delta_param(const field <vec> &tau,const field <vec> &tau_stop,
                         const field <vec> &lower_bound_init,const double upper_bound,const bool lt = 1){
 
 
-  Rcpp::Rcout<<"ABG"<< endl;
+  // Rcpp::Rcout<<"ABG"<< endl;
 
 
 
@@ -9720,7 +9720,7 @@ void update_stop_prob_param(const field<vec> &tau, const field<vec> &tau_s, cons
 
 
   omp_set_num_threads(1);
-// #pragma omp parallel for num_threads(nparall)
+#pragma omp parallel for num_threads(nparall)
   for (unsigned i = 0; i < N; ++i) {
 
 
