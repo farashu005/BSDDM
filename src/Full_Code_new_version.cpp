@@ -1386,22 +1386,10 @@ field<vec> update_lk_FS4(const vec &tau,const vec &tau_s,
   vec diff_Y_RIR=exp(Y_RIR- lk_RIR_FS);
 
 
-  vec diff_X_LCR2 = X_LCR- lk_LCR_FS;
-  vec diff_Y_LCR2 = Y_LCR- lk_LCR_FS;
-
-  vec diff_X_LIR2 = X_LIR- lk_LIR_FS;
-  vec diff_Y_LIR2 = Y_LIR- lk_LIR_FS;
-
-  vec diff_X_RCR2 = X_RCR- lk_RCR_FS;
-  vec diff_Y_RCR2 = Y_RCR- lk_RCR_FS;
-
-  vec diff_X_RIR2 = X_RIR- lk_RIR_FS;
-  vec diff_Y_RIR2 =  Y_RIR- lk_RIR_FS;
 
 
 
-
-  field<vec> result(20);
+  field<vec> result(12);
 
   result(0)=lk_LCR_FS;
   result(1)=lk_LIR_FS;
@@ -1421,18 +1409,7 @@ field<vec> update_lk_FS4(const vec &tau,const vec &tau_s,
   result(10)=diff_X_RIR;
   result(11)=diff_Y_RIR;
 
-  result(12)=diff_X_LCR2;
-  result(13)=diff_Y_LCR2;
-
-  result(14)=diff_X_LIR2;
-  result(15)=diff_Y_LIR2;
-
-  result(16)=diff_X_RCR2;
-  result(17)=diff_Y_RCR2;
-
-  result(18)=diff_X_RIR2;
-  result(19)=diff_Y_RIR2;
-
+ 
 
   return result;
 
@@ -2341,7 +2318,11 @@ vec log_survival_s_I(const double sigma, const vec &u,const double SSD,double DE
   y1.transform([&lt](double E) { return R::pnorm(E, 0, 1, lt, 1); });
 
 
-  vec C=(2*exp(b)*m)/(sigma*u_d);
+  // vec C=(2*exp(b)*m)/(sigma*u_d);
+  
+  
+  vec C = (2.0 * exp(b) / sigma) * (m % pow(u_d, -1.0));
+  
 
   vec q2 =exponent_2_I(sigma,u_d,m,b);
 
@@ -3429,7 +3410,7 @@ vec deriv_exp_delta_prime2_I(double sigma,const vec &u,double b,const vec &m,dou
 
 inline vec deriv_nu_diff_delta_prime_I(const vec &u,const double SSD,double nu1,double nu2,const double DEL, const double DEL_s){
 
-  return ((SSD+DEL_s-DEL-(2*u))*(exp(nu2)-exp(nu1)))/(2*pow(u,3/2));
+  return ((SSD+DEL_s-DEL-(2*u))*(exp(nu2)-exp(nu1)))/(2*pow(u,1.5));
 
 
 
@@ -3471,7 +3452,7 @@ vec deriv_log_dens_delta_prime_I(const double sigma,const vec &u,
 
   // calculating small vectors
 
-  vec A=(3/2)*(1/u_d);
+  vec A=(1.5)*(1/u_d);
 
   vec c1=q1%deriv_delta_prime1;
 
@@ -3557,7 +3538,7 @@ double integrate_integral_delta_prime(double sigma,double SSD,double DEL,double 
 
   // Compute the integrand values
   vec integrand_values =IntegrandFunc_delta_prime(u,sigma,SSD,DEL,DEL_s,stop_param(0),stop_param(1),
-                                                  b_CR,nu1_CR,nu2_CR,b_IR,nu1_IR,nu2_IR,lt);
+                                                  b_CR,nu1_CR,nu2_CR,b_IR,nu1_IR,nu2_IR,deriv_delta,lt);
 
 
 
@@ -3839,7 +3820,8 @@ double integrate_integral_delta_prime_s(double sigma,double SSD,double DEL,doubl
 
   // Compute the integrand values
   vec integrand_values =IntegrandFunc_delta_prime_s(u,sigma,SSD,DEL,DEL_s,stop_param(0),stop_param(1),
-                                                    b_CR,nu1_CR,nu2_CR,b_IR,nu1_IR,nu2_IR, deriv_delta_s,lt);
+                                                    b_CR,nu1_CR,nu2_CR,b_IR,nu1_IR,nu2_IR, deriv_delta_s,
+                                                    deriv_delta_s_stop,lt);
 
 
 
@@ -4764,7 +4746,7 @@ double integrate_integral_nu_stop(double sigma,double SSD,double DEL,
                                   double b_CR,double nu1_CR,const double nu2_CR,
                                   double b_IR,double nu1_IR,const double nu2_IR,
                                   const double nu_stim, const double nu_squared,
-                                  double lambda_prime,double alpha_prime,double lower_bound,double upper_bound,double lt=1) {
+                                  double lambda_prime,double alpha_prime,double lower_bound,double upper_bound,const bool lt=1) {
 
 
 
@@ -6118,7 +6100,7 @@ inline vec deriv_log_dens_delta_prime(const vec &tau,const double sigma,const ve
 
   // Rcpp::Rcout<<"AAN"<< endl;
 
-  return (((3/2)*(1/tau)-((exp(2*b))/(2*sigma*pow(tau,2)))+((exp(2*nu))/(2*sigma)))*deriv_delta);
+  return (((1.5)*(1/tau)-((exp(2*b))/(2*sigma*pow(tau,2)))+((exp(2*nu))/(2*sigma)))*deriv_delta);
 
 
 
@@ -6173,7 +6155,7 @@ vec deriv_exp_delta_prime2(const double sigma,const vec &tau,
 
 inline vec deriv_nu_diff_delta_prime(const vec &tau,const vec &SSD,const vec &nu1,const vec &nu2,const double DEL, const double DEL_s){
 
-  return ((SSD+DEL_s-DEL-(2*tau))%(exp(nu2)-exp(nu1)))/(2*pow(tau,3/2));
+  return ((SSD+DEL_s-DEL-(2*tau))%(exp(nu2)-exp(nu1)))/(2*pow(tau,1.5));
 }
 
 
@@ -6211,7 +6193,7 @@ mat deriv_log_dens_delta_fs(const double sigma,const vec &tau,const vec &tau_s,
 
   // calculating small vectors
 
-  vec A=(3/2)*(1/tau);
+  vec A=(1.5)*(1/tau);
 
   vec c1=q1%deriv_delta_prime1;
 
@@ -6312,7 +6294,7 @@ vec deriv_log_dens_stop_delta_prime_s(const vec &tau_s, const double sigma, cons
 // Derivative of log dense w.r.t. delta_prime (Go Proces-Failed Stop Trial)
 
 
-mat deriv_log_dens_delta_s_fs(const double sigma,const vec &tau,const vec &tau_s,
+vec deriv_log_dens_delta_s_fs(const double sigma,const vec &tau,const vec &tau_s,
                               const vec &SSD, const vec &b,const vec &nu1,const vec &nu2,const double deriv_delta_s,
                               const double DEL, const double DEL_s,
                               const bool lt=1){
@@ -6501,11 +6483,11 @@ vec grad_delta(const vec &tau,const vec &tau_s,const double sigma,const vec &SSD
   mat grad_R_delta_prime = grad_vec(tau(Ind_R),sigma,nu_r(Ind_R),nu_l_p, b_r(Ind_R),b_l(Ind_R),deriv_delta);
 
 
-  mat LCR_delta_prime = grad_L_delta_prime.col(0);
-  mat LIR_delta_prime = grad_L_delta_prime.col(1);
+  vec LCR_delta_prime = grad_L_delta_prime.col(0);
+  vec LIR_delta_prime = grad_L_delta_prime.col(1);
 
-  mat RCR_delta_prime = grad_R_delta_prime.col(0);
-  mat RIR_delta_prime = grad_R_delta_prime.col(1);
+  vec RCR_delta_prime = grad_R_delta_prime.col(0);
+  vec RIR_delta_prime = grad_R_delta_prime.col(1);
 
 
 
@@ -6707,29 +6689,6 @@ mat grad_vec_nu_stop(const vec &tau,const vec &tau_s,const double sigma,const ve
 }
 
 
-//
-//
-// // Helper: report non-finite (NaN/±Inf) entries in a vector
-// void check_vec_nonfinite(const std::string& name, const arma::vec& v) {
-//   if (v.n_elem == 0) {
-//     Rcpp::Rcout << name << " is empty.\n";
-//     return;
-//   }
-//   arma::uvec bad = arma::find_nonfinite(v);  // catches NaN and ±Inf
-//   if (!bad.is_empty()) {
-//     Rcpp::Rcout << "Non-finite values in " << name
-//                 << " (count=" << bad.n_elem << ", n=" << v.n_elem << ")\n";
-//     arma::uword k = std::min<arma::uword>(bad.n_elem, (arma::uword)10);
-//     for (arma::uword i = 0; i < k; ++i) {
-//       arma::uword idx = bad(i);
-//       double val = v(idx);
-//       Rcpp::Rcout << "  [" << idx << "] " << val;
-//       if (std::isnan(val))      Rcpp::Rcout << " (NaN)";
-//       else if (std::isinf(val)) Rcpp::Rcout << (val > 0 ? " (+Inf)" : " (-Inf)");
-//       Rcpp::Rcout << "\n";
-//     }
-//   }
-// }
 
 
 // Gradient function for Stop Parameters
@@ -6790,16 +6749,7 @@ vec grad_stop_param(const vec &tau,const vec &tau_s,const double sigma,const vec
   + stim_sum;
 
 
-  // if (grad_b_stop < 0) {
-  //   Rcpp::Rcout << "grad_b_stop: " << grad_b_stop << std::endl;
-  //   Rcpp::Rcout << "dot_LCR: " << dot_LCR
-  //               << ", dot_LIR: " << dot_LIR
-  //               << ", dot_RCR: " << dot_RCR
-  //               << ", dot_RIR: " << dot_RIR << std::endl;
-  //   Rcpp::Rcout << "prior_term: " << prior_term
-  //               << ", stim_sum: " << stim_sum << std::endl;
-  // }
-
+  
 
 
   //nu_stop gradient
@@ -6859,25 +6809,7 @@ vec grad_stop_param(const vec &tau,const vec &tau_s,const double sigma,const vec
     sum(nu_stop_Stim(0))+sum(nu_stop_Stim(1));
 
 
-  // //Debug: if grad_nu_stop is NaN, print all components
-  // if (grad_nu_stop > 0) {
-  //   // Rcpp::Rcout << "tau_s  " << tau_s.t() << std::endl;
-  //   Rcpp::Rcout << "diff_Y_LCR * deriv_LCR: " << dot(diff_Y_LCR, deriv_LCR) << std::endl;
-  //   Rcpp::Rcout << "FS_LCR * deriv_nu_s_LCR: " << dot(FS_LCR, deriv_nu_s_LCR) << std::endl;
-  //   Rcpp::Rcout << "diff_Y_LIR * deriv_LIR: " << dot(diff_Y_LIR, deriv_LIR) << std::endl;
-  //   Rcpp::Rcout << "FS_LIR * deriv_nu_s_LIR: " << dot(FS_LIR, deriv_nu_s_LIR) << std::endl;
-  //   Rcpp::Rcout << "diff_Y_RCR * deriv_RCR: " << dot(diff_Y_RCR, deriv_RCR) << std::endl;
-  //   Rcpp::Rcout << "FS_RCR * deriv_nu_s_RCR: " << dot(FS_RCR, deriv_nu_s_RCR) << std::endl;
-  //   Rcpp::Rcout << "diff_Y_RIR * deriv_RIR: " << dot(diff_Y_RIR, deriv_RIR) << std::endl;
-  //   Rcpp::Rcout << "FS_RIR * deriv_nu_s_RIR: " << dot(FS_RIR, deriv_nu_s_RIR) << std::endl;
-  //   Rcpp::Rcout << "Prior term: " << ((stop_param(1) - mu_nu_stop) / sigma_nu_stop) << std::endl;
-  //   Rcpp::Rcout << "sum(nu_stop_Stim(0)): " << sum(nu_stop_Stim(0)) << std::endl;
-  //   Rcpp::Rcout << "sum(nu_stop_Stim(1)): " << sum(nu_stop_Stim(1)) << std::endl;
-  //   Rcpp::Rcout << "stop_param(1): " << stop_param(1)
-  //               << ", mu_nu_stop: " << mu_nu_stop
-  //               << ", sigma_nu_stop: " << sigma_nu_stop << std::endl;
-
-  // }
+  
 
 
 
@@ -8504,8 +8436,7 @@ void update_penal_param(const field <vec> &tau,const field <vec> &tau_s,const do
 #pragma omp parallel for num_threads(nparall)
   for (unsigned i = 0; i < N; ++i){
 
-    // Rcpp::Rcout<< "subject: " << i <<endl;
-
+   
     //Updating neceassary vectors
 
     vec nu_l_p_i= h(nu_l(i), Ind_R(i) ) - penalty_fun(h(nu_r(i), Ind_R(i) ),h(nu_r_squared(i), Ind_R(i) ),penal_param.col(i));
@@ -8558,9 +8489,6 @@ void update_penal_param(const field <vec> &tau,const field <vec> &tau_s,const do
 
 
     double Inhibit_likelihood=sum(likelihood_integral(0))+sum(likelihood_integral(1));
-
-
-    // Rcpp::Rcout<<"Inhibit_likelihood"<<Inhibit_likelihood<<endl;
 
 
     mat Penal_LS=integrate_penalty_Left_Stim(likelihood_integral,sigma,SSD(i),DEL(i),DEL_s(i),
@@ -8771,17 +8699,10 @@ void update_penal_param(const field <vec> &tau,const field <vec> &tau_s,const do
 
 
 
-/////////////////////////////////////////////////////////////////////////////////////// Delta_prime /////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////////// Delta_prime /////////////////////////////////////////////////////////////////////////////////////////////
-// Clamp helper
-inline double clamp(double x, double lo, double hi) {
-  return std::max(lo, std::min(x, hi));
-}
 
 //Leapfrog algorithm
-
-
 
 void leap_frog_delta_param(const vec &tau,const vec &tau_stop,const double sigma,const vec &SSD,const double SSD_min,const double U,
                            const vec &stop_param,const vec &penal_param,const vec &prob_param,vec &delta_param,
@@ -8792,36 +8713,37 @@ void leap_frog_delta_param(const vec &tau,const vec &tau_stop,const double sigma
                            const uvec &Ind_LCR,const uvec &Ind_LIR,const uvec &Ind_RIR,const uvec &Ind_RCR,
                            const uvec &Ind_S_LCR,const uvec &Ind_S_LIR,const uvec &Ind_S_RIR,const uvec &Ind_S_RCR,
                            const uvec &Ind_I_L,const uvec &Ind_I_R,
-                           vec &v_old,const double L, const double delta,mat &p,
+                           vec &v_old,const unsigned L, const double delta,vec &p,
                            const vec &lower_bound_init,const double upper_bound,const bool lt=1){
 
 
   // Rcpp::Rcout<<"ABF"<< endl;
+  
+  uvec idx_tau_pos = find(tau > 0);
+  
+  uvec idx_tau_stop_pos = find(tau_stop > 0);
 
   for (unsigned j = 0; j < L; ++j){
 
 
     delta_param+=delta*(p-(delta/2)*v_old);
+    
+    delta_param.clamp(-20.0,20.0);
 
-
-
-    // When computing DEL_s and DEL:
-    double delta0_clamped = clamp(delta_param(0), -20.0, 20.0);
-    double delta1_clamped = clamp(delta_param(1), -20.0, 20.0);
-
-    double DEL_s = U * EXPITE(delta0_clamped);
-    double DEL   = (SSD_min + DEL_s) * EXPITE(delta1_clamped);
-
+    
+    double DEL_s = U * EXPITE(delta_param(0));
+    double DEL   = (SSD_min + DEL_s) * EXPITE(delta_param(1));
+    
 
     vec tau_prime(tau.n_elem, fill::zeros);
     vec tau_s(tau_stop.n_elem, fill::zeros);
 
     // Apply subtraction only where tau > 0
-    uvec idx_tau_pos = find(tau > 0);
+    
     tau_prime.elem(idx_tau_pos) = tau.elem(idx_tau_pos) - DEL;
 
     // Apply subtraction only where tau_stop > 0
-    uvec idx_tau_stop_pos = find(tau_stop > 0);
+    
     tau_s.elem(idx_tau_stop_pos) = tau_stop.elem(idx_tau_stop_pos) - DEL_s;
 
 
@@ -9017,11 +8939,11 @@ void update_delta_param(const field <vec> &tau,const field <vec> &tau_stop,
     vec lower_bound=lower_bound_init(i)+DEL_s;
 
 
-    double deriv_delta=(SSD_min+DEL_s)*EXPITE_sq(delta_param(1));
+    double deriv_delta=(SSD_min+DEL_s)*EXPITE_sq(delta_param(1,i));
 
-    double deriv_delta_s=EXPITE(delta_param(1))*U(i)*EXPITE_sq(delta_param(0));
+    double deriv_delta_s=EXPITE(delta_param(1,i))*U(i)*EXPITE_sq(delta_param(0,i));
 
-    double deriv_delta_s_stop=U(i)*EXPITE_sq(delta_param(0));
+    double deriv_delta_s_stop=U(i)*EXPITE_sq(delta_param(0,i));
 
 
     vec weight_LCR=weight(sigma,g(tau_prime, Ind_L(i), Ind_LCR(i) ),h(nu_r_p(i),Ind_LCR(i) ),
@@ -9339,25 +9261,6 @@ void leap_frog_stop_prob_param(const vec &tau, const vec &tau_s, const double si
 
 
     stop_param.clamp(-7.0,5.0);
-
-
-    // // Print if stop_param(0) < 0 OR prob_param(1) > 0
-    // if (stop_param(0) < 0 || stop_param(1) > 0) {
-    //   Rcpp::Rcout << "stop_param: " << stop_param.t();
-    //   Rcpp::Rcout << "prob_param: " << prob_param.t();
-    //
-    //   Rcpp::Rcout << "delta: " << delta << "\n";
-    //   Rcpp::Rcout << "p_stop: " << p_stop.t();
-    //   Rcpp::Rcout << "p_prob: " << p_prob.t();
-    //   Rcpp::Rcout << "v_old_stop: " << v_old_stop.t();
-    //   Rcpp::Rcout << "v_old_prob: " << v_old_prob.t();
-    // }
-
-
-
-
-
-
 
 
     double sum_Prob = mlpack::AccuLog(prob_param);
@@ -10940,7 +10843,23 @@ List hmc(const List Time_stamp,const List Go_RT,const List Go_RT_S,const double 
          const bool lt = true){
 
 
-  
+  // List hmc(const List Time_stamp,const List Go_RT,const List Go_RT_S,const double SSD_min,const arma::vec& U,const List Ind_G,const List Stop_S_D,
+  //          const double sigma,arma::mat delta_param,arma::mat gama,
+  //          arma::mat beta,arma::mat stop_param,arma::mat prob_param,const List Indicator,
+  //          const List mean_priors_main,const List var_priors_main,arma::mat penal_param,
+  //          const arma::vec prior_penal_stop,const arma::vec T_Go,const arma::vec k,const arma::vec T_Total,
+  //          const double a,const double b,const arma::vec prob_hyp,
+  //          double eta_b_l,double eta_b_r,double eta_nu_l,double eta_nu_r,
+  //          List gama_Ind,List beta_Ind,
+  //          const double nu_d,const arma::vec lam,const List Phi_mat,
+  //          arma::vec rand_param_g_l,arma::vec rand_param_g_r,arma::vec rand_param_b_l,arma::vec rand_param_b_r,
+  //          const double kappa,const List ranges,
+  //          const double L,const int leapmax,
+  //          const double nhmc,int thin,unsigned nparall,
+  //          const List l_bound,const double upper_bound,
+  //          const bool update_gama_beta,const bool update_penalty,const bool update_stop,const bool update_prob,const bool update_rand_eff,const bool update_delta,
+  //          const bool lt = true){
+
   Rcpp::Rcout<<"ABP"<< endl;
 
   // --- Checkpoint controls ---
@@ -11016,7 +10935,8 @@ List hmc(const List Time_stamp,const List Go_RT,const List Go_RT_S,const double 
   vec range_d=range(2);
   vec range_stop_prob=range(3);
 
- 
+  vec range_stop=range(3);
+
   vec range_rand_effect=range(4);
 
   vec range_rand_g_l=range(5);
