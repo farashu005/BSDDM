@@ -8904,7 +8904,7 @@ void update_delta_param(const field <vec> &tau,const field <vec> &tau_stop,
                         const field <vec> &lower_bound_init,const double upper_bound,const bool lt = 1){
 
 
-  // Rcpp::Rcout<<"ABG"<< endl;
+  Rcpp::Rcout<<"ABG"<< endl;
 
 
 
@@ -9346,18 +9346,7 @@ void leap_frog_stop_prob_param(const vec &tau, const vec &tau_s, const double si
     vec diff_Y_RIR=lk_FS(11);
 
 
-    vec diff_X_LCR2=lk_FS(12);
-    vec diff_Y_LCR2=lk_FS(13);
-
-    vec diff_X_LIR2=lk_FS(14);
-    vec diff_Y_LIR2=lk_FS(15);
-
-    vec diff_X_RCR2=lk_FS(16);
-    vec diff_Y_RCR2=lk_FS(17);
-
-    vec diff_X_RIR2=lk_FS(18);
-    vec diff_Y_RIR2=lk_FS(19);
-
+    
 
 
     vec v_new_stop = -grad_stop_param(tau,tau_s,sigma,SSD,DEL,DEL_s,
@@ -9731,7 +9720,7 @@ void update_stop_prob_param(const field<vec> &tau, const field<vec> &tau_s, cons
 
 
   omp_set_num_threads(1);
-#pragma omp parallel for num_threads(nparall)
+// #pragma omp parallel for num_threads(nparall)
   for (unsigned i = 0; i < N; ++i) {
 
 
@@ -9833,18 +9822,6 @@ void update_stop_prob_param(const field<vec> &tau, const field<vec> &tau_s, cons
 
     vec diff_X_RIR=lk_FS(10);
     vec diff_Y_RIR=lk_FS(11);
-
-    vec diff_X_LCR2=lk_FS(12);
-    vec diff_Y_LCR2=lk_FS(13);
-
-    vec diff_X_LIR2=lk_FS(14);
-    vec diff_Y_LIR2=lk_FS(15);
-
-    vec diff_X_RCR2=lk_FS(16);
-    vec diff_Y_RCR2=lk_FS(17);
-
-    vec diff_X_RIR2=lk_FS(18);
-    vec diff_Y_RIR2=lk_FS(19);
 
 
 
